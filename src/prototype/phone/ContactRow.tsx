@@ -1,0 +1,107 @@
+import { useCallback, useRef, useState } from 'react'
+import { MagnifiableFrame } from '../Magnifier'
+import { space } from '../../tokens/spatial'
+
+export interface ContactRowProps {
+  id: string
+  name: string
+  avatar: string
+  onCall: () => void
+  onText: () => void
+  index?: number
+}
+
+export function ContactRow({ id, name, avatar, onCall, onText, index = 0 }: ContactRowProps) {
+  const downRef = useRef<{ x: number; y: number } | null>(null)
+  const [swipeOffset, setSwipeOffset] = useState(0)
+
+  const onPointerDown = useCallback((e: React.PointerEvent) => {
+    downRef.current = { x: e.clientX, y: e.clientY }
+    const el = e.currentTarget as HTMLElement
+    if (typeof el.setPointerCapture === 'function') {
+      try { el.setPointerCapture(e.pointerId) } catch { /* jsdom */ }
+    }
+  }, [])
+
+  const onPointerMove = useCallback((e: React.PointerEvent) => {
+    const start = downRef.current
+    if (!start) return
+    const dx = e.clientX - start.x
+    const dy = e.clientY - start.y
+    if (Math.abs(dy) > Math.abs(dx)) return
+    const clamped = Math.max(-120, Math.min(120, dx))
+    setSwipeOffset(clamped)
+  }, [])
+
+  const onPointerUp = useCallback((e: React.PointerEvent) => {
+    const start = downRef.current
+    downRef.current = null
+    setSwipeOffset(0)
+    if (!start) return
+    const dx = e.clientX - start.x
+    const dy = e.clientY - start.y
+    if (Math.abs(dy) > Math.abs(dx)) return
+    if (dx >= space.thresholdSwipeRowPx) {
+      onCall()
+    } else if (dx <= -space.thresholdSwipeRowPx) {
+      onText()
+    }
+  }, [onCall, onText])
+
+  const callRevealed = swipeOffset > 0
+  const textRevealed = swipeOffset < 0
+
+  return (
+    <MagnifiableFrame
+      id={`contact-row-${id}`}
+      index={index}
+      onCommit={onCall}
+      label={`Call ${name}`}
+    >
+      <div
+        data-testid={`contact-row-${id}`}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+        onPointerCancel={() => { downRef.current = null; setSwipeOffset(0) }}
+        style={{
+          position: 'relative',
+          display: 'flex',
+          alignItems: 'center',
+          gap: 10,
+          padding: '8px 12px',
+          color: 'var(--text-primary)',
+          fontSize: 13,
+          borderRadius: 6,
+          touchAction: 'pan-y',
+          cursor: 'pointer',
+          transform: `translateX(${swipeOffset}px)`,
+          transition: downRef.current ? 'none' : 'transform 0.18s ease',
+          background: 'rgba(255,255,255,0.05)',
+        }}
+      >
+        {callRevealed && (
+          <div style={{
+            position: 'absolute', left: -60, top: 0, bottom: 0,
+            width: 60, display: 'flex', alignItems: 'center', justifyContent: 'center',
+            color: 'var(--action-call)', fontWeight: 600, fontSize: 16,
+          }}>C</div>
+        )}
+        {textRevealed && (
+          <div style={{
+            position: 'absolute', right: -60, top: 0, bottom: 0,
+            width: 60, display: 'flex', alignItems: 'center', justifyContent: 'center',
+            color: 'var(--action-text)', fontWeight: 600, fontSize: 16,
+          }}>T</div>
+        )}
+        <div style={{
+          width: 22, height: 22, borderRadius: '50%',
+          background: 'linear-gradient(135deg, #7fa3c4, #b8a3c4)',
+          fontSize: 10, color: 'white',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}>{avatar}</div>
+        <span>{name}</span>
+      </div>
+    </MagnifiableFrame>
+  )
+}
