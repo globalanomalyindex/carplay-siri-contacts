@@ -13,6 +13,12 @@ export function useMagnifierDriver(): MagnifierDriver {
   const { getTargets, setLockedId, setRotaryActive } = useMagnifierInternal()
   const currentLockRef = useRef<string | null>(null)
   const currentFreeRef = useRef<string | null>(null)
+  // True while a rotary session is in progress (between start() and end()).
+  // Used to make end() idempotent: the orb's React onPointerUp and the
+  // window-level useLongPressRotarySession both call end() on the same
+  // pointerup, and without this guard the second call would re-lock to the
+  // nearest target via move(p) and double-fire onCommit.
+  const sessionActiveRef = useRef(false)
 
   // Snap (discrete) targets only, used by pickLockedTarget.
   const computeSnapGeometryMap = useCallback((): Map<string, TargetGeometry> => {
@@ -51,6 +57,7 @@ export function useMagnifierDriver(): MagnifierDriver {
   const start = useCallback(() => {
     currentLockRef.current = null
     currentFreeRef.current = null
+    sessionActiveRef.current = true
     setLockedId(null)
     setRotaryActive(true)
   }, [setLockedId, setRotaryActive])
@@ -76,6 +83,13 @@ export function useMagnifierDriver(): MagnifierDriver {
 
   const end = useCallback(
     (p: Point): string | null => {
+      // Idempotent: if the session already ended (e.g. via the orb's React
+      // pointerup handler), do nothing for subsequent callers like the
+      // window-level pointerup listener. Without this guard, move(p) below
+      // would re-lock to the nearest target and double-fire onCommit.
+      if (!sessionActiveRef.current) return null
+      sessionActiveRef.current = false
+
       move(p)
       const snapId = currentLockRef.current
       const freeId = currentFreeRef.current

@@ -2,7 +2,6 @@ import { createContext, useContext, type ReactNode } from 'react'
 import type { AccessibilitySettings } from './useAccessibilitySettings'
 
 const DEFAULTS: AccessibilitySettings = {
-  longPressAnywhere: false,
   forceReducedMotion: false,
   highContrast: false,
 }

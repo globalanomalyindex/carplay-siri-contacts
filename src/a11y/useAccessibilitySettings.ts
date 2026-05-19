@@ -3,10 +3,11 @@ import { useState, useCallback, useEffect } from 'react'
 /**
  * Prototype-level accessibility settings. In production these would live in
  * CarPlay's Accessibility settings; here they are toggleable via the debug UI.
+ *
+ * Long-press-anywhere is no longer a setting: it is on by default for every
+ * user (the tap-rescue path) and lives directly in the orchestrating shell.
  */
 export interface AccessibilitySettings {
-  /** Long-press-anywhere on the screen enters rotary mode (the tap-rescue path). */
-  longPressAnywhere: boolean
   /** Manual override of the OS Reduce Motion setting (for testing). */
   forceReducedMotion: boolean
   /** Manual override for high-contrast mode (raises glass-frame opacity). */
@@ -14,7 +15,6 @@ export interface AccessibilitySettings {
 }
 
 const DEFAULTS: AccessibilitySettings = {
-  longPressAnywhere: false,
   forceReducedMotion: false,
   highContrast: false,
 }

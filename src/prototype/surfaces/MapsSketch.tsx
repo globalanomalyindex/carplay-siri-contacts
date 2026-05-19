@@ -18,8 +18,12 @@ const POIS = [
 export function MapsSketch() {
   const toast = useToast()
   return (
-    <div className="h-full flex flex-col gap-2 p-2">
-      <div className="flex gap-2">
+    <div
+      data-testid="maps-sketch"
+      className="flex flex-col gap-2 p-2"
+      style={{ height: '100%', minHeight: 0 }}
+    >
+      <div className="flex gap-2 flex-shrink-0">
         {QUICK_CONTROLS.map((qc, i) => (
           <MagnifiableFrame
             key={qc.id}
@@ -66,15 +70,34 @@ function MapCanvas() {
       ref={canvasRef}
       data-testid="map-canvas"
       style={{
-        flex: 1,
+        flex: '1 1 0',
+        minHeight: 0,
+        width: '100%',
         position: 'relative',
-        background: 'linear-gradient(180deg, #2d4a52, #1a3142)',
-        borderRadius: 8,
+        background:
+          'radial-gradient(circle at 30% 25%, rgba(120, 220, 240, 0.18), transparent 55%),' +
+          'radial-gradient(circle at 75% 75%, rgba(180, 150, 255, 0.14), transparent 60%),' +
+          'linear-gradient(180deg, #2d4a52 0%, #1f3a48 55%, #16293a 100%)',
+        borderRadius: 10,
         overflow: 'hidden',
+        boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.06)',
       }}
     >
-      <div style={{ position: 'absolute', top: '40%', left: 0, right: 0, height: 2, background: 'rgba(255,255,255,0.18)' }} />
-      <div style={{ position: 'absolute', top: 0, bottom: 0, left: '55%', width: 2, background: 'rgba(255,255,255,0.18)' }} />
+      {/* Subtle map "roads": a curved primary road + crossing grid lines */}
+      <div style={{ position: 'absolute', inset: 0, opacity: 0.55 }}>
+        <svg
+          width="100%"
+          height="100%"
+          viewBox="0 0 100 100"
+          preserveAspectRatio="none"
+          style={{ display: 'block' }}
+        >
+          <path d="M 0 65 Q 30 50, 55 60 T 100 50" stroke="rgba(255,255,255,0.22)" strokeWidth="1.1" fill="none" />
+          <path d="M 40 0 Q 50 35, 55 60 T 65 100" stroke="rgba(255,255,255,0.14)" strokeWidth="0.8" fill="none" />
+          <line x1="0" y1="38" x2="100" y2="44" stroke="rgba(255,255,255,0.10)" strokeWidth="0.5" />
+          <line x1="80" y1="0" x2="84" y2="100" stroke="rgba(255,255,255,0.10)" strokeWidth="0.5" />
+        </svg>
+      </div>
       {POIS.map((p, i) => (
         <div
           key={p.id}

@@ -1,6 +1,13 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { CarPlayChrome } from './prototype/chrome/CarPlayChrome'
+import { DockSwitcher, type DockSurface } from './prototype/chrome/DockSwitcher'
+import { ScreenEdgeAura } from './prototype/chrome/ScreenEdgeAura'
+import { ScreenEdgeAuraRim } from './prototype/chrome/ScreenEdgeAuraRim'
 import { MasterOrb } from './prototype/MasterOrb/MasterOrb'
+import { OrbControlProvider } from './prototype/MasterOrb/OrbControlProvider'
+import { useOrbControl } from './prototype/MasterOrb/OrbControlContext'
+import { useGlobalSiriDismiss } from './prototype/MasterOrb/useGlobalSiriDismiss'
+import { useSwipeOffScreenAbort } from './prototype/MasterOrb/useSwipeOffScreenAbort'
 import { MagnifierProvider, useMagnifierDriver } from './prototype/Magnifier'
 import { useLongPressAnywhere } from './prototype/Magnifier/useLongPressAnywhere'
 import { useLongPressRotarySession } from './prototype/Magnifier/useLongPressRotarySession'
@@ -17,43 +24,49 @@ import { RadialDialer } from './prototype/phone/RadialDialer'
 import { MapsSketch } from './prototype/surfaces/MapsSketch'
 import { MusicSketch } from './prototype/surfaces/MusicSketch'
 
-type Surface = 'phone' | 'dialer' | 'maps' | 'music'
-
 function App() {
   const { settings, update } = useAccessibilitySettings()
   const [driving, setDriving] = useState(false)
-  const [surface, setSurface] = useState<Surface>('phone')
+  const [surface, setSurface] = useState<DockSurface>('phone')
+  const screenRef = useRef<HTMLDivElement>(null)
 
   return (
     <div className="min-h-screen bg-slate-900 flex items-center justify-center p-6">
       <ReducedMotionOverrideProvider value={settings.forceReducedMotion}>
         <SettingsProvider value={settings}>
           <ToastProvider>
-            <MagnifierProvider>
-              <AnnouncerShell />
-              <LongPressRescueShell enabled={settings.longPressAnywhere}>
-                <div style={{ width: 720, height: 400 }}>
-                  <CarPlayChrome
-                    orbHome={<MasterOrb />}
-                    dock={
-                      <>
-                        <DockIcon label="M" />
-                        <DockIcon label="N" />
-                        <DockIcon label="T" />
-                        <DockIcon label="S" />
-                      </>
-                    }
-                  >
-                    <DrivingProvider driving={driving}>
-                      {surface === 'phone'  && <PhoneApp />}
-                      {surface === 'dialer' && <RadialDialer />}
-                      {surface === 'maps'   && <MapsSketch />}
-                      {surface === 'music'  && <MusicSketch />}
-                    </DrivingProvider>
-                  </CarPlayChrome>
+            <OrbControlProvider>
+              <MagnifierProvider>
+                <AnnouncerShell />
+                <ShellWiring screenRef={screenRef} />
+                <div
+                  ref={screenRef}
+                  data-testid="carplay-screen-bounds"
+                  style={{ width: 720, height: 400, position: 'relative' }}
+                >
+                  {/* Aura sits BEHIND the chrome so the rainbow bloom can
+                      bleed past the rounded edge into the surrounding tray
+                      without tinting the screen interior. */}
+                  <ScreenEdgeAuraGate />
+                  <div style={{ position: 'relative', width: '100%', height: '100%', zIndex: 1 }}>
+                    <CarPlayChrome
+                      orbHome={<MasterOrb />}
+                      dock={<DockSwitcher surface={surface} onSelect={setSurface} />}
+                    >
+                      <DrivingProvider driving={driving}>
+                        {surface === 'phone'  && <PhoneApp />}
+                        {surface === 'dialer' && <RadialDialer />}
+                        {surface === 'maps'   && <MapsSketch />}
+                        {surface === 'music'  && <MusicSketch />}
+                      </DrivingProvider>
+                    </CarPlayChrome>
+                  </div>
+                  {/* Rim overlay sits on top of the chrome so the inset glow
+                      and white edge highlight catch the actual rounded corner. */}
+                  <ScreenEdgeAuraRimGate />
                 </div>
-              </LongPressRescueShell>
-            </MagnifierProvider>
+              </MagnifierProvider>
+            </OrbControlProvider>
           </ToastProvider>
         </SettingsProvider>
       </ReducedMotionOverrideProvider>
@@ -62,34 +75,48 @@ function App() {
         update={update}
         driving={driving}
         setDriving={setDriving}
-        surface={surface}
-        setSurface={setSurface}
       />
     </div>
   )
 }
 
-function LongPressRescueShell({ enabled, children }: { enabled: boolean; children: React.ReactNode }) {
+/**
+ * Co-locates the window-level hooks that need MagnifierProvider + OrbControl
+ * context. Long-press-anywhere is always on (default tap-rescue). Global Siri
+ * dismiss listens for taps outside the orb when Siri is active. Swipe-off-
+ * screen aborts rotary if the pointer leaves the CarPlay screen bounds.
+ */
+function ShellWiring({ screenRef }: { screenRef: React.RefObject<HTMLDivElement | null> }) {
   const driver = useMagnifierDriver()
-  useLongPressAnywhere({ enabled, onLongPress: () => driver.start() })
+  useLongPressAnywhere({ enabled: true, onLongPress: () => driver.start() })
   useLongPressRotarySession()
-  return <>{children}</>
+  useGlobalSiriDismiss()
+  useSwipeOffScreenAbort({ screenRef })
+  return null
+}
+
+/**
+ * Pulls Siri-active state from OrbControl and decides whether to paint the
+ * screen-edge rainbow bloom. Sits behind the chrome.
+ */
+function ScreenEdgeAuraGate() {
+  const { siriActive } = useOrbControl()
+  return <ScreenEdgeAura active={siriActive} />
+}
+
+/**
+ * The crisp inset rim paired with the bloom. Sits on top of the chrome so
+ * its white-edge highlight and inner glow trace the screen's actual rounded
+ * corner.
+ */
+function ScreenEdgeAuraRimGate() {
+  const { siriActive } = useOrbControl()
+  return <ScreenEdgeAuraRim active={siriActive} />
 }
 
 function AnnouncerShell() {
   const labels = useAriaLabelMap()
   return <AriaLockAnnouncer labels={labels} />
-}
-
-function DockIcon({ label }: { label: string }) {
-  return (
-    <div style={{
-      width: 36, height: 36, borderRadius: 9,
-      background: 'rgba(255,255,255,0.10)',
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-      color: 'rgba(255,255,255,0.70)', fontSize: 14,
-    }}>{label}</div>
-  )
 }
 
 export default App

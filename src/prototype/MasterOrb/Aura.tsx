@@ -16,6 +16,10 @@ export function Aura({ active, size = 34 }: AuraProps) {
   const reduced = useReducedMotion()
   const auraSize = size * 3
 
+  // Toned down from the original full-strength aura: the screen-edge rainbow
+  // halo (see ScreenEdgeAura) is now the primary "Siri is listening" signal.
+  // This local pulse remains as a soft accent grounding the orb itself, but
+  // its opacity is dialed back so it does not compete with the edge halo.
   return (
     <AnimatePresence>
       {active && (
@@ -24,8 +28,8 @@ export function Aura({ active, size = 34 }: AuraProps) {
           initial={{ opacity: 0, scale: 0.9 }}
           animate={
             reduced
-              ? { opacity: 0.6, scale: 1 }
-              : { opacity: [0.5, 0.75, 0.5], scale: [1, 1.18, 1] }
+              ? { opacity: 0.35, scale: 1 }
+              : { opacity: [0.25, 0.40, 0.25], scale: [1, 1.12, 1] }
           }
           exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.18 } }}
           transition={

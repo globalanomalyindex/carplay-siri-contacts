@@ -60,6 +60,7 @@ export function CarPlayChrome({
         <div
           data-testid="carplay-app-content"
           className="flex-1 relative"
+          style={{ minWidth: 0, minHeight: 0 }}
         >
           {children}
         </div>
