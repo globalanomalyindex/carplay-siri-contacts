@@ -8,9 +8,11 @@ export interface DebugPanelProps {
   ) => void
   driving: boolean
   setDriving: (d: boolean) => void
+  surface: 'phone' | 'dialer' | 'maps' | 'music'
+  setSurface: (s: 'phone' | 'dialer' | 'maps' | 'music') => void
 }
 
-export function DebugPanel({ settings, update, driving, setDriving }: DebugPanelProps) {
+export function DebugPanel({ settings, update, driving, setDriving, surface, setSurface }: DebugPanelProps) {
   return (
     <div
       style={{
@@ -52,6 +54,23 @@ export function DebugPanel({ settings, update, driving, setDriving }: DebugPanel
         value={settings.highContrast}
         onChange={(v) => update('highContrast', v)}
       />
+      <div style={{ marginTop: 12, paddingTop: 10, borderTop: '1px solid rgba(255,255,255,0.10)' }}>
+        <div style={{ textTransform: 'uppercase', letterSpacing: '0.06em', fontSize: 10, color: 'rgba(255,180,120,0.85)', marginBottom: 6 }}>
+          Surface
+        </div>
+        {(['phone', 'dialer', 'maps', 'music'] as const).map((s) => (
+          <label key={s} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '4px 0', cursor: 'pointer', fontSize: 12 }}>
+            <input
+              type="radio"
+              name="surface"
+              checked={surface === s}
+              onChange={() => setSurface(s)}
+              style={{ accentColor: 'rgba(255,180,120,0.85)' }}
+            />
+            <span style={{ textTransform: 'capitalize' }}>{s}</span>
+          </label>
+        ))}
+      </div>
     </div>
   )
 }

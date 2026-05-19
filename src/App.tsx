@@ -8,10 +8,16 @@ import { useAccessibilitySettings } from './a11y/useAccessibilitySettings'
 import { DebugPanel } from './prototype/DebugPanel'
 import { DrivingProvider } from './prototype/phone/DrivingContext'
 import { PhoneApp } from './prototype/phone/PhoneApp'
+import { RadialDialer } from './prototype/phone/RadialDialer'
+import { MapsSketch } from './prototype/surfaces/MapsSketch'
+import { MusicSketch } from './prototype/surfaces/MusicSketch'
+
+type Surface = 'phone' | 'dialer' | 'maps' | 'music'
 
 function App() {
   const { settings, update } = useAccessibilitySettings()
   const [driving, setDriving] = useState(false)
+  const [surface, setSurface] = useState<Surface>('phone')
 
   return (
     <div className="min-h-screen bg-slate-900 flex items-center justify-center p-6">
@@ -30,7 +36,10 @@ function App() {
               }
             >
               <DrivingProvider driving={driving}>
-                <PhoneApp />
+                {surface === 'phone'  && <PhoneApp />}
+                {surface === 'dialer' && <RadialDialer />}
+                {surface === 'maps'   && <MapsSketch />}
+                {surface === 'music'  && <MusicSketch />}
               </DrivingProvider>
             </CarPlayChrome>
           </div>
@@ -41,6 +50,8 @@ function App() {
         update={update}
         driving={driving}
         setDriving={setDriving}
+        surface={surface}
+        setSurface={setSurface}
       />
     </div>
   )
