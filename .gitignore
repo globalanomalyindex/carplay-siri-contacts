@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Brainstorming workspace runtime state (server pid, idle markers)
+.superpowers/brainstorm/**/state/
