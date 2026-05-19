@@ -21,20 +21,14 @@ export function Hero() {
 
   return (
     <header ref={ref} className="cs-section" style={{ paddingTop: 96, position: 'relative', overflow: 'hidden' }}>
-      {/* Decorative orb sits behind the headline */}
+      {/* Decorative orb floats to the right of the headline, never behind it */}
       <motion.div
         aria-hidden="true"
+        className="hero-orb-anchor"
         style={{
-          position: 'absolute',
-          top: '52%',
-          left: '50%',
-          translateX: '-50%',
-          translateY: '-50%',
           y: orbY,
           scale: orbScale,
           opacity: orbOpacity,
-          zIndex: 0,
-          pointerEvents: 'none',
         }}
       >
         <motion.div
@@ -66,7 +60,7 @@ export function Hero() {
 
         <motion.h1
           className="cs-h1"
-          style={{ marginTop: 36, position: 'relative' }}
+          style={{ marginTop: 36, position: 'relative', maxWidth: 720 }}
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.85, ease: [0.2, 0.8, 0.3, 1.0], delay: 0.06 }}

@@ -257,11 +257,34 @@
   color: var(--cs-text);
 }
 
+/* Hero orb anchor. Positions the orb in the right margin of the hero,
+   away from the headline. On narrow viewports it tucks below the text. */
+.hero-orb-anchor {
+  position: absolute;
+  z-index: 0;
+  pointer-events: none;
+  right: max(-3vw, -56px);
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+@media (max-width: 880px) {
+  .hero-orb-anchor {
+    position: relative;
+    top: auto;
+    right: auto;
+    transform: none;
+    display: flex;
+    justify-content: center;
+    margin-top: 56px;
+  }
+}
+
 /* Hero gradient orb stub for the case-study hero (decorative, no interaction) */
 .hero-orb {
   position: relative;
-  width: clamp(180px, 28vw, 320px);
-  height: clamp(180px, 28vw, 320px);
+  width: clamp(140px, 22vw, 260px);
+  height: clamp(140px, 22vw, 260px);
   border-radius: 50%;
   background: conic-gradient(
     from 200deg,
