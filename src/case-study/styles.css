@@ -1,0 +1,617 @@
+/* Case study scoped styles. Applied via .case-study root class.
+   Apple Newsroom meets Apple developer documentation: lots of whitespace,
+   monospace inline values, careful typography, washed pastel accents on
+   key words only. Pastels are spot accents, never wallpaper. */
+
+:root {
+  /* Washed pastels. Accent palette. Used only on highlighted words,
+     section dividers, or accent backgrounds. Not for body. */
+  --pastel-pink:     #FFC9D2;
+  --pastel-peach:    #FFDDB8;
+  --pastel-yellow:   #FFF3B0;
+  --pastel-mint:     #C7F0D8;
+  --pastel-sky:      #C6E5FB;
+  --pastel-lavender: #DCCAF7;
+
+  /* Case study surface colors */
+  --cs-bg:          #FBFBFD;
+  --cs-bg-tint:     #F5F5F7;
+  --cs-text:        #1D1D1F;
+  --cs-text-2:      #6E6E73;
+  --cs-text-3:      #86868B;
+  --cs-rule:        #D2D2D7;
+  --cs-rule-soft:   rgba(0, 0, 0, 0.06);
+  --cs-spec-bg:     rgba(0, 0, 0, 0.04);
+}
+
+.case-study {
+  background: var(--cs-bg);
+  color: var(--cs-text);
+  min-height: 100vh;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text',
+    system-ui, 'Segoe UI', Roboto, sans-serif;
+  font-weight: 400;
+  line-height: 1.55;
+  letter-spacing: -0.003em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.case-study main {
+  width: 100%;
+}
+
+/* Container. Content max width is 1080px; hero is full bleed. */
+.cs-container {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding-left: 32px;
+  padding-right: 32px;
+}
+
+.cs-container-wide {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-left: 32px;
+  padding-right: 32px;
+}
+
+@media (max-width: 720px) {
+  .cs-container,
+  .cs-container-wide {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+
+/* Section vertical rhythm */
+.cs-section {
+  padding-top: 120px;
+  padding-bottom: 120px;
+}
+
+.cs-section-tight {
+  padding-top: 80px;
+  padding-bottom: 80px;
+}
+
+@media (max-width: 720px) {
+  .cs-section { padding-top: 72px; padding-bottom: 72px; }
+  .cs-section-tight { padding-top: 56px; padding-bottom: 56px; }
+}
+
+/* Typography. Display, body, monospace, section labels. */
+.cs-h1 {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
+  font-size: clamp(56px, 9.5vw, 128px);
+  font-weight: 600;
+  line-height: 0.98;
+  letter-spacing: -0.025em;
+  margin: 0;
+}
+
+.cs-h2 {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
+  font-size: clamp(36px, 5.2vw, 64px);
+  font-weight: 600;
+  line-height: 1.04;
+  letter-spacing: -0.022em;
+  margin: 0 0 24px;
+}
+
+.cs-h3 {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
+  font-size: clamp(22px, 2.4vw, 32px);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.018em;
+  margin: 0 0 12px;
+}
+
+.cs-eyebrow {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--cs-text-2);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 24px;
+}
+
+.cs-eyebrow::before {
+  content: '';
+  display: inline-block;
+  width: 18px;
+  height: 1px;
+  background: var(--cs-text-2);
+}
+
+.cs-lead {
+  font-size: clamp(20px, 1.9vw, 24px);
+  font-weight: 400;
+  line-height: 1.45;
+  letter-spacing: -0.012em;
+  color: var(--cs-text);
+  max-width: 720px;
+  margin: 0 0 32px;
+}
+
+.cs-body {
+  font-size: 18px;
+  line-height: 1.65;
+  color: var(--cs-text);
+  max-width: 680px;
+}
+
+.cs-body + .cs-body {
+  margin-top: 20px;
+}
+
+.cs-body-secondary {
+  color: var(--cs-text-2);
+}
+
+/* Monospace inline spec value */
+.spec-value {
+  font-family: ui-monospace, 'SF Mono', Monaco, 'Cascadia Mono', monospace;
+  font-size: 0.86em;
+  background: var(--cs-spec-bg);
+  padding: 2px 7px;
+  border-radius: 5px;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+/* Hairline divider between section topics */
+.cs-divider {
+  border: 0;
+  border-top: 1px solid var(--cs-rule);
+  margin: 64px 0;
+}
+
+/* Pastel text accent. Applied via PastelText component. */
+.pastel-text {
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  display: inline;
+  background-size: 100% 100%;
+}
+
+.pastel-text[data-variant="pink"]      { background-image: linear-gradient(135deg, #FF92A8, #FFC9D2); }
+.pastel-text[data-variant="peach"]     { background-image: linear-gradient(135deg, #FFB078, #FFDDB8); }
+.pastel-text[data-variant="yellow"]    { background-image: linear-gradient(135deg, #F0CB4A, #FFF3B0); }
+.pastel-text[data-variant="mint"]      { background-image: linear-gradient(135deg, #6FD89E, #C7F0D8); }
+.pastel-text[data-variant="sky"]       { background-image: linear-gradient(135deg, #7AB8E8, #C6E5FB); }
+.pastel-text[data-variant="lavender"]  { background-image: linear-gradient(135deg, #A88BE3, #DCCAF7); }
+.pastel-text[data-variant="gradient-1"] {
+  background-image: linear-gradient(110deg, #FF92A8 0%, #FFB078 28%, #6FD89E 58%, #7AB8E8 82%, #A88BE3 100%);
+}
+.pastel-text[data-variant="gradient-2"] {
+  background-image: linear-gradient(110deg, #7AB8E8 0%, #6FD89E 38%, #FFB078 70%, #FF92A8 100%);
+}
+
+/* Soft pastel highlight (marker-style background, keeps text body color) */
+.pastel-highlight {
+  background-color: var(--bg, var(--pastel-mint));
+  padding: 0.05em 0.22em;
+  border-radius: 5px;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+/* Pull quote */
+.cs-pullquote {
+  margin: 64px auto;
+  max-width: 880px;
+  padding: 0 16px;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
+  font-size: clamp(28px, 3.6vw, 44px);
+  font-weight: 600;
+  line-height: 1.18;
+  letter-spacing: -0.02em;
+  text-align: center;
+  color: var(--cs-text);
+}
+
+.cs-pullquote cite {
+  display: block;
+  font-style: normal;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--cs-text-2);
+  margin-top: 24px;
+}
+
+/* Two-column spec rows */
+.spec-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 24px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--cs-rule);
+  align-items: baseline;
+}
+
+.spec-row:last-child { border-bottom: 0; }
+
+.spec-row .spec-label {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--cs-text-2);
+}
+
+.spec-row .spec-val {
+  font-family: ui-monospace, 'SF Mono', Monaco, 'Cascadia Mono', monospace;
+  font-size: 13px;
+  text-align: right;
+  color: var(--cs-text);
+}
+
+/* Hero gradient orb stub for the case-study hero (decorative, no interaction) */
+.hero-orb {
+  position: relative;
+  width: clamp(180px, 28vw, 320px);
+  height: clamp(180px, 28vw, 320px);
+  border-radius: 50%;
+  background: conic-gradient(
+    from 200deg,
+    #FF6E7F,
+    #FFD86B,
+    #6BFFD1,
+    #6B9AFF,
+    #B573FF,
+    #FF6E7F
+  );
+  box-shadow:
+    0 30px 80px -20px rgba(120, 100, 200, 0.35),
+    inset 0 12px 24px rgba(255, 255, 255, 0.30),
+    inset 0 -12px 24px rgba(0, 0, 0, 0.18);
+  filter: saturate(1.05);
+}
+
+.hero-orb::after {
+  content: '';
+  position: absolute;
+  inset: -28%;
+  border-radius: 50%;
+  background: radial-gradient(
+    closest-side,
+    rgba(180, 150, 255, 0.32),
+    rgba(180, 150, 255, 0) 70%
+  );
+  z-index: -1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-orb { filter: none; }
+}
+
+/* Top navigation */
+.cs-nav {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: rgba(251, 251, 253, 0.78);
+  backdrop-filter: saturate(160%) blur(18px);
+  -webkit-backdrop-filter: saturate(160%) blur(18px);
+  border-bottom: 1px solid var(--cs-rule-soft);
+}
+
+.cs-nav-inner {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 14px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.cs-nav a {
+  color: var(--cs-text);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: -0.003em;
+}
+
+.cs-nav-brand {
+  font-weight: 600;
+  letter-spacing: -0.012em;
+}
+
+.cs-nav-link {
+  color: var(--cs-text-2) !important;
+  transition: color 160ms;
+}
+
+.cs-nav-link:hover { color: var(--cs-text) !important; }
+
+/* Card and grid utilities */
+.cs-card {
+  background: #FFFFFF;
+  border: 1px solid var(--cs-rule);
+  border-radius: 18px;
+  padding: 28px;
+}
+
+.cs-card-tinted {
+  background: var(--cs-bg-tint);
+  border: 1px solid transparent;
+  border-radius: 18px;
+  padding: 28px;
+}
+
+.cs-grid {
+  display: grid;
+  gap: 24px;
+}
+
+.cs-grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.cs-grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.cs-grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+@media (max-width: 920px) {
+  .cs-grid-3, .cs-grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 640px) {
+  .cs-grid-2, .cs-grid-3, .cs-grid-4 { grid-template-columns: 1fr; }
+}
+
+/* Stat block */
+.cs-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cs-stat-value {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif;
+  font-size: clamp(40px, 4.6vw, 64px);
+  font-weight: 600;
+  line-height: 1.0;
+  letter-spacing: -0.025em;
+  color: var(--cs-text);
+}
+
+.cs-stat-label {
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--cs-text-2);
+  max-width: 240px;
+}
+
+/* Easing curve demo card */
+.curve-card {
+  background: #FFFFFF;
+  border: 1px solid var(--cs-rule);
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.curve-card-token {
+  font-family: ui-monospace, 'SF Mono', Monaco, 'Cascadia Mono', monospace;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--cs-text);
+}
+
+.curve-card-value {
+  font-family: ui-monospace, 'SF Mono', Monaco, 'Cascadia Mono', monospace;
+  font-size: 11.5px;
+  color: var(--cs-text-2);
+  line-height: 1.45;
+}
+
+.curve-card-use {
+  font-size: 13.5px;
+  color: var(--cs-text-2);
+  line-height: 1.5;
+}
+
+.curve-card svg {
+  width: 100%;
+  height: 88px;
+  display: block;
+}
+
+.curve-card-demo {
+  position: relative;
+  height: 36px;
+  background: var(--cs-bg-tint);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.curve-card-demo .puck {
+  position: absolute;
+  top: 50%;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 200deg, #FF6E7F, #FFD86B, #6BFFD1, #6B9AFF, #B573FF, #FF6E7F
+  );
+  box-shadow: 0 4px 12px rgba(120, 100, 200, 0.25);
+  transform: translateY(-50%);
+}
+
+/* Friction section. Annotated original CarPlay illustration. */
+.friction-screen {
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
+  aspect-ratio: 16 / 9;
+  background: linear-gradient(180deg, #1A3142, #1D3540);
+  border-radius: 18px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 30px 60px -28px rgba(0, 0, 0, 0.40), 0 4px 8px rgba(0, 0, 0, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.friction-screen-inner {
+  position: absolute;
+  inset: 12px;
+  border-radius: 12px;
+  display: grid;
+  grid-template-columns: 84px 1fr;
+  gap: 0;
+}
+
+.friction-dock {
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 10px 0 0 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 16px;
+  gap: 14px;
+}
+
+.friction-dock-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.10);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.friction-dock-icon.active {
+  background: rgba(120, 220, 240, 0.18);
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.friction-app {
+  padding: 18px 22px;
+  display: flex;
+  flex-direction: column;
+}
+
+.friction-tabs {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.30);
+  padding: 4px;
+  border-radius: 999px;
+  width: fit-content;
+  margin-bottom: 18px;
+}
+
+.friction-tab {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.55);
+  padding: 6px 14px;
+  border-radius: 999px;
+}
+
+.friction-tab.active {
+  color: #1d1d1f;
+  background: rgba(255, 255, 255, 0.92);
+  font-weight: 600;
+}
+
+.friction-tab.locked {
+  opacity: 0.5;
+}
+
+.friction-locked-body {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 14px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.70);
+}
+
+.friction-locked-body .siri-btn {
+  background: rgba(255, 255, 255, 0.10);
+  border: 1px solid rgba(255, 255, 255, 0.20);
+  border-radius: 12px;
+  padding: 10px 18px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.92);
+  font-weight: 500;
+}
+
+/* Friction annotation pins */
+.friction-pin {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.friction-pin-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--pastel-pink);
+  box-shadow: 0 0 0 4px rgba(255, 201, 210, 0.30);
+}
+
+.friction-pin-text {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--cs-text-2);
+  white-space: nowrap;
+}
+
+/* Footer */
+.cs-footer {
+  border-top: 1px solid var(--cs-rule);
+  padding: 56px 0 80px;
+  background: var(--cs-bg-tint);
+}
+
+.cs-footer-inner {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.cs-footer-meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 24px;
+  font-size: 13px;
+  color: var(--cs-text-2);
+}
+
+.cs-footer a {
+  color: var(--cs-text);
+  text-decoration: none;
+  border-bottom: 1px solid var(--cs-rule);
+  padding-bottom: 1px;
+  transition: border-color 160ms;
+}
+
+.cs-footer a:hover { border-color: var(--cs-text); }
