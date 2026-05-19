@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { MagnifiableFrame } from '../Magnifier'
-import { useDriving } from './DrivingContext'
+import { useDriving } from './useDriving'
 
 const DIGITS_IN_RING: { d: string; angleDeg: number }[] = [
   { d: '3', angleDeg:  90 },

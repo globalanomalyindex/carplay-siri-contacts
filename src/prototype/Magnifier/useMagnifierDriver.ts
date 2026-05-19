@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef } from 'react'
-import { useMagnifierInternal } from './MagnifierProvider'
+import { useMagnifierInternal } from './MagnifierContext'
 import { pickLockedTarget, type TargetGeometry, type Point } from './geometry'
 import { space } from '../../tokens/spatial'
 

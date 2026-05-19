@@ -1,4 +1,5 @@
-export { MagnifierProvider, useMagnifierContext, useMagnifierInternal } from './MagnifierProvider'
+export { MagnifierProvider } from './MagnifierProvider'
+export { useMagnifierContext, useMagnifierInternal } from './MagnifierContext'
 export { useMagnifiable } from './useMagnifiable'
 export { useMagnifierDriver } from './useMagnifierDriver'
 export { MagnifiableFrame } from './MagnifiableFrame'

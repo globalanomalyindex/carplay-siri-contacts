@@ -1,39 +1,10 @@
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useMemo,
-  useRef,
-  useState,
-  type ReactNode,
-} from 'react'
+import { useCallback, useMemo, useRef, useState, type ReactNode } from 'react'
 import type { MagnifiableTarget, MagnifierContextValue } from './types'
-
-const MagnifierContext = createContext<MagnifierContextValue | null>(null)
-
-export function useMagnifierContext(): MagnifierContextValue {
-  const ctx = useContext(MagnifierContext)
-  if (!ctx) {
-    throw new Error('useMagnifierContext must be used inside a <MagnifierProvider>')
-  }
-  return ctx
-}
-
-export interface MagnifierInternalAPI {
-  getTargets: () => Map<string, MagnifiableTarget>
-  setLockedId: (id: string | null) => void
-  setRotaryActive: (active: boolean) => void
-}
-
-const InternalContext = createContext<MagnifierInternalAPI | null>(null)
-
-export function useMagnifierInternal(): MagnifierInternalAPI {
-  const ctx = useContext(InternalContext)
-  if (!ctx) {
-    throw new Error('useMagnifierInternal must be used inside a <MagnifierProvider>')
-  }
-  return ctx
-}
+import {
+  MagnifierContext,
+  InternalContext,
+  type MagnifierInternalAPI,
+} from './MagnifierContext'
 
 export interface MagnifierProviderProps {
   children: ReactNode

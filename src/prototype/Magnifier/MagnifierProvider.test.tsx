@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { render, renderHook } from '@testing-library/react'
-import { MagnifierProvider, useMagnifierContext } from './MagnifierProvider'
+import { MagnifierProvider } from './MagnifierProvider'
+import { useMagnifierContext } from './MagnifierContext'
 import { useMagnifiable } from './useMagnifiable'
 import { useRef } from 'react'
 

@@ -14,9 +14,11 @@ export interface ContactRowProps {
 export function ContactRow({ id, name, avatar, onCall, onText, index = 0 }: ContactRowProps) {
   const downRef = useRef<{ x: number; y: number } | null>(null)
   const [swipeOffset, setSwipeOffset] = useState(0)
+  const [dragging, setDragging] = useState(false)
 
   const onPointerDown = useCallback((e: React.PointerEvent) => {
     downRef.current = { x: e.clientX, y: e.clientY }
+    setDragging(true)
     const el = e.currentTarget as HTMLElement
     if (typeof el.setPointerCapture === 'function') {
       try { el.setPointerCapture(e.pointerId) } catch { /* jsdom */ }
@@ -36,6 +38,7 @@ export function ContactRow({ id, name, avatar, onCall, onText, index = 0 }: Cont
   const onPointerUp = useCallback((e: React.PointerEvent) => {
     const start = downRef.current
     downRef.current = null
+    setDragging(false)
     setSwipeOffset(0)
     if (!start) return
     const dx = e.clientX - start.x
@@ -63,7 +66,11 @@ export function ContactRow({ id, name, avatar, onCall, onText, index = 0 }: Cont
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
-        onPointerCancel={() => { downRef.current = null; setSwipeOffset(0) }}
+        onPointerCancel={() => {
+          downRef.current = null
+          setDragging(false)
+          setSwipeOffset(0)
+        }}
         style={{
           position: 'relative',
           display: 'flex',
@@ -76,7 +83,7 @@ export function ContactRow({ id, name, avatar, onCall, onText, index = 0 }: Cont
           touchAction: 'pan-y',
           cursor: 'pointer',
           transform: `translateX(${swipeOffset}px)`,
-          transition: downRef.current ? 'none' : 'transform 0.18s ease',
+          transition: dragging ? 'none' : 'transform 0.18s ease',
           background: 'rgba(255,255,255,0.05)',
         }}
       >

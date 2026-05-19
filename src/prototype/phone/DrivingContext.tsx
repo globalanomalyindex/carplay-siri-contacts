@@ -1,11 +1,6 @@
-import { createContext, useContext, type ReactNode } from 'react'
-
-const DrivingContext = createContext<boolean>(false)
+import type { ReactNode } from 'react'
+import { DrivingContext } from './useDriving'
 
 export function DrivingProvider({ driving, children }: { driving: boolean; children: ReactNode }) {
   return <DrivingContext.Provider value={driving}>{children}</DrivingContext.Provider>
-}
-
-export function useDriving(): boolean {
-  return useContext(DrivingContext)
 }

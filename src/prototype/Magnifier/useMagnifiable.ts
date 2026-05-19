@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useMagnifierContext } from './MagnifierProvider'
+import { useMagnifierContext } from './MagnifierContext'
 import type { MagnifiableTarget } from './types'
 
 export function useMagnifiable(target: MagnifiableTarget): void {

@@ -1,6 +1,6 @@
 import { motion } from 'motion/react'
 import { useRef, type ReactNode } from 'react'
-import { useMagnifierContext } from './MagnifierProvider'
+import { useMagnifierContext } from './MagnifierContext'
 import { useMagnifiable } from './useMagnifiable'
 import { dur, easing } from '../../tokens/motion'
 import type { MagnifierBehavior } from './types'

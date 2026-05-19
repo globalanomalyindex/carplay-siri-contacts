@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { useMagnifierDriver } from './useMagnifierDriver'
-import { useMagnifierContext } from './MagnifierProvider'
+import { useMagnifierContext } from './MagnifierContext'
 
 /**
  * Once long-press has fired and rotary mode has begun, this hook listens
