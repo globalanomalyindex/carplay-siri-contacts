@@ -1,7 +1,15 @@
 import { useCallback, useEffect, useRef } from 'react'
 import { useMagnifierInternal } from './MagnifierContext'
-import { pickLockedTarget, type TargetGeometry, type Point } from './geometry'
+import {
+  pickLockedTarget,
+  computeGestureDirection,
+  type TargetGeometry,
+  type Point,
+} from './geometry'
 import { space } from '../../tokens/spatial'
+
+/** Last N pointer samples used to classify gesture direction. */
+const GESTURE_SAMPLE_WINDOW = 5
 
 export interface MagnifierDriver {
   start: () => void
@@ -10,9 +18,10 @@ export interface MagnifierDriver {
 }
 
 export function useMagnifierDriver(): MagnifierDriver {
-  const { getTargets, setLockedId, setRotaryActive } = useMagnifierInternal()
+  const { getTargets, setLockedId, setRotaryActive, setGestureDirection } = useMagnifierInternal()
   const currentLockRef = useRef<string | null>(null)
   const currentFreeRef = useRef<string | null>(null)
+  const recentSamplesRef = useRef<Point[]>([])
   // True while a rotary session is in progress (between start() and end()).
   // Used to make end() idempotent: the orb's React onPointerUp and the
   // window-level useLongPressRotarySession both call end() on the same
@@ -57,13 +66,24 @@ export function useMagnifierDriver(): MagnifierDriver {
   const start = useCallback(() => {
     currentLockRef.current = null
     currentFreeRef.current = null
+    recentSamplesRef.current = []
     sessionActiveRef.current = true
     setLockedId(null)
     setRotaryActive(true)
-  }, [setLockedId, setRotaryActive])
+    setGestureDirection('idle')
+  }, [setLockedId, setRotaryActive, setGestureDirection])
 
   const move = useCallback(
     (p: Point) => {
+      // Keep a tail of recent samples so direction can be classified from
+      // the last ~5 moves rather than from the whole gesture.
+      const samples = recentSamplesRef.current
+      samples.push(p)
+      if (samples.length > GESTURE_SAMPLE_WINDOW) {
+        samples.splice(0, samples.length - GESTURE_SAMPLE_WINDOW)
+      }
+      setGestureDirection(computeGestureDirection(samples))
+
       const geom = computeSnapGeometryMap()
       const lockId = pickLockedTarget(
         p,
@@ -78,7 +98,7 @@ export function useMagnifierDriver(): MagnifierDriver {
       // Only track freeDrift target while not snap-locked.
       currentFreeRef.current = lockId ? null : findFreeDriftAtPoint(p)
     },
-    [computeSnapGeometryMap, findFreeDriftAtPoint, setLockedId],
+    [computeSnapGeometryMap, findFreeDriftAtPoint, setLockedId, setGestureDirection],
   )
 
   const end = useCallback(
@@ -102,19 +122,22 @@ export function useMagnifierDriver(): MagnifierDriver {
       }
       currentLockRef.current = null
       currentFreeRef.current = null
+      recentSamplesRef.current = []
       setLockedId(null)
       setRotaryActive(false)
+      setGestureDirection('idle')
       return snapId ?? freeId
     },
-    [move, getTargets, setLockedId, setRotaryActive],
+    [move, getTargets, setLockedId, setRotaryActive, setGestureDirection],
   )
 
   useEffect(() => {
     return () => {
       setLockedId(null)
       setRotaryActive(false)
+      setGestureDirection('idle')
     }
-  }, [setLockedId, setRotaryActive])
+  }, [setLockedId, setRotaryActive, setGestureDirection])
 
   return { start, move, end }
 }

@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useRef, useState, type ReactNode } from 'react'
-import type { MagnifiableTarget, MagnifierContextValue } from './types'
+import type { GestureDirection, MagnifiableTarget, MagnifierContextValue } from './types'
 import {
   MagnifierContext,
   InternalContext,
@@ -14,6 +14,7 @@ export function MagnifierProvider({ children }: MagnifierProviderProps) {
   const targetsRef = useRef<Map<string, MagnifiableTarget>>(new Map())
   const [lockedId, setLockedId] = useState<string | null>(null)
   const [rotaryActive, setRotaryActive] = useState(false)
+  const [gestureDirection, setGestureDirection] = useState<GestureDirection>('idle')
 
   const register = useCallback((t: MagnifiableTarget) => {
     targetsRef.current.set(t.id, t)
@@ -23,8 +24,8 @@ export function MagnifierProvider({ children }: MagnifierProviderProps) {
   }, [])
 
   const publicValue = useMemo<MagnifierContextValue>(
-    () => ({ register, lockedId, rotaryActive }),
-    [register, lockedId, rotaryActive],
+    () => ({ register, lockedId, rotaryActive, gestureDirection }),
+    [register, lockedId, rotaryActive, gestureDirection],
   )
 
   const internalValue = useMemo<MagnifierInternalAPI>(
@@ -32,6 +33,7 @@ export function MagnifierProvider({ children }: MagnifierProviderProps) {
       getTargets: () => targetsRef.current,
       setLockedId,
       setRotaryActive,
+      setGestureDirection,
     }),
     [],
   )

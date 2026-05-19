@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react'
-import type { MagnifiableTarget, MagnifierContextValue } from './types'
+import type { GestureDirection, MagnifiableTarget, MagnifierContextValue } from './types'
 
 export const MagnifierContext = createContext<MagnifierContextValue | null>(null)
 
@@ -15,6 +15,7 @@ export interface MagnifierInternalAPI {
   getTargets: () => Map<string, MagnifiableTarget>
   setLockedId: (id: string | null) => void
   setRotaryActive: (active: boolean) => void
+  setGestureDirection: (direction: GestureDirection) => void
 }
 
 export const InternalContext = createContext<MagnifierInternalAPI | null>(null)

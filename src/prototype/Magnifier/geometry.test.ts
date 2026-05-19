@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { distance, pickLockedTarget, isPastHysteresis } from './geometry'
+import { distance, pickLockedTarget, isPastHysteresis, computeGestureDirection } from './geometry'
 
 const rectFor = (x: number, y: number, w = 60, h = 30): DOMRect =>
   ({
@@ -51,5 +51,65 @@ describe('isPastHysteresis', () => {
     const to   = rectFor(100, 0)
     expect(isPastHysteresis({ x: 89, y: 15 }, from, to, 0.6)).toBe(false)
     expect(isPastHysteresis({ x: 91, y: 15 }, from, to, 0.6)).toBe(true)
+  })
+})
+
+describe('computeGestureDirection', () => {
+  it('returns idle for empty or single-sample input', () => {
+    expect(computeGestureDirection([])).toBe('idle')
+    expect(computeGestureDirection([{ x: 10, y: 10 }])).toBe('idle')
+  })
+
+  it('returns idle when total motion is below threshold', () => {
+    const trail = [
+      { x: 100, y: 100 },
+      { x: 102, y: 101 },
+      { x: 101, y: 102 },
+    ]
+    expect(computeGestureDirection(trail)).toBe('idle')
+  })
+
+  it('classifies a clean horizontal sweep as horizontal', () => {
+    const trail = [
+      { x: 100, y: 100 },
+      { x: 120, y: 101 },
+      { x: 140, y: 100 },
+      { x: 160, y: 101 },
+      { x: 180, y: 100 },
+    ]
+    expect(computeGestureDirection(trail)).toBe('horizontal')
+  })
+
+  it('classifies a clean vertical drag as vertical', () => {
+    const trail = [
+      { x: 100, y: 100 },
+      { x: 101, y: 120 },
+      { x: 100, y: 140 },
+      { x: 101, y: 160 },
+      { x: 100, y: 180 },
+    ]
+    expect(computeGestureDirection(trail)).toBe('vertical')
+  })
+
+  it('returns idle for diagonal motion below dominance threshold', () => {
+    const trail = [
+      { x: 100, y: 100 },
+      { x: 115, y: 115 },
+      { x: 130, y: 130 },
+      { x: 145, y: 145 },
+    ]
+    expect(computeGestureDirection(trail)).toBe('idle')
+  })
+
+  it('respects custom dominantFraction', () => {
+    const trail = [
+      { x: 100, y: 100 },
+      { x: 120, y: 105 },
+      { x: 140, y: 110 },
+    ]
+    // Default 0.6: horizontal share is 40/(40+10)=0.8, qualifies as horizontal.
+    expect(computeGestureDirection(trail)).toBe('horizontal')
+    // Stricter 0.9 threshold: same trail no longer qualifies.
+    expect(computeGestureDirection(trail, { dominantFraction: 0.9 })).toBe('idle')
   })
 })

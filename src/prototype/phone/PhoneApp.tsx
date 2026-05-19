@@ -20,19 +20,27 @@ const TAB_LOCK_PREFIX = 'tab-'
  * swipe-back) where temporary previews revert on release. A real
  * commit (lift on a tab) fires the tab's onCommit -> setActive, making
  * the preview stick the same way a tap commit does.
+ *
+ * Direction gate: the tab preview only fires when the recent gesture trail
+ * reads as horizontal. A vertical drag from a higher row passing over the
+ * tab pill on the way down would otherwise hijack the visible content.
  */
 export function PhoneApp() {
   const driving = useDriving()
   const tabs: TabId[] = driving ? ['favorites', 'recents'] : ['favorites', 'recents', 'contacts']
   const [active, setActive] = useState<TabId>('favorites')
-  const { lockedId } = useMagnifierContext()
+  const { lockedId, gestureDirection } = useMagnifierContext()
 
   // Derive the previewed tab from the magnifier lock. Falls back to the
-  // committed active tab when there is no tab lock.
-  const previewTab: TabId | null =
+  // committed active tab when there is no tab lock OR when the gesture
+  // direction is vertical (the user is dragging down through the tab pill,
+  // not actually trying to switch tabs).
+  const tabLockId =
     lockedId && lockedId.startsWith(TAB_LOCK_PREFIX)
       ? (lockedId.slice(TAB_LOCK_PREFIX.length) as TabId)
       : null
+  const previewTab: TabId | null =
+    tabLockId && gestureDirection !== 'vertical' ? tabLockId : null
   const displayed: TabId =
     previewTab && tabs.includes(previewTab) ? previewTab : active
 

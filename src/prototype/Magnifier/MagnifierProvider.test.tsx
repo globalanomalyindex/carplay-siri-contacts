@@ -12,6 +12,7 @@ describe('MagnifierProvider', () => {
     })
     expect(result.current.lockedId).toBe(null)
     expect(result.current.rotaryActive).toBe(false)
+    expect(result.current.gestureDirection).toBe('idle')
   })
 
   it('throws when useMagnifierContext is used outside a provider', () => {

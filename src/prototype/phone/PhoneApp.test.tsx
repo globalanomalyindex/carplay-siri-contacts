@@ -117,4 +117,38 @@ describe('PhoneApp pass-through tab open', () => {
     expect(screen.getByTestId('favorites-list')).toBeInTheDocument()
     expect(screen.queryByTestId('recents-list')).not.toBeInTheDocument()
   })
+
+  it('suppresses the tab preview when the gesture direction is vertical', () => {
+    let setLock: ((id: string | null) => void) | null = null
+    let setDir: ((d: 'horizontal' | 'vertical' | 'idle') => void) | null = null
+    function Wiring({ ready }: { ready: () => void }) {
+      const api = useMagnifierInternal()
+      setLock = api.setLockedId
+      setDir = api.setGestureDirection
+      ready()
+      return null
+    }
+    render(
+      <MagnifierProvider>
+        <Wiring ready={() => {}} />
+        <DrivingProvider driving={false}>
+          <PhoneApp />
+        </DrivingProvider>
+      </MagnifierProvider>,
+    )
+
+    // Vertical drag passes through tab-recents on the way to a row.
+    // The previously-committed Favorites tab must stay visible.
+    act(() => {
+      setDir!('vertical')
+      setLock!('tab-recents')
+    })
+
+    expect(screen.getByTestId('favorites-list')).toBeInTheDocument()
+    expect(screen.queryByTestId('recents-list')).not.toBeInTheDocument()
+
+    // Once the user moves horizontally again the preview takes effect.
+    act(() => { setDir!('horizontal') })
+    expect(screen.getByTestId('recents-list')).toBeInTheDocument()
+  })
 })
