@@ -36,24 +36,42 @@ export function ContactRow({ id, name, avatar, onCall, onText, index = 0 }: Cont
   const [swipeOffset, setSwipeOffset] = useState(0)
   const [dragging, setDragging] = useState(false)
 
+  /**
+   * Check the surrounding ExpandableCell's state. Once it has taken over the
+   * gesture (state === 'expanded' or 'committing'), the swipe handler must
+   * yield: the user is no longer panning the row sideways, they are picking
+   * an action chip inside the expanded cell.
+   */
+  const isCellExpanded = useCallback((el: HTMLElement | null) => {
+    if (!el) return false
+    const cell = el.closest<HTMLElement>('[data-testid^="expandable-contact-row-"]')
+    const s = cell?.getAttribute('data-state')
+    return s === 'expanded' || s === 'committing'
+  }, [])
+
   const onPointerDown = useCallback((e: React.PointerEvent) => {
     downRef.current = { x: e.clientX, y: e.clientY }
     setDragging(true)
-    const el = e.currentTarget as HTMLElement
-    if (typeof el.setPointerCapture === 'function') {
-      try { el.setPointerCapture(e.pointerId) } catch { /* jsdom */ }
-    }
+    // Deliberately no setPointerCapture here: the outer ExpandableCell already
+    // captures the pointer. Capturing twice causes pointermove events on the
+    // outer cell to be delivered to the inner row, defeating the cell-scope.
   }, [])
 
   const onPointerMove = useCallback((e: React.PointerEvent) => {
     const start = downRef.current
     if (!start) return
+    // If the ExpandableCell has taken over (the user is interacting with the
+    // expanded action chips), abandon the swipe-pan visual entirely.
+    if (isCellExpanded(e.currentTarget as HTMLElement)) {
+      if (swipeOffset !== 0) setSwipeOffset(0)
+      return
+    }
     const dx = e.clientX - start.x
     const dy = e.clientY - start.y
     if (Math.abs(dy) > Math.abs(dx)) return
     const clamped = Math.max(-120, Math.min(120, dx))
     setSwipeOffset(clamped)
-  }, [])
+  }, [isCellExpanded, swipeOffset])
 
   const onPointerUp = useCallback((e: React.PointerEvent) => {
     const start = downRef.current
@@ -61,6 +79,9 @@ export function ContactRow({ id, name, avatar, onCall, onText, index = 0 }: Cont
     setDragging(false)
     setSwipeOffset(0)
     if (!start) return
+    // Same guard on lift: a lift from an expanded action chip must not also
+    // fire the swipe action.
+    if (isCellExpanded(e.currentTarget as HTMLElement)) return
     const dx = e.clientX - start.x
     const dy = e.clientY - start.y
     if (Math.abs(dy) > Math.abs(dx)) return
@@ -69,7 +90,7 @@ export function ContactRow({ id, name, avatar, onCall, onText, index = 0 }: Cont
     } else if (dx <= -space.thresholdSwipeRowPx) {
       onText()
     }
-  }, [onCall, onText])
+  }, [isCellExpanded, onCall, onText])
 
   const callRevealed = swipeOffset > 0
   const textRevealed = swipeOffset < 0

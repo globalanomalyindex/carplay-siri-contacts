@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from 'motion/react'
+import { motion } from 'motion/react'
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 import { useReducedMotion } from '../../a11y/useReducedMotion'
 import { space } from '../../tokens/spatial'
@@ -163,47 +163,20 @@ export function ExpandableCell({
     [],
   )
 
-  const onPointerDown = useCallback(
-    (e: React.PointerEvent) => {
-      // Only honor a single primary pointer at a time.
-      if (pressRef.current) return
-      pressRef.current = {
-        pointerId: e.pointerId,
-        startX: e.clientX,
-        startY: e.clientY,
-        startTime: performance.now(),
-        expandedAt: null,
-      }
-      setState('pressing')
-
-      const el = e.currentTarget as HTMLElement
-      if (typeof el.setPointerCapture === 'function') {
-        try { el.setPointerCapture(e.pointerId) } catch { /* jsdom */ }
-      }
-
-      cancelHoldTimer()
-      holdTimerRef.current = window.setTimeout(() => {
-        const press = pressRef.current
-        if (!press || press.pointerId !== e.pointerId) return
-        press.expandedAt = performance.now()
-        setState('expanded')
-      }, HOLD_MS)
-    },
-    [cancelHoldTimer],
-  )
-
-  const onPointerMove = useCallback(
-    (e: React.PointerEvent) => {
+  /**
+   * Shared move resolver. Called by both the React onPointerMove handler
+   * (so unit tests can fireEvent it) and the window-level pointermove
+   * listener (so the real browser delivers it after Motion's `layout`
+   * animation invalidates any captured pointer).
+   */
+  const resolveMove = useCallback(
+    (x: number, y: number) => {
       const press = pressRef.current
-      if (!press || press.pointerId !== e.pointerId) return
-
-      const dx = e.clientX - press.startX
-      const dy = e.clientY - press.startY
+      if (!press) return
+      const dx = x - press.startX
+      const dy = y - press.startY
       const dist = Math.hypot(dx, dy)
 
-      // Pre-expansion: motion past the drag threshold cancels the hold.
-      // The cell goes back to collapsed and lets the parent handle the drag
-      // (e.g. ContactRow's horizontal swipe).
       if (press.expandedAt === null) {
         if (dist >= DRAG_THRESHOLD) {
           collapse()
@@ -211,30 +184,30 @@ export function ExpandableCell({
         return
       }
 
-      // Already expanded: track which action chip the pointer is over.
-      const actionId = findActionAtPoint({ x: e.clientX, y: e.clientY })
+      const actionId = findActionAtPoint({ x, y })
       setHoveredActionId(actionId)
     },
     [collapse, findActionAtPoint],
   )
 
-  const onPointerUp = useCallback(
-    (e: React.PointerEvent) => {
+  /**
+   * Shared lift resolver. Consumes the press ref so a second call is a
+   * no-op (matters when both the React pointerup and the window pointerup
+   * fire from the same browser event).
+   */
+  const resolveUp = useCallback(
+    (x: number, y: number) => {
       const press = pressRef.current
-      if (!press || press.pointerId !== e.pointerId) return
-      const now = performance.now()
-      const heldMs = now - press.startTime
-      const dx = e.clientX - press.startX
-      const dy = e.clientY - press.startY
+      if (!press) return
+      const heldMs = performance.now() - press.startTime
+      const dx = x - press.startX
+      const dy = y - press.startY
       const dist = Math.hypot(dx, dy)
       const expandedAt = press.expandedAt
 
-      // Reset session state up front; we'll override below for the commit
-      // animation case.
       cancelHoldTimer()
       pressRef.current = null
 
-      // Case A: never expanded. Treat as tap if short + still.
       if (expandedAt === null) {
         if (heldMs <= HOLD_MS + HOLD_TAP_GRACE_MS && dist < DRAG_THRESHOLD) {
           setState('collapsed')
@@ -242,15 +215,12 @@ export function ExpandableCell({
           onTap?.()
           return
         }
-        // Held past the threshold but the timer hadn't fired yet (rare).
-        // No action.
         setState('collapsed')
         setHoveredActionId(null)
         return
       }
 
-      // Case B: expanded. Did we land on a chip?
-      const actionId = findActionAtPoint({ x: e.clientX, y: e.clientY })
+      const actionId = findActionAtPoint({ x, y })
       if (actionId) {
         const action = actions.find((a) => a.id === actionId)
         if (action) {
@@ -265,16 +235,87 @@ export function ExpandableCell({
           return
         }
       }
-      // Lifted somewhere inside the expanded cell but not on a chip.
       setState('collapsed')
       setHoveredActionId(null)
     },
     [actions, cancelHoldTimer, findActionAtPoint, onTap],
   )
 
+  const onPointerDown = useCallback(
+    (e: React.PointerEvent) => {
+      // Only honor a single primary pointer at a time.
+      if (pressRef.current) return
+      pressRef.current = {
+        pointerId: e.pointerId,
+        startX: e.clientX,
+        startY: e.clientY,
+        startTime: performance.now(),
+        expandedAt: null,
+      }
+      setState('pressing')
+
+      // Deliberately NOT calling setPointerCapture: Motion's `layout` prop
+      // animates sibling bounds, and the browser issues an implicit
+      // pointercancel on any captured element while that animation runs.
+      // Window-level listeners (below) are the load-bearing path.
+
+      cancelHoldTimer()
+      holdTimerRef.current = window.setTimeout(() => {
+        const press = pressRef.current
+        if (!press || press.pointerId !== e.pointerId) return
+        press.expandedAt = performance.now()
+        setState('expanded')
+      }, HOLD_MS)
+    },
+    [cancelHoldTimer],
+  )
+
+  // React-level handlers are still wired so unit tests that use
+  // fireEvent.pointerMove / pointerUp can resolve a gesture.
+  const onPointerMove = useCallback(
+    (e: React.PointerEvent) => resolveMove(e.clientX, e.clientY),
+    [resolveMove],
+  )
+
+  const onPointerUp = useCallback(
+    (e: React.PointerEvent) => resolveUp(e.clientX, e.clientY),
+    [resolveUp],
+  )
+
   const onPointerCancel = useCallback(() => {
-    collapse()
-  }, [collapse])
+    // Real touchcancel events (system gesture, OS interruption) arrive
+    // with real coordinates. The window listener below handles those by
+    // collapsing. The implicit Motion-layout cancel arrives with (0,0)
+    // and is ignored there so the user's real lift can still resolve.
+  }, [])
+
+  // Window-level pointer listeners. These are the load-bearing path: in a
+  // real browser, Motion's layout animation can break pointer capture and
+  // suppress the React-level pointerup. The listeners deliver the lift
+  // wherever it actually happened.
+  useEffect(() => {
+    function onMove(e: PointerEvent) {
+      resolveMove(e.clientX, e.clientY)
+    }
+    function onUp(e: PointerEvent) {
+      resolveUp(e.clientX, e.clientY)
+    }
+    function onCancel(e: PointerEvent) {
+      // Motion-layout-driven implicit pointercancel arrives at (0,0). The
+      // user has not actually lifted; ignore and wait for the real
+      // pointerup. A genuine cancel from the OS comes with real coords.
+      if (e.clientX === 0 && e.clientY === 0) return
+      collapse()
+    }
+    window.addEventListener('pointermove', onMove)
+    window.addEventListener('pointerup', onUp)
+    window.addEventListener('pointercancel', onCancel)
+    return () => {
+      window.removeEventListener('pointermove', onMove)
+      window.removeEventListener('pointerup', onUp)
+      window.removeEventListener('pointercancel', onCancel)
+    }
+  }, [collapse, resolveMove, resolveUp])
 
   // Tear down any pending timer on unmount.
   useEffect(() => {
@@ -325,47 +366,42 @@ export function ExpandableCell({
       }}
       className={className}
     >
-      <motion.div
-        layout
+      <div
         data-testid={`expandable-content-${id}`}
         style={{ display: 'flex', flex: '1 1 auto', minWidth: 0 }}
       >
         {children}
-      </motion.div>
-      <AnimatePresence>
-        {expanded && (
-          <motion.div
-            layout
-            data-testid={`expandable-actions-${id}`}
-            initial={reduced ? { opacity: 0 } : { opacity: 0, x: expansionAxis === 'horizontal' ? -8 : 0, y: expansionAxis === 'vertical' ? -8 : 0 }}
-            animate={{ opacity: 1, x: 0, y: 0 }}
-            exit={reduced ? { opacity: 0 } : { opacity: 0, x: expansionAxis === 'horizontal' ? -8 : 0, y: expansionAxis === 'vertical' ? -8 : 0 }}
-            transition={
-              reduced
-                ? { duration: 0.12 }
-                : { type: 'spring', stiffness: 320, damping: 28, mass: 0.5 }
-            }
-            style={{
-              display: 'flex',
-              flexDirection: expansionAxis === 'horizontal' ? 'row' : 'row',
-              flexWrap: 'wrap',
-              gap: 6,
-              padding: expansionAxis === 'horizontal' ? '6px 8px' : '4px 8px 8px',
-              alignItems: 'center',
-              alignSelf: 'stretch',
-              justifyContent: expansionAxis === 'horizontal' ? 'flex-end' : 'flex-start',
-            }}
-          >
-            {actions.map((action) => (
-              <ActionChip
-                key={action.id}
-                action={action}
-                hovered={hoveredActionId === action.id}
-              />
-            ))}
-          </motion.div>
-        )}
-      </AnimatePresence>
+      </div>
+      {expanded && (
+        <motion.div
+          data-testid={`expandable-actions-${id}`}
+          initial={reduced ? { opacity: 0 } : { opacity: 0, x: expansionAxis === 'horizontal' ? -8 : 0, y: expansionAxis === 'vertical' ? -8 : 0 }}
+          animate={{ opacity: 1, x: 0, y: 0 }}
+          transition={
+            reduced
+              ? { duration: 0.12 }
+              : { type: 'spring', stiffness: 320, damping: 28, mass: 0.5 }
+          }
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            gap: 6,
+            padding: expansionAxis === 'horizontal' ? '6px 8px' : '4px 8px 8px',
+            alignItems: 'center',
+            alignSelf: 'stretch',
+            justifyContent: expansionAxis === 'horizontal' ? 'flex-end' : 'flex-start',
+          }}
+        >
+          {actions.map((action) => (
+            <ActionChip
+              key={action.id}
+              action={action}
+              hovered={hoveredActionId === action.id}
+            />
+          ))}
+        </motion.div>
+      )}
     </motion.div>
   )
 }
