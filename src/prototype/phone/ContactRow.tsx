@@ -63,6 +63,8 @@ export function ContactRow({ id, name, avatar, onCall, onText, index = 0 }: Cont
     >
       <div
         data-testid={`contact-row-${id}`}
+        data-variant="contact-row"
+        data-state={callRevealed ? 'call-revealed' : textRevealed ? 'text-revealed' : 'idle'}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
@@ -76,14 +78,21 @@ export function ContactRow({ id, name, avatar, onCall, onText, index = 0 }: Cont
           display: 'flex',
           alignItems: 'center',
           gap: 10,
+          minHeight: 44,
           padding: '8px 12px',
           color: 'var(--text-primary)',
           fontSize: 13,
-          borderRadius: 6,
+          fontWeight: 400,
+          letterSpacing: '-0.01em',
+          borderRadius: 8,
           touchAction: 'pan-y',
           cursor: 'pointer',
           transform: `translateX(${swipeOffset}px)`,
-          transition: dragging ? 'none' : 'transform 0.18s ease',
+          // Custom Apple-feel ease curve when not dragging. Snaps back fast
+          // with a touch of overshoot resistance via the bezier shape.
+          transition: dragging
+            ? 'none'
+            : 'transform 0.28s cubic-bezier(0.2, 0.85, 0.3, 1)',
           background: 'rgba(255,255,255,0.05)',
         }}
       >
@@ -102,12 +111,13 @@ export function ContactRow({ id, name, avatar, onCall, onText, index = 0 }: Cont
           }}>T</div>
         )}
         <div style={{
-          width: 22, height: 22, borderRadius: '50%',
+          width: 26, height: 26, borderRadius: '50%',
           background: 'linear-gradient(135deg, #7fa3c4, #b8a3c4)',
-          fontSize: 10, color: 'white',
+          fontSize: 11, fontWeight: 600, color: 'white',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
+          boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.18)',
         }}>{avatar}</div>
-        <span>{name}</span>
+        <span style={{ fontWeight: 500 }}>{name}</span>
       </div>
     </MagnifiableFrame>
   )

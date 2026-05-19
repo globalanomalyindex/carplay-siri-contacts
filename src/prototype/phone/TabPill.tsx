@@ -40,6 +40,7 @@ export function TabPill({ tabs, active, onChange }: TabPillProps) {
   return (
     <div
       data-testid="tab-pill"
+      data-variant="tab-pill"
       onPointerDown={onPointerDown}
       onPointerUp={onPointerUp}
       style={{
@@ -51,6 +52,7 @@ export function TabPill({ tabs, active, onChange }: TabPillProps) {
         borderRadius: 18,
         padding: '4px 6px',
         touchAction: 'pan-y',
+        boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.06)',
       }}
     >
       {tabs.map((t, i) => (
@@ -64,14 +66,19 @@ export function TabPill({ tabs, active, onChange }: TabPillProps) {
           <button
             onClick={() => onChange(t)}
             data-active={t === active || undefined}
+            data-variant="tab"
+            data-state={t === active ? 'active' : 'idle'}
             style={{
-              padding: '4px 12px',
+              padding: '6px 12px',
               borderRadius: 14,
               background: t === active ? 'rgba(60,180,200,0.30)' : 'transparent',
               color: t === active ? '#b8eef7' : 'rgba(255,255,255,0.75)',
               fontSize: 12,
+              fontWeight: t === active ? 600 : 500,
+              letterSpacing: '-0.01em',
               border: 'none',
               cursor: 'pointer',
+              transition: 'background-color 220ms cubic-bezier(0.2,0.8,0.3,1), color 220ms cubic-bezier(0.2,0.8,0.3,1)',
             }}
           >
             {LABELS[t]}

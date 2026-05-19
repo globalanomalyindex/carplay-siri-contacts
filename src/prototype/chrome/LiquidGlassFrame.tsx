@@ -36,6 +36,8 @@ export function LiquidGlassFrame({
   return (
     <div
       className="flex items-center justify-center"
+      data-variant="liquid-glass"
+      data-state={bright ? 'bright' : 'default'}
       style={{
         width: dim ?? 'var(--glass-size)',
         height: dim ?? 'var(--glass-size)',
@@ -45,10 +47,13 @@ export function LiquidGlassFrame({
         boxShadow: [
           'inset 0 1px 0 var(--glass-highlight)',
           'inset 0 -1px 0 var(--glass-shadow)',
+          '0 1px 3px rgba(0, 0, 0, 0.12)',
           '0 6px 24px var(--glass-glow)',
         ].join(', '),
-        backdropFilter: 'blur(8px)',
-        WebkitBackdropFilter: 'blur(8px)',
+        // iOS Vibrancy: heavier blur + saturate boost. Mirrors UIKit's
+        // .systemUltraThinMaterial look when stacked over the carplay tray.
+        backdropFilter: 'blur(20px) saturate(180%)',
+        WebkitBackdropFilter: 'blur(20px) saturate(180%)',
         ...style,
       }}
     >

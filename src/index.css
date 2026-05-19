@@ -2,3 +2,32 @@
 @import "./tokens/motion.css";
 @import "./tokens/color.css";
 @import "./tokens/spatial.css";
+
+/* Apple system font stack. Renders SF Pro on macOS/iOS, falls back through
+   BlinkMacSystemFont (Chromium on macOS), system-ui (everything else), then
+   generic sans-serif. Weight pairings: 600 semibold for primary labels,
+   500 medium for emphasis, 400 regular for body text. */
+:root {
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    'SF Pro Display',
+    'SF Pro Text',
+    system-ui,
+    'Segoe UI',
+    Roboto,
+    sans-serif;
+  font-synthesis-weight: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Visible focus rings for keyboard navigation. Cyan to match the prototype
+   accent. Mouse and touch users still see the platform default
+   :focus-visible behavior (no ring on click). */
+:where(button, [role="button"], a, input, select, textarea):focus-visible {
+  outline: 2px solid var(--accent-cyan, rgba(120, 220, 240, 0.95));
+  outline-offset: 2px;
+  border-radius: inherit;
+}

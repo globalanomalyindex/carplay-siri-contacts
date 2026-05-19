@@ -36,6 +36,8 @@ export function MagnifiableFrame({
     <motion.div
       ref={ref}
       data-testid={`magnifiable-${id}`}
+      data-variant="magnifiable-frame"
+      data-state={locked ? 'locked' : rotaryActive ? 'active' : 'idle'}
       data-locked={locked || undefined}
       animate={{
         boxShadow: rotaryActive
@@ -49,11 +51,24 @@ export function MagnifiableFrame({
           ? 'rgba(255,255,255,0.07)'
           : 'rgba(0,0,0,0)',
       }}
-      transition={{
-        duration: rotaryActive ? dur.frameEmerge : 0.12,
-        ease: locked ? easing.auraTravel : easing.frameEmerge,
-        delay: rotaryActive && !locked ? stagger : 0,
-      }}
+      transition={
+        locked
+          ? {
+              // Apple-spring lock-on. Stiffer than tab/content so the user
+              // feels the cell snap close, with damping that settles fast.
+              type: 'spring',
+              stiffness: 320,
+              damping: 30,
+              mass: 0.5,
+            }
+          : {
+              // Cubic easing for the staggered fade-in of every cell when
+              // rotary begins. Springs would all over-shoot in unison.
+              duration: rotaryActive ? dur.frameEmerge : 0.12,
+              ease: easing.frameEmerge,
+              delay: rotaryActive && !locked ? stagger : 0,
+            }
+      }
       style={{
         borderRadius: 8,
         position: 'relative',

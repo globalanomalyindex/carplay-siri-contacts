@@ -65,7 +65,8 @@ export function DockSwitcher({ surface, onSelect }: DockSwitcherProps) {
   return (
     <div
       data-testid="dock-switcher"
-      style={{ display: 'flex', flexDirection: 'column', gap: 6, alignItems: 'center' }}
+      data-variant="dock-switcher"
+      style={{ display: 'flex', flexDirection: 'column', gap: 0, alignItems: 'center' }}
     >
       {DOCK_ITEMS.map((item) => (
         <DockButton
@@ -81,18 +82,21 @@ export function DockSwitcher({ surface, onSelect }: DockSwitcherProps) {
   )
 }
 
+interface DockButtonProps {
+  active: boolean
+  label: string
+  onClick: () => void
+  children: React.ReactNode
+}
+
 function DockButton({
   active,
   label,
   onClick,
   children,
-}: {
-  active: boolean
-  label: string
-  onClick: () => void
-  children: React.ReactNode
-}) {
+}: DockButtonProps) {
   const baseStyle: CSSProperties = {
+    // Visual chip is 36; the wrapper expands hit area to 44 (Apple HIG min).
     width: 36,
     height: 36,
     borderRadius: 10,
@@ -101,14 +105,14 @@ function DockButton({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    transition: 'background-color 140ms ease, box-shadow 140ms ease, color 140ms ease',
+    transition: 'background-color 180ms cubic-bezier(0.2,0.8,0.3,1), box-shadow 180ms cubic-bezier(0.2,0.8,0.3,1), color 180ms cubic-bezier(0.2,0.8,0.3,1)',
     color: active ? 'rgba(255, 255, 255, 0.96)' : 'rgba(255, 255, 255, 0.66)',
     background: active
       ? 'linear-gradient(180deg, rgba(120, 220, 240, 0.32), rgba(120, 220, 240, 0.18))'
       : 'rgba(255, 255, 255, 0.06)',
     boxShadow: active
-      ? 'inset 0 0 0 1px rgba(120, 220, 240, 0.55), 0 4px 14px rgba(120, 220, 240, 0.28)'
-      : 'inset 0 1px 0 rgba(255, 255, 255, 0.10)',
+      ? 'inset 0 0 0 1px rgba(120, 220, 240, 0.55), 0 1px 3px rgba(0,0,0,0.12), 0 4px 14px rgba(120, 220, 240, 0.28)'
+      : 'inset 0 1px 0 rgba(255, 255, 255, 0.10), 0 1px 3px rgba(0,0,0,0.08)',
     position: 'relative',
     padding: 0,
   }
@@ -120,35 +124,50 @@ function DockButton({
       aria-label={label}
       aria-pressed={active}
       data-active={active || undefined}
+      data-variant="dock-button"
+      data-state={active ? 'active' : 'idle'}
       data-testid={`dock-${label.toLowerCase()}`}
-      style={baseStyle}
+      style={{
+        // Outer hit-area expansion: 44pt min per Apple HIG.
+        minWidth: 44,
+        minHeight: 44,
+        padding: 4,
+        background: 'transparent',
+        border: 'none',
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
     >
-      <svg
-        width="22"
-        height="22"
-        viewBox="0 0 22 22"
-        aria-hidden
-        focusable="false"
-        style={{ display: 'block' }}
-      >
-        {children}
-      </svg>
-      {active && (
-        <span
+      <span style={baseStyle}>
+        <svg
+          width="22"
+          height="22"
+          viewBox="0 0 22 22"
           aria-hidden
-          style={{
-            position: 'absolute',
-            left: '50%',
-            bottom: -5,
-            transform: 'translateX(-50%)',
-            width: 18,
-            height: 2,
-            borderRadius: 1,
-            background: 'var(--accent-cyan, rgba(120, 220, 240, 0.95))',
-            boxShadow: '0 0 6px rgba(120, 220, 240, 0.6)',
-          }}
-        />
-      )}
+          focusable="false"
+          style={{ display: 'block' }}
+        >
+          {children}
+        </svg>
+        {active && (
+          <span
+            aria-hidden
+            style={{
+              position: 'absolute',
+              left: '50%',
+              bottom: -5,
+              transform: 'translateX(-50%)',
+              width: 18,
+              height: 2,
+              borderRadius: 1,
+              background: 'var(--accent-cyan, rgba(120, 220, 240, 0.95))',
+              boxShadow: '0 0 6px rgba(120, 220, 240, 0.6)',
+            }}
+          />
+        )}
+      </span>
     </button>
   )
 }

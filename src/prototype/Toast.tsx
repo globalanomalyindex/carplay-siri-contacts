@@ -25,19 +25,25 @@ export function ToastProvider({ children }: { children: ReactNode }) {
       <div
         role="status"
         aria-live="polite"
+        data-variant="toast"
+        data-state={message ? 'visible' : 'hidden'}
         style={{
           position: 'fixed',
           bottom: 32,
           left: '50%',
           transform: 'translateX(-50%)',
-          background: 'rgba(20, 30, 40, 0.92)',
+          background: 'rgba(20, 30, 40, 0.72)',
           color: 'white',
           padding: '10px 18px',
-          borderRadius: 10,
+          borderRadius: 12,
           border: '1px solid rgba(255,255,255,0.10)',
           fontSize: 13,
-          backdropFilter: 'blur(8px)',
-          WebkitBackdropFilter: 'blur(8px)',
+          fontWeight: 500,
+          letterSpacing: '-0.01em',
+          backdropFilter: 'blur(20px) saturate(180%)',
+          WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+          boxShadow:
+            '0 1px 3px rgba(0,0,0,0.12), 0 4px 16px rgba(0,0,0,0.18)',
           zIndex: 300,
           opacity: message ? 1 : 0,
           pointerEvents: message ? 'auto' : 'none',

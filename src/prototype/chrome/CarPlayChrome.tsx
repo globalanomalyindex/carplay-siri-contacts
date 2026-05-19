@@ -24,9 +24,16 @@ export function CarPlayChrome({
 }: CarPlayChromeProps) {
   return (
     <div
-      className="relative w-full h-full overflow-hidden rounded-2xl"
+      data-variant="carplay-chrome"
+      className="relative w-full h-full overflow-hidden"
       style={{
+        // 20px reads more iOS than Tailwind's rounded-2xl (16px) at this
+        // surface size, while keeping inner cards visually subordinate at
+        // 12px.
+        borderRadius: 20,
         background: `linear-gradient(135deg, var(--carplay-bg-from) 0%, var(--carplay-bg-mid) 60%, var(--carplay-bg-to) 100%)`,
+        boxShadow:
+          '0 1px 3px rgba(0,0,0,0.12), 0 4px 16px rgba(0,0,0,0.20)',
       }}
     >
       {/* Status bar */}
