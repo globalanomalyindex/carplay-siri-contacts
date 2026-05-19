@@ -20,7 +20,6 @@ import { useAriaLabelMap } from './a11y/useAriaLabelMap'
 import { DebugPanel } from './prototype/DebugPanel'
 import { DrivingProvider } from './prototype/phone/DrivingContext'
 import { PhoneApp } from './prototype/phone/PhoneApp'
-import { RadialDialer } from './prototype/phone/RadialDialer'
 import { MapsSketch } from './prototype/surfaces/MapsSketch'
 import { MusicSketch } from './prototype/surfaces/MusicSketch'
 
@@ -54,10 +53,9 @@ function App() {
                       dock={<DockSwitcher surface={surface} onSelect={setSurface} />}
                     >
                       <DrivingProvider driving={driving}>
-                        {surface === 'phone'  && <PhoneApp />}
-                        {surface === 'dialer' && <RadialDialer />}
-                        {surface === 'maps'   && <MapsSketch />}
-                        {surface === 'music'  && <MusicSketch />}
+                        {surface === 'phone' && <PhoneApp />}
+                        {surface === 'maps'  && <MapsSketch />}
+                        {surface === 'music' && <MusicSketch />}
                       </DrivingProvider>
                     </CarPlayChrome>
                   </div>

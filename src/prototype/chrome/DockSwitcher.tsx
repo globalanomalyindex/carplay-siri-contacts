@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react'
 
-export type DockSurface = 'phone' | 'music' | 'maps' | 'dialer'
+export type DockSurface = 'phone' | 'music' | 'maps'
 
 export interface DockSwitcherProps {
   surface: DockSurface
@@ -56,20 +56,6 @@ const DOCK_ITEMS: DockItem[] = [
           strokeLinejoin="round"
         />
         <circle cx="11" cy="8.1" r="1.9" fill="currentColor" />
-      </>
-    ),
-  },
-  {
-    id: 'dialer',
-    label: 'Dialer',
-    glyph: (
-      <>
-        {/* 3x3 grid of dots, evokes a phone keypad */}
-        {[5.5, 11, 16.5].map((cx) =>
-          [5.5, 11, 16.5].map((cy) => (
-            <circle key={`${cx}-${cy}`} cx={cx} cy={cy} r="1.4" fill="currentColor" />
-          )),
-        )}
       </>
     ),
   },

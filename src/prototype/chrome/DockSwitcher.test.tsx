@@ -3,12 +3,12 @@ import { render, screen, fireEvent } from '@testing-library/react'
 import { DockSwitcher } from './DockSwitcher'
 
 describe('DockSwitcher', () => {
-  it('renders the four surface buttons', () => {
+  it('renders the three surface buttons', () => {
     render(<DockSwitcher surface="phone" onSelect={() => {}} />)
     expect(screen.getByTestId('dock-phone')).toBeInTheDocument()
     expect(screen.getByTestId('dock-music')).toBeInTheDocument()
     expect(screen.getByTestId('dock-maps')).toBeInTheDocument()
-    expect(screen.getByTestId('dock-dialer')).toBeInTheDocument()
+    expect(screen.queryByTestId('dock-dialer')).not.toBeInTheDocument()
   })
 
   it('marks the active surface with aria-pressed=true and data-active', () => {
@@ -26,7 +26,7 @@ describe('DockSwitcher', () => {
     render(<DockSwitcher surface="phone" onSelect={onSelect} />)
     fireEvent.click(screen.getByTestId('dock-music'))
     expect(onSelect).toHaveBeenCalledWith('music')
-    fireEvent.click(screen.getByTestId('dock-dialer'))
-    expect(onSelect).toHaveBeenCalledWith('dialer')
+    fireEvent.click(screen.getByTestId('dock-maps'))
+    expect(onSelect).toHaveBeenCalledWith('maps')
   })
 })
