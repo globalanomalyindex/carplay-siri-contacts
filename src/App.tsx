@@ -1,26 +1,42 @@
 import { CarPlayChrome } from './prototype/chrome/CarPlayChrome'
 import { MasterOrb } from './prototype/MasterOrb/MasterOrb'
+import { MagnifierProvider, MagnifiableFrame } from './prototype/Magnifier'
 
 function App() {
   return (
     <div className="min-h-screen bg-slate-900 flex items-center justify-center p-6">
-      <div style={{ width: 640, height: 360 }}>
-        <CarPlayChrome
-          orbHome={<MasterOrb />}
-          dock={
-            <>
-              <DockIcon label="M" />
-              <DockIcon label="N" />
-              <DockIcon label="T" />
-              <DockIcon label="S" />
-            </>
-          }
-        >
-          <div className="text-white/40 text-center pt-8 text-xs uppercase tracking-widest">
-            (any app content)
-          </div>
-        </CarPlayChrome>
-      </div>
+      <MagnifierProvider>
+        <div style={{ width: 640, height: 360 }}>
+          <CarPlayChrome
+            orbHome={<MasterOrb />}
+            dock={
+              <>
+                <DockIcon label="M" />
+                <DockIcon label="N" />
+                <DockIcon label="T" />
+                <DockIcon label="S" />
+              </>
+            }
+          >
+            <div className="p-4 space-y-2 text-white/85 text-sm">
+              <p className="text-white/40 text-xs uppercase tracking-widest mb-3">
+                Drag from the orb to test magnifier:
+              </p>
+              {['Mom', 'Dad', 'Sarah', 'Jake', 'Kira'].map((name, i) => (
+                <MagnifiableFrame
+                  key={name}
+                  id={`fav-${name.toLowerCase()}`}
+                  index={i}
+                  onCommit={() => alert(`Calling ${name}`)}
+                  label={`Call ${name}`}
+                >
+                  <div className="px-3 py-2">{name}</div>
+                </MagnifiableFrame>
+              ))}
+            </div>
+          </CarPlayChrome>
+        </div>
+      </MagnifierProvider>
     </div>
   )
 }

@@ -1,16 +1,17 @@
 import { describe, it, expect } from 'vitest'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { MasterOrb } from './MasterOrb'
+import { MagnifierProvider } from '../Magnifier/MagnifierProvider'
 
 describe('MasterOrb', () => {
   it('renders idle with no aura', () => {
-    render(<MasterOrb />)
+    render(<MagnifierProvider><MasterOrb /></MagnifierProvider>)
     expect(screen.getByTestId('master-orb')).toBeInTheDocument()
     expect(screen.queryByTestId('siri-aura')).not.toBeInTheDocument()
   })
 
   it('shows aura after a tap (Siri active)', () => {
-    render(<MasterOrb />)
+    render(<MagnifierProvider><MasterOrb /></MagnifierProvider>)
     const hit = screen.getByTestId('master-orb-hit')
     fireEvent.pointerDown(hit, { pointerId: 1, clientX: 10, clientY: 10 })
     fireEvent.pointerUp(hit, { pointerId: 1, clientX: 10, clientY: 10 })
@@ -18,7 +19,7 @@ describe('MasterOrb', () => {
   })
 
   it('hides aura after a second tap (Siri canceled)', async () => {
-    render(<MasterOrb />)
+    render(<MagnifierProvider><MasterOrb /></MagnifierProvider>)
     const hit = screen.getByTestId('master-orb-hit')
     fireEvent.pointerDown(hit, { pointerId: 1, clientX: 10, clientY: 10 })
     fireEvent.pointerUp(hit, { pointerId: 1, clientX: 10, clientY: 10 })
@@ -33,7 +34,7 @@ describe('MasterOrb', () => {
 
 describe('MasterOrb drag', () => {
   it('enters rotary mode on drag past threshold', () => {
-    render(<MasterOrb />)
+    render(<MagnifierProvider><MasterOrb /></MagnifierProvider>)
     const hit = screen.getByTestId('master-orb-hit')
     fireEvent.pointerDown(hit, { pointerId: 1, clientX: 10, clientY: 10 })
     fireEvent.pointerMove(hit, { pointerId: 1, clientX: 30, clientY: 10 })
@@ -41,7 +42,7 @@ describe('MasterOrb drag', () => {
   })
 
   it('returns to idle on pointer up in rotary mode', async () => {
-    render(<MasterOrb />)
+    render(<MagnifierProvider><MasterOrb /></MagnifierProvider>)
     const hit = screen.getByTestId('master-orb-hit')
     fireEvent.pointerDown(hit, { pointerId: 1, clientX: 10, clientY: 10 })
     fireEvent.pointerMove(hit, { pointerId: 1, clientX: 30, clientY: 10 })

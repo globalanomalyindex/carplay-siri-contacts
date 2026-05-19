@@ -5,10 +5,13 @@ import { Orb } from './Orb'
 import { Aura } from './Aura'
 import { Dissipation } from './Dissipation'
 import { LiquidGlassFrame } from '../chrome/LiquidGlassFrame'
+import { useMagnifierDriver } from '../Magnifier/useMagnifierDriver'
 import { space } from '../../tokens/spatial'
 
 export function MasterOrb() {
   const [snapshot, send] = useMachine(orbMachine)
+  const driver = useMagnifierDriver()
+
   const downStartRef = useRef<{ x: number; y: number; t: number } | null>(null)
   const draggingRef = useRef(false)
   const [dissipateCenter, setDissipateCenter] = useState<{ x: number; y: number } | null>(null)
@@ -24,19 +27,26 @@ export function MasterOrb() {
 
   const onPointerMove = useCallback((e: React.PointerEvent) => {
     const start = downStartRef.current
-    if (!start || draggingRef.current) return
+    if (!start) return
 
-    const dist = Math.hypot(e.clientX - start.x, e.clientY - start.y)
-    if (dist >= space.thresholdDragDistPx && snapshot.value === 'idle') {
-      draggingRef.current = true
-      const rect = (e.currentTarget as HTMLElement).getBoundingClientRect()
-      setDissipateCenter({
-        x: rect.left + rect.width / 2,
-        y: rect.top + rect.height / 2,
-      })
-      send({ type: 'DRAG_START' })
+    if (!draggingRef.current) {
+      const dist = Math.hypot(e.clientX - start.x, e.clientY - start.y)
+      if (dist >= space.thresholdDragDistPx && snapshot.value === 'idle') {
+        draggingRef.current = true
+        const rect = (e.currentTarget as HTMLElement).getBoundingClientRect()
+        setDissipateCenter({
+          x: rect.left + rect.width / 2,
+          y: rect.top + rect.height / 2,
+        })
+        send({ type: 'DRAG_START' })
+        driver.start()
+      }
     }
-  }, [send, snapshot.value])
+
+    if (draggingRef.current) {
+      driver.move({ x: e.clientX, y: e.clientY })
+    }
+  }, [send, snapshot.value, driver])
 
   const onPointerUp = useCallback((e: React.PointerEvent) => {
     const start = downStartRef.current
@@ -46,7 +56,12 @@ export function MasterOrb() {
     if (draggingRef.current) {
       draggingRef.current = false
       setDissipateCenter(null)
-      send({ type: 'ABORT' })
+      const lockedId = driver.end({ x: e.clientX, y: e.clientY })
+      if (lockedId) {
+        send({ type: 'COMMIT', targetId: lockedId })
+      } else {
+        send({ type: 'ABORT' })
+      }
       return
     }
 
@@ -64,7 +79,7 @@ export function MasterOrb() {
       send({ type: 'TAP' })
       return
     }
-  }, [send])
+  }, [send, driver])
 
   const state = snapshot.value as 'idle' | 'siriActive' | 'rotary'
   const inRotary = state === 'rotary'
@@ -78,7 +93,10 @@ export function MasterOrb() {
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
         onPointerCancel={() => {
-          draggingRef.current = false
+          if (draggingRef.current) {
+            draggingRef.current = false
+            driver.end({ x: 0, y: 0 })
+          }
           downStartRef.current = null
           setDissipateCenter(null)
           if (snapshot.value === 'rotary') send({ type: 'ABORT' })
