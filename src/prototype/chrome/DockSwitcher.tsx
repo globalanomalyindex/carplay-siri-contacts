@@ -1,4 +1,5 @@
 import type { CSSProperties } from 'react'
+import { MagnifiableFrame } from '../Magnifier'
 
 export type DockSurface = 'phone' | 'music' | 'maps'
 
@@ -75,14 +76,20 @@ export function DockSwitcher({ surface, onSelect }: DockSwitcherProps) {
       style={{ display: 'flex', flexDirection: 'column', gap: 0, alignItems: 'center' }}
     >
       {DOCK_ITEMS.map((item) => (
-        <DockButton
+        <MagnifiableFrame
           key={item.id}
-          active={surface === item.id}
-          label={item.label}
-          onClick={() => onSelect(item.id)}
+          id={`dock-${item.id}`}
+          label={`${item.label} surface`}
+          onCommit={() => onSelect(item.id)}
         >
-          {item.glyph}
-        </DockButton>
+          <DockButton
+            active={surface === item.id}
+            label={item.label}
+            onClick={() => onSelect(item.id)}
+          >
+            {item.glyph}
+          </DockButton>
+        </MagnifiableFrame>
       ))}
     </div>
   )

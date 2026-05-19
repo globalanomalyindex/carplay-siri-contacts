@@ -1,10 +1,15 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { DockSwitcher } from './DockSwitcher'
+import { MagnifierProvider } from '../Magnifier'
+
+function renderInProvider(ui: React.ReactElement) {
+  return render(<MagnifierProvider>{ui}</MagnifierProvider>)
+}
 
 describe('DockSwitcher', () => {
   it('renders the three surface buttons', () => {
-    render(<DockSwitcher surface="phone" onSelect={() => {}} />)
+    renderInProvider(<DockSwitcher surface="phone" onSelect={() => {}} />)
     expect(screen.getByTestId('dock-phone')).toBeInTheDocument()
     expect(screen.getByTestId('dock-music')).toBeInTheDocument()
     expect(screen.getByTestId('dock-maps')).toBeInTheDocument()
@@ -12,7 +17,7 @@ describe('DockSwitcher', () => {
   })
 
   it('marks the active surface with aria-pressed=true and data-active', () => {
-    render(<DockSwitcher surface="maps" onSelect={() => {}} />)
+    renderInProvider(<DockSwitcher surface="maps" onSelect={() => {}} />)
     const mapsBtn = screen.getByTestId('dock-maps')
     expect(mapsBtn.getAttribute('aria-pressed')).toBe('true')
     expect(mapsBtn.getAttribute('data-active')).toBe('true')
@@ -23,10 +28,17 @@ describe('DockSwitcher', () => {
 
   it('fires onSelect with the right surface id on click', () => {
     const onSelect = vi.fn()
-    render(<DockSwitcher surface="phone" onSelect={onSelect} />)
+    renderInProvider(<DockSwitcher surface="phone" onSelect={onSelect} />)
     fireEvent.click(screen.getByTestId('dock-music'))
     expect(onSelect).toHaveBeenCalledWith('music')
     fireEvent.click(screen.getByTestId('dock-maps'))
     expect(onSelect).toHaveBeenCalledWith('maps')
+  })
+
+  it('registers each dock item as a magnifiable target with id dock-<surface>', () => {
+    renderInProvider(<DockSwitcher surface="phone" onSelect={() => {}} />)
+    expect(screen.getByTestId('magnifiable-dock-phone')).toBeInTheDocument()
+    expect(screen.getByTestId('magnifiable-dock-music')).toBeInTheDocument()
+    expect(screen.getByTestId('magnifiable-dock-maps')).toBeInTheDocument()
   })
 })
