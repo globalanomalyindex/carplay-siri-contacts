@@ -104,8 +104,8 @@ export function Reflection() {
           <p style={{ margin: 0, fontSize: 15, color: 'var(--cs-text-2)', lineHeight: 1.55 }}>
             The Master Orb is the foundation that makes the customizable grid
             safe to drive. Composing a CarPlay home screen from cells of
-            varying sizes &mdash; Now Playing, navigation mini, contacts mini
-            &mdash; is the next case study.
+            varying sizes (Now Playing, navigation mini, contacts mini) is
+            the next case study.
           </p>
         </motion.aside>
       </div>
