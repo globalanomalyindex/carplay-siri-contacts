@@ -2,6 +2,11 @@ import { useCallback, useRef, useState } from 'react'
 import { MagnifiableFrame } from '../Magnifier'
 import { space } from '../../tokens/spatial'
 
+/** Render variant of the ContactRow. Used by Figma Code Connect. */
+export type ContactRowVariant = 'contact-row'
+/** Interactive state of the ContactRow. */
+export type ContactRowState = 'idle' | 'call-revealed' | 'text-revealed'
+
 export interface ContactRowProps {
   id: string
   name: string

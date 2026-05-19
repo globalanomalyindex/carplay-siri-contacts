@@ -27,21 +27,29 @@ export function MusicSketch() {
           >
             <div
               data-testid={`queue-row-${t.id}`}
+              data-variant="queue-row"
               style={{
-                padding: '6px 10px',
-                color: 'rgba(255,255,255,0.85)',
+                padding: '8px 12px',
+                minHeight: 44,
+                color: 'rgba(255,255,255,0.92)',
                 fontSize: 13,
+                fontWeight: 400,
+                letterSpacing: '-0.01em',
                 background: 'rgba(255,255,255,0.05)',
-                borderRadius: 6,
+                borderRadius: 8,
                 display: 'flex',
                 gap: 10,
                 alignItems: 'center',
               }}
             >
-              <div style={{ width: 24, height: 24, borderRadius: 4, background: 'linear-gradient(135deg, #b8a3c4, #7fa3c4)' }} />
+              <div style={{
+                width: 28, height: 28, borderRadius: 6,
+                background: 'linear-gradient(135deg, #b8a3c4, #7fa3c4)',
+                boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.18)',
+              }} />
               <div>
-                <div>{t.title}</div>
-                <div style={{ fontSize: 10, color: 'var(--text-secondary)' }}>{t.artist}</div>
+                <div style={{ fontWeight: 500 }}>{t.title}</div>
+                <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>{t.artist}</div>
               </div>
             </div>
           </MagnifiableFrame>
@@ -54,10 +62,29 @@ export function MusicSketch() {
 function NowPlaying({ progress, setProgress }: { progress: number; setProgress: (n: number) => void }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-      <div data-testid="now-playing-title" style={{ color: 'var(--text-primary)', fontSize: 15, fontWeight: 600 }}>
+      <div
+        data-testid="now-playing-title"
+        data-variant="now-playing-title"
+        style={{
+          color: 'var(--text-primary)',
+          fontSize: 15,
+          fontWeight: 600,
+          letterSpacing: '-0.02em',
+        }}
+      >
         I Can't Let You Go In This Life
       </div>
-      <div style={{ color: 'var(--text-secondary)', fontSize: 12 }}>Love Spells</div>
+      <div
+        data-variant="now-playing-artist"
+        style={{
+          color: 'var(--text-secondary)',
+          fontSize: 12,
+          fontWeight: 500,
+          letterSpacing: '-0.01em',
+        }}
+      >
+        Love Spells
+      </div>
       <ProgressBar progress={progress} setProgress={setProgress} />
     </div>
   )

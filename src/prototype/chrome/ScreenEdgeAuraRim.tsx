@@ -22,6 +22,7 @@ export function ScreenEdgeAuraRim({ active }: ScreenEdgeAuraRimProps) {
       {active && (
         <motion.div
           data-testid="screen-edge-aura-rim"
+          data-variant="aura-rim"
           initial={{ opacity: 0 }}
           animate={
             reduced
@@ -37,7 +38,9 @@ export function ScreenEdgeAuraRim({ active }: ScreenEdgeAuraRimProps) {
           style={{
             position: 'absolute',
             inset: 0,
-            borderRadius: 16,
+            // Matches CarPlayChrome's outer radius (20px) so the rim's
+            // white edge traces the actual rounded corner.
+            borderRadius: 20,
             pointerEvents: 'none',
             zIndex: 10,
             boxShadow:

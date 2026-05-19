@@ -33,14 +33,20 @@ export function MapsSketch() {
             label={`Quick control: ${qc.label}`}
           >
             <button
+              data-variant="quick-control"
+              data-state="idle"
               style={{
-                padding: '6px 12px',
+                padding: '8px 14px',
+                minHeight: 32,
                 background: 'rgba(255,255,255,0.08)',
-                color: 'rgba(255,255,255,0.85)',
+                color: 'rgba(255,255,255,0.92)',
                 borderRadius: 14,
                 fontSize: 12,
+                fontWeight: 500,
+                letterSpacing: '-0.01em',
                 border: 'none',
                 cursor: 'pointer',
+                boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.08), 0 1px 3px rgba(0,0,0,0.10)',
               }}
             >
               {qc.label}
@@ -111,11 +117,12 @@ function MapCanvas() {
           >
             <div
               data-testid={`poi-pin-${p.id}`}
+              data-variant="map-pin"
               style={{
                 width: 22, height: 22, borderRadius: '50% 50% 50% 0',
                 transform: 'rotate(-45deg)',
                 background: 'var(--action-call)',
-                boxShadow: '0 2px 6px rgba(0,0,0,0.30)',
+                boxShadow: '0 1px 3px rgba(0,0,0,0.18), 0 2px 6px rgba(0,0,0,0.24)',
                 border: '2px solid rgba(255,255,255,0.85)',
               }}
             />

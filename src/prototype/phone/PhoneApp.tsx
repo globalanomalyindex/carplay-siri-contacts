@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { motion } from 'motion/react'
 import { useMagnifierContext } from '../Magnifier'
 import { useDriving } from './useDriving'
@@ -8,13 +8,18 @@ import { RecentsList } from './RecentsList'
 import { ContactsList } from './ContactsList'
 import { UtilityCluster } from './UtilityCluster'
 
+const TAB_LOCK_PREFIX = 'tab-'
+
 /**
  * Pass-through tab open: while the rotary magnifier is locked on a tab
- * (lockedId === "tab-favorites" etc.), the parent quietly switches the
- * active tab so the new content paints underneath the rotary preview. If
- * the user keeps dragging onto a row and lifts there, the row's onCommit
- * fires; if they lift on the tab itself, the tab's own onCommit fires the
- * same setActive(...) - same outcome either way.
+ * (lockedId === "tab-favorites" etc.), the displayed tab is derived from
+ * the lock so the new content paints under the rotary preview without
+ * persisting committed state. The user can then drag down to a row and
+ * lift to call. After the lock ends, the displayed tab reverts to the
+ * committed `active` value, which matches iOS preview gestures (peek/pop,
+ * swipe-back) where temporary previews revert on release. A real
+ * commit (lift on a tab) fires the tab's onCommit -> setActive, making
+ * the preview stick the same way a tap commit does.
  */
 export function PhoneApp() {
   const driving = useDriving()
@@ -22,17 +27,14 @@ export function PhoneApp() {
   const [active, setActive] = useState<TabId>('favorites')
   const { lockedId } = useMagnifierContext()
 
-  // Watch the magnifier lock for a tab id and preview-switch the active
-  // tab to match. Idempotent: only writes when the candidate is different
-  // from current active, so unrelated locks (contact rows etc.) are noops.
-  useEffect(() => {
-    if (!lockedId) return
-    if (!lockedId.startsWith('tab-')) return
-    const candidate = lockedId.slice(4) as TabId
-    if (!tabs.includes(candidate)) return
-    if (candidate === active) return
-    setActive(candidate)
-  }, [lockedId, active, tabs])
+  // Derive the previewed tab from the magnifier lock. Falls back to the
+  // committed active tab when there is no tab lock.
+  const previewTab: TabId | null =
+    lockedId && lockedId.startsWith(TAB_LOCK_PREFIX)
+      ? (lockedId.slice(TAB_LOCK_PREFIX.length) as TabId)
+      : null
+  const displayed: TabId =
+    previewTab && tabs.includes(previewTab) ? previewTab : active
 
   const onSwitch = (next: TabId) => {
     if (tabs.includes(next)) setActive(next)
@@ -41,26 +43,26 @@ export function PhoneApp() {
   return (
     <div className="h-full flex flex-col p-3 gap-3">
       <div className="flex items-center gap-3">
-        <TabPill tabs={tabs} active={active} onChange={onSwitch} />
+        <TabPill tabs={tabs} active={displayed} onChange={onSwitch} />
         <UtilityCluster />
       </div>
       <div className="flex-1 overflow-hidden relative">
         {/* No AnimatePresence + mode="wait" here: we want the new tab to
             mount immediately so the rotary preview can magnify rows under
             the pointer. The current tab's content swaps via a quick spring
-            crossfade keyed on `active`. */}
+            crossfade keyed on `displayed`. */}
         <motion.div
-          key={active}
+          key={displayed}
           data-variant="tab-content"
-          data-state={active}
+          data-state={displayed}
           initial={{ opacity: 0, y: 4 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ type: 'spring', stiffness: 320, damping: 30, mass: 0.5 }}
           style={{ position: 'absolute', inset: 0 }}
         >
-          {active === 'favorites' && <FavoritesList />}
-          {active === 'recents' && <RecentsList />}
-          {active === 'contacts' && !driving && <ContactsList />}
+          {displayed === 'favorites' && <FavoritesList />}
+          {displayed === 'recents' && <RecentsList />}
+          {displayed === 'contacts' && !driving && <ContactsList />}
         </motion.div>
       </div>
     </div>

@@ -4,6 +4,12 @@ import { space } from '../../tokens/spatial'
 
 export type TabId = 'favorites' | 'recents' | 'contacts'
 
+/** Render variant of an individual Tab cell. Used by Figma Code Connect
+ *  to map this component to its design counterpart. */
+export type TabVariant = 'tab'
+/** Interactive state of a Tab cell. */
+export type TabState = 'idle' | 'active'
+
 const LABELS: Record<TabId, string> = {
   favorites: 'Favorites',
   recents: 'Recents',

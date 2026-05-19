@@ -2,6 +2,12 @@ import type { CSSProperties } from 'react'
 
 export type DockSurface = 'phone' | 'music' | 'maps'
 
+/** Render variant of an individual dock button. Figma component mapping
+ *  key for Code Connect. */
+export type DockButtonVariant = 'dock-button'
+/** Interactive state of a dock button. */
+export type DockButtonState = 'idle' | 'active'
+
 export interface DockSwitcherProps {
   surface: DockSurface
   onSelect: (s: DockSurface) => void

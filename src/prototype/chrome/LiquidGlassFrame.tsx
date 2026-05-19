@@ -1,5 +1,10 @@
 import type { ReactNode, CSSProperties } from 'react'
 
+/** Render variant of the LiquidGlassFrame. Maps to Figma component name. */
+export type LiquidGlassVariant = 'liquid-glass'
+/** Interactive/contrast state. */
+export type LiquidGlassState = 'default' | 'bright'
+
 export interface LiquidGlassFrameProps {
   children: ReactNode
   /** Size override; defaults to var(--glass-size) = 46pt. */
