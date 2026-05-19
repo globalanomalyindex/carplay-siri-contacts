@@ -5,6 +5,8 @@ import { MagnifierProvider, useMagnifierDriver } from './prototype/Magnifier'
 import { useLongPressAnywhere } from './prototype/Magnifier/useLongPressAnywhere'
 import { useLongPressRotarySession } from './prototype/Magnifier/useLongPressRotarySession'
 import { useAccessibilitySettings } from './a11y/useAccessibilitySettings'
+import { AriaLockAnnouncer } from './a11y/AriaLockAnnouncer'
+import { useAriaLabelMap } from './a11y/useAriaLabelMap'
 import { DebugPanel } from './prototype/DebugPanel'
 import { DrivingProvider } from './prototype/phone/DrivingContext'
 import { PhoneApp } from './prototype/phone/PhoneApp'
@@ -22,6 +24,7 @@ function App() {
   return (
     <div className="min-h-screen bg-slate-900 flex items-center justify-center p-6">
       <MagnifierProvider>
+        <AnnouncerShell />
         <LongPressRescueShell enabled={settings.longPressAnywhere}>
           <div style={{ width: 720, height: 400 }}>
             <CarPlayChrome
@@ -62,6 +65,11 @@ function LongPressRescueShell({ enabled, children }: { enabled: boolean; childre
   useLongPressAnywhere({ enabled, onLongPress: () => driver.start() })
   useLongPressRotarySession()
   return <>{children}</>
+}
+
+function AnnouncerShell() {
+  const labels = useAriaLabelMap()
+  return <AriaLockAnnouncer labels={labels} />
 }
 
 function DockIcon({ label }: { label: string }) {
