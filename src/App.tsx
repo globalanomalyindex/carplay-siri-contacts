@@ -3,6 +3,7 @@ import { CarPlayChrome } from './prototype/chrome/CarPlayChrome'
 import { MasterOrb } from './prototype/MasterOrb/MasterOrb'
 import { MagnifierProvider, MagnifiableFrame, useMagnifierDriver } from './prototype/Magnifier'
 import { useLongPressAnywhere } from './prototype/Magnifier/useLongPressAnywhere'
+import { useLongPressRotarySession } from './prototype/Magnifier/useLongPressRotarySession'
 import { useAccessibilitySettings } from './a11y/useAccessibilitySettings'
 import { DebugPanel } from './prototype/DebugPanel'
 
@@ -62,6 +63,7 @@ function LongPressRescueShell({
 }: { enabled: boolean; children: React.ReactNode }) {
   const driver = useMagnifierDriver()
   useLongPressAnywhere({ enabled, onLongPress: () => driver.start() })
+  useLongPressRotarySession()
   return <>{children}</>
 }
 
