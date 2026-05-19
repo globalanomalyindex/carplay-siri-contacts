@@ -5,103 +5,114 @@ export interface ScreenEdgeAuraProps {
   active: boolean
 }
 
+interface FluidBlobProps {
+  color: string
+  startX: string
+  startY: string
+  delay: number
+  duration: number
+  /** Width of the blob as a percentage of the parent. */
+  size: number
+  /** Peak opacity reached mid-cycle. */
+  peakOpacity: number
+}
+
 /**
- * Rainbow bloom that haloes the CarPlay screen when Siri is listening. Two
- * stacked rotating conic gradients sit BEHIND the screen chrome and bleed
- * past its rounded edge into the surrounding tray. The screen's own
- * overflow:hidden clips the inside, so the bloom only kisses the very edge
- * of the rounded corner inside the viewport while glowing freely outside.
+ * Rainbow halo around the CarPlay screen when Siri is listening. Built from
+ * a stack of slow-moving radial-gradient "blobs" of Siri palette colors. Each
+ * blob translates and scales on its own offset cycle, so the layered result
+ * reads as fluid color flow rather than rotating bands.
  *
- *   - outer  : large, heavy blur, slow clockwise rotation (8s).
- *   - inner  : tighter blur, opacity pulse on a 3s cycle, counter-rotation,
- *              blended via screen so the rim shimmers without going dark.
+ * Layers, in render order:
+ *   1. Five primary palette blobs around the screen edge, blended via screen.
+ *   2. Two secondary, larger blobs at lower opacity to fill the gap and add
+ *      depth so the rim never goes flat.
  *
- * App content remains 100% readable: the bloom never touches the interior
- * of the screen. The crisp inset rim (white-edge + soft Siri-purple inner
- * glow) is provided by a sibling, ScreenEdgeAuraRim, that sits ON TOP of
- * the chrome.
+ * Heavy gaussian blur (44-56px) smooths the blob silhouettes into a single
+ * glow. The blobs sit BEHIND the chrome and bleed past the rounded edge into
+ * the surrounding tray; screen interior stays readable because chrome content
+ * paints over the bloom.
  *
- * Reduced motion: rainbow is static, no rotation or opacity pulse.
+ * Reduced motion: blobs hold at peak opacity, no translation or scale.
  */
 export function ScreenEdgeAura({ active }: ScreenEdgeAuraProps) {
-  const reduced = useReducedMotion()
-
   return (
     <AnimatePresence>
       {active && (
         <motion.div
           data-testid="screen-edge-aura"
+          data-variant="fluid"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.32 }}
           style={{
             position: 'absolute',
-            inset: 0,
+            inset: '-32px',
             pointerEvents: 'none',
-            // Stays behind the chrome via its own positioning context: the
-            // App-level layout places this *before* the chrome wrapper.
+            overflow: 'hidden',
+            borderRadius: 30,
             zIndex: 0,
           }}
         >
-          {/* Outer bloom: oversized so the rainbow leaks just past the screen
-              edge, heavy blur, slow rotation (5s) so the user can clearly see
-              the palette drift but the motion stays calm. */}
-          <motion.div
-            aria-hidden
-            animate={reduced ? { rotate: 0 } : { rotate: 360 }}
-            transition={
-              reduced
-                ? { duration: 0 }
-                : { duration: 5, ease: 'linear', repeat: Infinity }
-            }
-            style={{
-              position: 'absolute',
-              inset: '-44px',
-              background:
-                'conic-gradient(from 0deg,' +
-                ' #FF6E7F, #FFA56B, #FFD86B, #B8FF8E, #6BFFD1,' +
-                ' #6BE0FF, #6B9AFF, #B573FF, #FF6EC4, #FF6E7F)',
-              filter: 'blur(40px)',
-              opacity: 0.85,
-              borderRadius: 30,
-            }}
-          />
+          {/* Primary palette blobs - five points around the edge */}
+          <FluidBlob color="#FF6E7F" startX="12%" startY="14%" delay={0}    duration={11} size={62} peakOpacity={0.70} />
+          <FluidBlob color="#FFD86B" startX="78%" startY="18%" delay={1.4}  duration={13} size={60} peakOpacity={0.66} />
+          <FluidBlob color="#6BFFD1" startX="85%" startY="76%" delay={2.6}  duration={9}  size={58} peakOpacity={0.72} />
+          <FluidBlob color="#6B9AFF" startX="16%" startY="82%" delay={3.8}  duration={14} size={60} peakOpacity={0.68} />
+          <FluidBlob color="#B573FF" startX="50%" startY="50%" delay={5.0}  duration={10} size={64} peakOpacity={0.62} />
 
-          {/* Inner accent: counter-rotates, pulses opacity, sits just past the
-              screen edge to give a sharper hue at the rim. Screen-blended so
-              it adds rather than replaces the outer bloom's color. Faster
-              rotation (4s) creates the swirl effect when stacked against the
-              5s outer bloom. */}
-          <motion.div
-            aria-hidden
-            animate={
-              reduced
-                ? { rotate: 0, opacity: 0.6 }
-                : { rotate: -360, opacity: [0.45, 0.85, 0.45] }
-            }
-            transition={
-              reduced
-                ? { duration: 0 }
-                : {
-                    rotate: { duration: 4, ease: 'linear', repeat: Infinity },
-                    opacity: { duration: 3, ease: 'easeInOut', repeat: Infinity },
-                  }
-            }
-            style={{
-              position: 'absolute',
-              inset: '-18px',
-              background:
-                'conic-gradient(from 200deg,' +
-                ' #FF6E7F, #B573FF, #6B9AFF, #6BFFD1, #B8FF8E,' +
-                ' #FFD86B, #FFA56B, #FF6E7F)',
-              filter: 'blur(20px)',
-              borderRadius: 22,
-              mixBlendMode: 'screen',
-            }}
-          />
+          {/* Secondary blobs - larger, softer, fill the gaps */}
+          <FluidBlob color="#FF6EC4" startX="35%" startY="20%" delay={2.0}  duration={15} size={70} peakOpacity={0.42} />
+          <FluidBlob color="#FFA56B" startX="65%" startY="80%" delay={4.0}  duration={16} size={68} peakOpacity={0.40} />
         </motion.div>
       )}
     </AnimatePresence>
+  )
+}
+
+function FluidBlob({
+  color,
+  startX,
+  startY,
+  delay,
+  duration,
+  size,
+  peakOpacity,
+}: FluidBlobProps) {
+  const reduced = useReducedMotion()
+
+  return (
+    <motion.div
+      aria-hidden
+      initial={{ x: 0, y: 0, scale: 1, opacity: 0 }}
+      animate={
+        reduced
+          ? { x: 0, y: 0, scale: 1, opacity: peakOpacity * 0.85 }
+          : {
+              x: [0, 80, -40, 60, 0],
+              y: [0, -60, 40, -20, 0],
+              scale: [1, 1.18, 0.9, 1.12, 1],
+              opacity: [0, peakOpacity, peakOpacity * 0.75, peakOpacity, 0],
+            }
+      }
+      transition={
+        reduced
+          ? { duration: 0.4, ease: 'easeOut' }
+          : { duration, delay, repeat: Infinity, ease: 'easeInOut' }
+      }
+      style={{
+        position: 'absolute',
+        left: startX,
+        top: startY,
+        width: `${size}%`,
+        height: `${size}%`,
+        transform: 'translate(-50%, -50%)',
+        background: `radial-gradient(circle, ${color} 0%, ${color}00 70%)`,
+        filter: 'blur(48px)',
+        mixBlendMode: 'screen',
+        willChange: 'transform, opacity',
+      }}
+    />
   )
 }
