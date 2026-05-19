@@ -2,23 +2,22 @@ export { MagnifierProvider } from './MagnifierProvider'
 export {
   useMagnifierContext,
   useMagnifierInternal,
-  findQuickActionsTargetAtPoint,
 } from './MagnifierContext'
 export { useMagnifiable } from './useMagnifiable'
 export { useMagnifierDriver } from './useMagnifierDriver'
 export { MagnifiableFrame } from './MagnifiableFrame'
-export { QuickActions } from './QuickActions'
-export { pickQuickActionDirection, QUICK_ACTIONS_DEADZONE } from './quickActionsGeometry'
+export { ExpandableCell } from './ExpandableCell'
 export type {
-  QuickActionsVariant,
-  QuickActionsState,
-  QuickActionsProps,
-} from './QuickActions'
+  CellAction,
+  CellActionVariant,
+  CellActionTone,
+  ExpandableCellProps,
+  ExpandableCellVariant,
+  ExpandableCellState,
+} from './ExpandableCell'
 export type {
   MagnifiableTarget,
   MagnifierBehavior,
   MagnifierContextValue,
-  QuickAction,
-  QuickActionPosition,
   GestureDirection,
 } from './types'

@@ -4,7 +4,7 @@ import { useMagnifierContext } from './MagnifierContext'
 import { useMagnifiable } from './useMagnifiable'
 import { dur, easing } from '../../tokens/motion'
 import { useReducedMotion } from '../../a11y/useReducedMotion'
-import type { MagnifierBehavior, QuickAction } from './types'
+import type { MagnifierBehavior } from './types'
 
 export interface MagnifiableFrameProps {
   id: string
@@ -14,12 +14,6 @@ export interface MagnifiableFrameProps {
   index?: number
   children: ReactNode
   className?: string
-  /**
-   * Optional cardinal-quadrant menu. When set, a long-press on this
-   * cell opens the QuickActions menu instead of starting rotary mode.
-   * Tap still routes through the underlying child.
-   */
-  quickActions?: QuickAction[]
 }
 
 /**
@@ -36,13 +30,12 @@ export function MagnifiableFrame({
   index = 0,
   children,
   className,
-  quickActions,
 }: MagnifiableFrameProps) {
   const ref = useRef<HTMLDivElement>(null)
   const { lockedId, rotaryActive, lastCommittedId, lastCommittedAt } = useMagnifierContext()
   const reduced = useReducedMotion()
 
-  useMagnifiable({ id, ref, behavior, onCommit, label, quickActions })
+  useMagnifiable({ id, ref, behavior, onCommit, label })
 
   const locked = lockedId === id
   const stagger = Math.min(index * 0.02, 0.10)
