@@ -25,3 +25,8 @@ dist-ssr
 
 # Brainstorming workspace runtime state (server pid, idle markers)
 .superpowers/brainstorm/**/state/
+
+# Playwright artifacts
+test-results/
+playwright-report/
+
