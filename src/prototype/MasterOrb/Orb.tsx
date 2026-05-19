@@ -1,5 +1,6 @@
 import { motion } from 'motion/react'
 import { dur, easing } from '../../tokens/motion'
+import { useReducedMotion } from '../../a11y/useReducedMotion'
 import type { CSSProperties } from 'react'
 
 export interface OrbProps {
@@ -14,21 +15,24 @@ export interface OrbProps {
 /**
  * The Master Orb itself. Conic-gradient Siri rainbow with inset highlight
  * and shadow for soft volumetric form. Ambient breathing loop (5% scale,
- * 2 degree rotation, 6s cycle) unless `breath={false}`.
+ * 2 degree rotation, 6s cycle) unless `breath={false}` or the user has
+ * Reduce Motion enabled.
  */
 export function Orb({ size = 34, breath = true, style }: OrbProps) {
+  const reduced = useReducedMotion()
+  const animateBreath = breath && !reduced
   return (
     <motion.div
       data-testid="master-orb"
       animate={
-        breath
+        animateBreath
           ? { scale: [1, 1.05, 1], rotate: [0, 2, 0] }
           : { scale: 1, rotate: 0 }
       }
       transition={{
         duration: dur.ambientBreathe,
         ease: easing.ambientBreathe,
-        repeat: breath ? Infinity : 0,
+        repeat: animateBreath ? Infinity : 0,
       }}
       style={{
         width: size,
