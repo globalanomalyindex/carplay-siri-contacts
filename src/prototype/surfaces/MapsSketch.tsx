@@ -1,5 +1,6 @@
 import { useRef } from 'react'
 import { MagnifiableFrame, useMagnifiable } from '../Magnifier'
+import { useToast } from '../useToast'
 
 const QUICK_CONTROLS = [
   { id: 'home', label: 'Home' },
@@ -15,6 +16,7 @@ const POIS = [
 ]
 
 export function MapsSketch() {
+  const toast = useToast()
   return (
     <div className="h-full flex flex-col gap-2 p-2">
       <div className="flex gap-2">
@@ -23,7 +25,7 @@ export function MapsSketch() {
             key={qc.id}
             id={`maps-qc-${qc.id}`}
             index={i}
-            onCommit={() => alert(`Routing to ${qc.label}`)}
+            onCommit={() => toast.show(`Routing to ${qc.label}`)}
             label={`Quick control: ${qc.label}`}
           >
             <button
@@ -49,12 +51,13 @@ export function MapsSketch() {
 
 function MapCanvas() {
   const canvasRef = useRef<HTMLDivElement>(null)
+  const toast = useToast()
 
   useMagnifiable({
     id: 'map-canvas',
     ref: canvasRef,
     behavior: 'freeDrift',
-    onCommit: (p) => alert(`Drop pin at (${p?.x ?? 0}, ${p?.y ?? 0})`),
+    onCommit: (p) => toast.show(`Drop pin at (${Math.round(p?.x ?? 0)}, ${Math.round(p?.y ?? 0)})`),
     label: 'Map canvas: drop a pin',
   })
 
@@ -80,7 +83,7 @@ function MapCanvas() {
           <MagnifiableFrame
             id={`poi-${p.id}`}
             index={i + 10}
-            onCommit={() => alert(`Selected POI: ${p.label}`)}
+            onCommit={() => toast.show(`Selected POI: ${p.label}`)}
             label={p.label}
           >
             <div

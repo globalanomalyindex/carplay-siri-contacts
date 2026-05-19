@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react'
 import { MagnifiableFrame, useMagnifiable } from '../Magnifier'
+import { useToast } from '../useToast'
 
 const QUEUE = [
   { id: 'q1', title: 'Sunrise Drive', artist: 'Tycho' },
@@ -10,6 +11,7 @@ const QUEUE = [
 
 export function MusicSketch() {
   const [progress, setProgress] = useState(0.34)
+  const toast = useToast()
   return (
     <div className="h-full p-3 flex flex-col gap-3">
       <NowPlaying progress={progress} setProgress={setProgress} />
@@ -20,7 +22,7 @@ export function MusicSketch() {
             key={t.id}
             id={`queue-${t.id}`}
             index={i}
-            onCommit={() => alert(`Playing ${t.title}`)}
+            onCommit={() => toast.show(`Playing ${t.title}`)}
             label={`Play ${t.title} by ${t.artist}`}
           >
             <div
