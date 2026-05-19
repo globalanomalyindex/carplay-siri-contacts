@@ -57,10 +57,10 @@ export function Thesis() {
             A system-level affordance in the top-left negative space above
             the dock. Tap to invoke Siri. Drag to enter a context-aware
             magnifier mode that snaps to discrete components and free-drifts
-            over continuous canvases. Long-press anywhere to rescue a
-            misfired tap into the same magnifier. Cell-membrane hysteresis
-            keeps the lock honest. The orb is the only thing a driver needs
-            to learn.
+            over continuous canvases. Hold a cell directly and it expands
+            inline, surfacing its actions alongside its existing content.
+            Cell-membrane hysteresis keeps the lock honest. The orb is the
+            only thing a driver needs to learn.
           </p>
         </motion.div>
 

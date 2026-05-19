@@ -136,6 +136,32 @@ export function Process() {
           </p>
         </motion.div>
 
+        <motion.div
+          style={{ marginTop: 64 }}
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.7, ease: [0.2, 0.8, 0.3, 1.0] }}
+        >
+          <h3 className="cs-h3">Iterating on the contextual menu.</h3>
+          <p className="cs-body">
+            An early version of the hold-to-act path put four action chips in
+            the cardinal directions around the touch point: Call up, Text down,
+            and so on. It read well in isolation but broke spatial continuity.
+            The chips floated as a separate constellation, severed from the
+            row that produced them. Drivers had to re-acquire the affordance
+            visually rather than feel it grow from where their finger already
+            sat.
+          </p>
+          <p className="cs-body">
+            The current model expands the cell in place. The row grows; its
+            actions appear alongside the existing content; the rows above and
+            below shift to make room. Nothing disappears. The visual map of
+            the screen is preserved through the gesture, which matters most
+            for the users who can least afford to lose it.
+          </p>
+        </motion.div>
+
         <PullQuote cite="The curb-cut effect">
           Design for the most motor-constrained user.
           <br />

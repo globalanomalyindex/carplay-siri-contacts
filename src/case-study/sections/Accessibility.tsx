@@ -111,6 +111,15 @@ export function Accessibility() {
             The same magnifier. The accessibility path is not a mode toggle.
             It is the default behavior of the system.
           </p>
+          <p className="cs-body">
+            Holding a cell expands it inline rather than opening a separate
+            menu. Neighbors shift to make room. Nothing disappears. That
+            matters for users who navigate by spatial memory, who lose their
+            place when content reshuffles, or who cannot recover from a screen
+            that suddenly looks unfamiliar. The action chips appear right where
+            the user is already looking, attached to the cell that produced
+            them.
+          </p>
         </motion.div>
 
         {/* Beneficiary grid */}

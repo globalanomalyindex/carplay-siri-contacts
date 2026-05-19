@@ -30,11 +30,11 @@ const GESTURES: Gesture[] = [
     group: 'magnifier',
   },
   {
-    name: 'Long-press anywhere',
+    name: 'Long-press cell',
     outcome:
-      'Same magnifier, rescued in place. Layered over tap so misfires recover without learning a new pattern.',
+      'Cell expands inline. Action chips appear alongside its existing content. Adjacent cells shift to make room; nothing disappears. Drift to a chip and lift to fire.',
     threshold: '>= 250ms hold, < 8pt motion',
-    group: 'magnifier',
+    group: 'app',
   },
   {
     name: 'Drift across discrete UI',
@@ -115,7 +115,7 @@ export function GestureGrammar() {
             <PastelText variant="gradient-1">Twelve gestures.</PastelText> One vocabulary.
           </h2>
           <p className="cs-body">
-            The orb owns three. The magnifier owns seven. Apps own two. Every
+            The orb owns two. The magnifier owns six. Apps own four. Every
             threshold is published so adopters know exactly how much motion
             triggers what, and so accessibility users can predict the system
             instead of guessing.
