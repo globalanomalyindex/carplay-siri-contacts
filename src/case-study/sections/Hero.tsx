@@ -5,8 +5,9 @@ import { useReducedMotion } from '../../a11y/useReducedMotion'
 
 /**
  * Hero. Full-bleed introduction. Massive title with a pastel-gradient
- * accent on "Master". The decorative orb floats behind the title and
- * parallaxes upward on scroll.
+ * accent on "Master". The rainbow lives as ambient atmosphere behind
+ * the text (low-opacity blurred color blobs) plus a thin gradient bar
+ * above the eyebrow line. No competing object on the right.
  */
 export function Hero() {
   const ref = useRef<HTMLElement>(null)
@@ -15,27 +16,49 @@ export function Hero() {
     target: ref,
     offset: ['start start', 'end start'],
   })
-  const orbY = useTransform(scrollYProgress, [0, 1], reduced ? [0, 0] : [0, -80])
-  const orbScale = useTransform(scrollYProgress, [0, 1], reduced ? [1, 1] : [1, 0.94])
-  const orbOpacity = useTransform(scrollYProgress, [0, 1], [1, 0.7])
+  const auraY = useTransform(scrollYProgress, [0, 1], reduced ? [0, 0] : [0, -60])
+  const auraOpacity = useTransform(scrollYProgress, [0, 1], [1, 0.55])
+
+  // Blob positions and colors form a soft rainbow framing the headline.
+  // Heavy blur + low opacity keeps text fully legible.
+  const blobs = [
+    { color: '#FF6E7F', left: '8%',  top: '18%' },
+    { color: '#FFD86B', left: '78%', top: '14%' },
+    { color: '#6BFFD1', left: '90%', top: '70%' },
+    { color: '#6B9AFF', left: '12%', top: '78%' },
+    { color: '#B573FF', left: '50%', top: '50%' },
+  ]
 
   return (
     <header ref={ref} className="cs-section" style={{ paddingTop: 96, position: 'relative', overflow: 'hidden' }}>
-      {/* Decorative orb floats to the right of the headline, never behind it */}
+      {/* Ambient rainbow atmosphere. Sits behind text, never competes. */}
       <motion.div
         aria-hidden="true"
-        className="hero-orb-anchor"
-        style={{
-          y: orbY,
-          scale: orbScale,
-          opacity: orbOpacity,
-        }}
+        className="hero-aura"
+        style={{ y: auraY, opacity: auraOpacity }}
       >
-        <motion.div
-          className="hero-orb"
-          animate={reduced ? undefined : { scale: [1, 1.04, 1], rotate: [0, 4, 0] }}
-          transition={{ duration: 7, repeat: Infinity, ease: [0.45, 0.05, 0.55, 0.95] }}
-        />
+        {blobs.map((b, i) => (
+          <motion.span
+            key={i}
+            className="hero-aura-blob"
+            style={{ background: b.color, left: b.left, top: b.top }}
+            animate={
+              reduced
+                ? undefined
+                : {
+                    x: [0, 24, -16, 0],
+                    y: [0, -18, 12, 0],
+                    scale: [1, 1.12, 0.94, 1],
+                  }
+            }
+            transition={{
+              duration: 11 + i * 0.9,
+              repeat: Infinity,
+              ease: 'easeInOut',
+              delay: i * 0.45,
+            }}
+          />
+        ))}
       </motion.div>
 
       <div className="cs-container" style={{ position: 'relative', zIndex: 1 }}>
@@ -43,7 +66,10 @@ export function Hero() {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: [0.2, 0.8, 0.3, 1.0] }}
+          style={{ display: 'flex', alignItems: 'center', gap: 14 }}
         >
+          {/* Thin rainbow tech-spec bar */}
+          <span aria-hidden="true" className="hero-spec-bar" />
           <p
             style={{
               fontSize: 13,

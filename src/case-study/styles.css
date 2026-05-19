@@ -257,66 +257,57 @@
   color: var(--cs-text);
 }
 
-/* Hero orb anchor. Positions the orb in the right margin of the hero,
-   away from the headline. On narrow viewports it tucks below the text. */
-.hero-orb-anchor {
+/* Hero rainbow atmosphere. A handful of soft color blobs blurred to a
+   wash so the rainbow lives behind the text without competing with it. */
+.hero-aura {
   position: absolute;
-  z-index: 0;
+  inset: 0;
   pointer-events: none;
-  right: max(-3vw, -56px);
-  top: 50%;
-  transform: translateY(-50%);
+  z-index: 0;
+  overflow: hidden;
 }
 
-@media (max-width: 880px) {
-  .hero-orb-anchor {
-    position: relative;
-    top: auto;
-    right: auto;
-    transform: none;
-    display: flex;
-    justify-content: center;
-    margin-top: 56px;
+.hero-aura-blob {
+  position: absolute;
+  display: block;
+  width: clamp(280px, 32vw, 460px);
+  height: clamp(280px, 32vw, 460px);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  filter: blur(80px);
+  opacity: 0.22;
+  mix-blend-mode: multiply;
+  will-change: transform;
+}
+
+@media (prefers-color-scheme: dark) {
+  .hero-aura-blob {
+    mix-blend-mode: screen;
+    opacity: 0.28;
   }
 }
 
-/* Hero gradient orb stub for the case-study hero (decorative, no interaction) */
-.hero-orb {
-  position: relative;
-  width: clamp(140px, 22vw, 260px);
-  height: clamp(140px, 22vw, 260px);
-  border-radius: 50%;
-  background: conic-gradient(
-    from 200deg,
+@media (prefers-reduced-motion: reduce) {
+  .hero-aura-blob { animation: none; }
+}
+
+/* Thin rainbow tech-spec bar above the eyebrow line. Hairline width,
+   pastel gradient, soft saturation. */
+.hero-spec-bar {
+  display: inline-block;
+  width: 72px;
+  height: 3px;
+  border-radius: 2px;
+  background: linear-gradient(
+    90deg,
     #FF6E7F,
     #FFD86B,
     #6BFFD1,
     #6B9AFF,
-    #B573FF,
-    #FF6E7F
+    #B573FF
   );
-  box-shadow:
-    0 30px 80px -20px rgba(120, 100, 200, 0.35),
-    inset 0 12px 24px rgba(255, 255, 255, 0.30),
-    inset 0 -12px 24px rgba(0, 0, 0, 0.18);
-  filter: saturate(1.05);
-}
-
-.hero-orb::after {
-  content: '';
-  position: absolute;
-  inset: -28%;
-  border-radius: 50%;
-  background: radial-gradient(
-    closest-side,
-    rgba(180, 150, 255, 0.32),
-    rgba(180, 150, 255, 0) 70%
-  );
-  z-index: -1;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .hero-orb { filter: none; }
+  flex-shrink: 0;
+  opacity: 0.85;
 }
 
 /* Top navigation */
