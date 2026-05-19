@@ -30,3 +30,22 @@ describe('MasterOrb', () => {
     })
   })
 })
+
+describe('MasterOrb drag', () => {
+  it('enters rotary mode on drag past threshold', () => {
+    render(<MasterOrb />)
+    const hit = screen.getByTestId('master-orb-hit')
+    fireEvent.pointerDown(hit, { pointerId: 1, clientX: 10, clientY: 10 })
+    fireEvent.pointerMove(hit, { pointerId: 1, clientX: 30, clientY: 10 })
+    expect(screen.queryByTestId('master-orb')).not.toBeInTheDocument()
+  })
+
+  it('returns to idle on pointer up in rotary mode', async () => {
+    render(<MasterOrb />)
+    const hit = screen.getByTestId('master-orb-hit')
+    fireEvent.pointerDown(hit, { pointerId: 1, clientX: 10, clientY: 10 })
+    fireEvent.pointerMove(hit, { pointerId: 1, clientX: 30, clientY: 10 })
+    fireEvent.pointerUp(hit, { pointerId: 1, clientX: 30, clientY: 10 })
+    expect(screen.getByTestId('master-orb')).toBeInTheDocument()
+  })
+})

@@ -1,34 +1,54 @@
-import { useCallback, useRef } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { useMachine } from '@xstate/react'
 import { orbMachine } from './orbMachine'
 import { Orb } from './Orb'
 import { Aura } from './Aura'
+import { Dissipation } from './Dissipation'
 import { LiquidGlassFrame } from '../chrome/LiquidGlassFrame'
 import { space } from '../../tokens/spatial'
 
-/**
- * The MasterOrb: state machine + Orb visual + Aura + LiquidGlassFrame.
- * Handles tap and swipe-down on its own hit area. Drag handling (rotary
- * entry) is added in a later task. Long-press-anywhere is wired separately
- * via the system-level recognizer in Phase 6.
- */
 export function MasterOrb() {
   const [snapshot, send] = useMachine(orbMachine)
   const downStartRef = useRef<{ x: number; y: number; t: number } | null>(null)
+  const draggingRef = useRef(false)
+  const [dissipateCenter, setDissipateCenter] = useState<{ x: number; y: number } | null>(null)
 
   const onPointerDown = useCallback((e: React.PointerEvent) => {
     downStartRef.current = { x: e.clientX, y: e.clientY, t: performance.now() }
+    draggingRef.current = false
     const el = e.currentTarget as HTMLElement
-    // jsdom does not implement setPointerCapture; guard the call so tests pass.
     if (typeof el.setPointerCapture === 'function') {
-      el.setPointerCapture(e.pointerId)
+      try { el.setPointerCapture(e.pointerId) } catch { /* jsdom */ }
     }
   }, [])
+
+  const onPointerMove = useCallback((e: React.PointerEvent) => {
+    const start = downStartRef.current
+    if (!start || draggingRef.current) return
+
+    const dist = Math.hypot(e.clientX - start.x, e.clientY - start.y)
+    if (dist >= space.thresholdDragDistPx && snapshot.value === 'idle') {
+      draggingRef.current = true
+      const rect = (e.currentTarget as HTMLElement).getBoundingClientRect()
+      setDissipateCenter({
+        x: rect.left + rect.width / 2,
+        y: rect.top + rect.height / 2,
+      })
+      send({ type: 'DRAG_START' })
+    }
+  }, [send, snapshot.value])
 
   const onPointerUp = useCallback((e: React.PointerEvent) => {
     const start = downStartRef.current
     downStartRef.current = null
     if (!start) return
+
+    if (draggingRef.current) {
+      draggingRef.current = false
+      setDissipateCenter(null)
+      send({ type: 'ABORT' })
+      return
+    }
 
     const dx = e.clientX - start.x
     const dy = e.clientY - start.y
@@ -47,26 +67,35 @@ export function MasterOrb() {
   }, [send])
 
   const state = snapshot.value as 'idle' | 'siriActive' | 'rotary'
+  const inRotary = state === 'rotary'
 
   return (
-    <div
-      data-testid="master-orb-hit"
-      onPointerDown={onPointerDown}
-      onPointerUp={onPointerUp}
-      onPointerCancel={() => { downStartRef.current = null }}
-      style={{
-        cursor: 'pointer',
-        touchAction: 'none',
-      }}
-    >
-      <LiquidGlassFrame>
-        <div style={{ position: 'relative' }}>
-          <Aura active={state === 'siriActive'} size={space.orb} />
-          {state !== 'rotary' && (
-            <Orb breath={state === 'idle'} />
-          )}
-        </div>
-      </LiquidGlassFrame>
-    </div>
+    <>
+      <div
+        data-testid="master-orb-hit"
+        data-state={state}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+        onPointerCancel={() => {
+          draggingRef.current = false
+          downStartRef.current = null
+          setDissipateCenter(null)
+          if (snapshot.value === 'rotary') send({ type: 'ABORT' })
+        }}
+        style={{ cursor: 'pointer', touchAction: 'none' }}
+      >
+        <LiquidGlassFrame>
+          <div style={{ position: 'relative' }}>
+            <Aura active={state === 'siriActive'} size={space.orb} />
+            {!inRotary && <Orb breath={state === 'idle'} />}
+          </div>
+        </LiquidGlassFrame>
+      </div>
+      <Dissipation
+        active={inRotary && dissipateCenter !== null}
+        center={dissipateCenter ?? { x: 0, y: 0 }}
+      />
+    </>
   )
 }
