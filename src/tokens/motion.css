@@ -1,0 +1,31 @@
+/* Motion tokens: named easing curves and durations.
+   Every animation in the system references these by name. */
+
+:root {
+  /* Easing curves (cubic-bezier values from spec section 6.1) */
+  --ease-liquid-out:     cubic-bezier(0.08, 0.82, 0.17, 1.00);
+  --ease-liquid-in:      cubic-bezier(0.83, 0.00, 0.92, 0.18);
+  --ease-magnify-lock:   cubic-bezier(0.20, 0.90, 0.30, 1.00);
+  --ease-ambient-breathe:cubic-bezier(0.45, 0.05, 0.55, 0.95);
+  --ease-snap-fire:      cubic-bezier(0.30, 0.00, 0.20, 1.00);
+  --ease-frame-emerge:   cubic-bezier(0.20, 0.80, 0.30, 1.00);
+  --ease-aura-travel:    cubic-bezier(0.40, 0.00, 0.20, 1.00);
+  --ease-cell-membrane:  cubic-bezier(0.60, 0.00, 0.80, 0.30);
+
+  /* Spring config used by Motion. Values mirrored in motion.ts. */
+  --spring-glass-flex-damping:   0.62;
+  --spring-glass-flex-stiffness: 240;
+
+  /* Durations */
+  --dur-dissipate:            180ms;
+  --dur-reform:               220ms;
+  --dur-magnify:              240ms;
+  --dur-flash:                320ms;
+  --dur-frame-emerge:         180ms;
+  --dur-frame-emerge-stagger:  20ms;
+  --dur-frame-emerge-cap:     100ms;
+  --dur-aura-travel:          140ms;
+  --dur-long-press-threshold: 250ms;
+  --dur-aura-cycle:             3s;
+  --dur-ambient-breathe:        6s;
+}
