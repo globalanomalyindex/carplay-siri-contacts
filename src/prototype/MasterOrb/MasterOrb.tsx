@@ -6,11 +6,13 @@ import { Aura } from './Aura'
 import { Dissipation } from './Dissipation'
 import { LiquidGlassFrame } from '../chrome/LiquidGlassFrame'
 import { useMagnifierDriver } from '../Magnifier/useMagnifierDriver'
+import { useSettings } from '../../a11y/SettingsContext'
 import { space } from '../../tokens/spatial'
 
 export function MasterOrb() {
   const [snapshot, send] = useMachine(orbMachine)
   const driver = useMagnifierDriver()
+  const settings = useSettings()
 
   const downStartRef = useRef<{ x: number; y: number; t: number } | null>(null)
   const draggingRef = useRef(false)
@@ -103,7 +105,7 @@ export function MasterOrb() {
         }}
         style={{ cursor: 'pointer', touchAction: 'none' }}
       >
-        <LiquidGlassFrame>
+        <LiquidGlassFrame bright={settings.highContrast}>
           <div style={{ position: 'relative' }}>
             <Aura active={state === 'siriActive'} size={space.orb} />
             {!inRotary && <Orb breath={state === 'idle'} />}
