@@ -1,1 +1,4 @@
 @import "tailwindcss";
+@import "./tokens/motion.css";
+@import "./tokens/color.css";
+@import "./tokens/spatial.css";

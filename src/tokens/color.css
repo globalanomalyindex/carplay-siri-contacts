@@ -1,0 +1,52 @@
+/* Color tokens: Siri palette, liquid glass, semantic actions.
+   Values from spec section 4.3 and 9. */
+
+:root {
+  /* Orb conic gradient stops (Siri rainbow palette) */
+  --orb-stop-1: #FF6E7F;
+  --orb-stop-2: #FFD86B;
+  --orb-stop-3: #6BFFD1;
+  --orb-stop-4: #6B9AFF;
+  --orb-stop-5: #B573FF;
+  --orb-gradient: conic-gradient(
+    from 200deg,
+    var(--orb-stop-1),
+    var(--orb-stop-2),
+    var(--orb-stop-3),
+    var(--orb-stop-4),
+    var(--orb-stop-5),
+    var(--orb-stop-1)
+  );
+
+  /* Liquid glass */
+  --glass-fill:          rgba(255, 255, 255, 0.06);
+  --glass-border:        rgba(255, 255, 255, 0.22);
+  --glass-border-bright: rgba(255, 255, 255, 0.45);
+  --glass-highlight:     rgba(255, 255, 255, 0.30);
+  --glass-shadow:        rgba(0, 0, 0, 0.20);
+  --glass-glow:          rgba(120, 220, 240, 0.18);
+
+  /* Orb halo / aura */
+  --orb-halo: rgba(180, 150, 255, 0.55);
+
+  /* Semantic actions (iOS system colors) */
+  --action-call: #34C759;
+  --action-text: #0A84FF;
+  --action-dismiss: #FF453A;
+
+  /* CarPlay background */
+  --carplay-bg-from: #1a3142;
+  --carplay-bg-to:   #1d3540;
+  --carplay-bg-mid:  #2d4a52;
+  --carplay-dock-bg: rgba(0, 0, 0, 0.35);
+
+  /* Text */
+  --text-primary:   rgba(255, 255, 255, 0.92);
+  --text-secondary: rgba(255, 255, 255, 0.70);
+  --text-tertiary:  rgba(255, 255, 255, 0.45);
+
+  /* Accents */
+  --accent-cyan:   rgba(120, 220, 240, 0.85);
+  --accent-amber:  rgba(255, 180, 120, 0.85);
+  --accent-green:  rgba(140, 230, 160, 0.85);
+}

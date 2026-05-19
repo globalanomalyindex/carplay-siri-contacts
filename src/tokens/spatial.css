@@ -1,0 +1,39 @@
+/* Spatial tokens: sizes, radii, thresholds.
+   Values from spec section 4.3, 5.3, 6. */
+
+:root {
+  /* Orb + glass */
+  --orb-size:        34px;
+  --glass-size:      46px;
+  --glass-radius:    14px;
+  --glass-flex-scale: 1.08;
+
+  /* Magnifier */
+  --magnify-scale:        1.25;
+  --lock-radius:          40px;
+  --lock-radius-resistive:50px;
+
+  /* Hysteresis: lock holds until finger is 60 percent past the next center */
+  --membrane-hysteresis-fraction: 0.60;
+
+  /* Thresholds */
+  --threshold-tap-time:      250ms;
+  --threshold-drag-dist:       8px;
+  --threshold-swipe-cancel:   60px;
+  --threshold-swipe-row:      40px;
+  --threshold-swipe-tab:      60px;
+
+  /* Cancel target / Siri active aura */
+  --aura-blur:              22px;
+
+  /* CarPlay frame */
+  --dock-width:    56px;
+  --dock-gap:       6px;
+  --dock-icon:     36px;
+
+  /* Phone app */
+  --tab-pill-height: 36px;
+  --tab-segment-pad: 12px;
+  --row-height:      44px;
+  --row-height-driving: 56px;
+}
