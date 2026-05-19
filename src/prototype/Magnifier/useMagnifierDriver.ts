@@ -18,7 +18,13 @@ export interface MagnifierDriver {
 }
 
 export function useMagnifierDriver(): MagnifierDriver {
-  const { getTargets, setLockedId, setRotaryActive, setGestureDirection } = useMagnifierInternal()
+  const {
+    getTargets,
+    setLockedId,
+    setRotaryActive,
+    setGestureDirection,
+    recordCommit,
+  } = useMagnifierInternal()
   const currentLockRef = useRef<string | null>(null)
   const currentFreeRef = useRef<string | null>(null)
   const recentSamplesRef = useRef<Point[]>([])
@@ -113,6 +119,7 @@ export function useMagnifierDriver(): MagnifierDriver {
       move(p)
       const snapId = currentLockRef.current
       const freeId = currentFreeRef.current
+      const committedId = snapId ?? freeId
       if (snapId) {
         const target = getTargets().get(snapId)
         if (target) target.onCommit({ x: p.x, y: p.y })
@@ -120,15 +127,16 @@ export function useMagnifierDriver(): MagnifierDriver {
         const target = getTargets().get(freeId)
         if (target) target.onCommit({ x: p.x, y: p.y })
       }
+      if (committedId) recordCommit(committedId)
       currentLockRef.current = null
       currentFreeRef.current = null
       recentSamplesRef.current = []
       setLockedId(null)
       setRotaryActive(false)
       setGestureDirection('idle')
-      return snapId ?? freeId
+      return committedId
     },
-    [move, getTargets, setLockedId, setRotaryActive, setGestureDirection],
+    [move, getTargets, setLockedId, setRotaryActive, setGestureDirection, recordCommit],
   )
 
   useEffect(() => {

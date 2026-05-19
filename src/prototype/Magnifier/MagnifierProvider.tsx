@@ -15,6 +15,9 @@ export function MagnifierProvider({ children }: MagnifierProviderProps) {
   const [lockedId, setLockedId] = useState<string | null>(null)
   const [rotaryActive, setRotaryActive] = useState(false)
   const [gestureDirection, setGestureDirection] = useState<GestureDirection>('idle')
+  const [lastCommit, setLastCommit] = useState<{ id: string | null; at: number }>(
+    { id: null, at: 0 },
+  )
 
   const register = useCallback((t: MagnifiableTarget) => {
     targetsRef.current.set(t.id, t)
@@ -23,9 +26,20 @@ export function MagnifierProvider({ children }: MagnifierProviderProps) {
     }
   }, [])
 
+  const recordCommit = useCallback((id: string) => {
+    setLastCommit({ id, at: Date.now() })
+  }, [])
+
   const publicValue = useMemo<MagnifierContextValue>(
-    () => ({ register, lockedId, rotaryActive, gestureDirection }),
-    [register, lockedId, rotaryActive, gestureDirection],
+    () => ({
+      register,
+      lockedId,
+      rotaryActive,
+      gestureDirection,
+      lastCommittedId: lastCommit.id,
+      lastCommittedAt: lastCommit.at,
+    }),
+    [register, lockedId, rotaryActive, gestureDirection, lastCommit],
   )
 
   const internalValue = useMemo<MagnifierInternalAPI>(
@@ -34,8 +48,9 @@ export function MagnifierProvider({ children }: MagnifierProviderProps) {
       setLockedId,
       setRotaryActive,
       setGestureDirection,
+      recordCommit,
     }),
-    [],
+    [recordCommit],
   )
 
   return (

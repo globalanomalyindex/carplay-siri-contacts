@@ -22,4 +22,12 @@ export interface MagnifierContextValue {
   rotaryActive: boolean
   /** Classification of the recent pointer trail; 'idle' while idle. */
   gestureDirection: GestureDirection
+  /**
+   * Id of the most recently committed target, or null if none yet. Paired
+   * with `lastCommittedAt` so consumers can drive a one-shot success flash
+   * keyed on the timestamp (re-committing the same id retriggers the flash).
+   */
+  lastCommittedId: string | null
+  /** Monotonic timestamp (Date.now()) when the last commit fired. */
+  lastCommittedAt: number
 }

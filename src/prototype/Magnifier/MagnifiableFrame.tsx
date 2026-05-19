@@ -1,8 +1,9 @@
-import { motion } from 'motion/react'
+import { AnimatePresence, motion } from 'motion/react'
 import { useRef, type ReactNode } from 'react'
 import { useMagnifierContext } from './MagnifierContext'
 import { useMagnifiable } from './useMagnifiable'
 import { dur, easing } from '../../tokens/motion'
+import { useReducedMotion } from '../../a11y/useReducedMotion'
 import type { MagnifierBehavior } from './types'
 
 export interface MagnifiableFrameProps {
@@ -15,6 +16,12 @@ export interface MagnifiableFrameProps {
   className?: string
 }
 
+/**
+ * Lifetime of the on-cell success flash. Slightly longer than the toast's
+ * appearance so the eye reads "this is the thing that just fired".
+ */
+const COMMIT_FLASH_MS = 360
+
 export function MagnifiableFrame({
   id,
   onCommit,
@@ -25,12 +32,19 @@ export function MagnifiableFrame({
   className,
 }: MagnifiableFrameProps) {
   const ref = useRef<HTMLDivElement>(null)
-  const { lockedId, rotaryActive } = useMagnifierContext()
+  const { lockedId, rotaryActive, lastCommittedId, lastCommittedAt } = useMagnifierContext()
+  const reduced = useReducedMotion()
 
   useMagnifiable({ id, ref, behavior, onCommit, label })
 
   const locked = lockedId === id
   const stagger = Math.min(index * 0.02, 0.10)
+
+  // True for ~360ms after this frame's id was committed. AnimatePresence is
+  // keyed on the timestamp so a re-commit re-mounts the overlay and the
+  // flash plays again rather than skipping while the prior overlay sits.
+  const flashActive =
+    lastCommittedId === id && Date.now() - lastCommittedAt < COMMIT_FLASH_MS
 
   return (
     <motion.div
@@ -39,6 +53,7 @@ export function MagnifiableFrame({
       data-variant="magnifiable-frame"
       data-state={locked ? 'locked' : rotaryActive ? 'active' : 'idle'}
       data-locked={locked || undefined}
+      data-flashing={flashActive || undefined}
       animate={{
         boxShadow: rotaryActive
           ? locked
@@ -76,6 +91,41 @@ export function MagnifiableFrame({
       className={className}
     >
       {children}
+      <AnimatePresence>
+        {flashActive && (
+          <motion.div
+            key={lastCommittedAt}
+            data-testid={`commit-flash-${id}`}
+            data-variant="commit-flash"
+            aria-hidden
+            initial={{ opacity: 0, scale: 1 }}
+            // Scale pulse 1 -> 1.06 -> 1 paired with a green wash + glow.
+            // Reduced motion: opacity-only fade, no scale.
+            animate={
+              reduced
+                ? { opacity: [0, 0.35, 0], scale: 1 }
+                : { opacity: [0, 0.45, 0], scale: [1, 1.06, 1] }
+            }
+            exit={{ opacity: 0 }}
+            transition={{
+              duration: COMMIT_FLASH_MS / 1000,
+              ease: easing.snapFire,
+            }}
+            style={{
+              position: 'absolute',
+              inset: 0,
+              borderRadius: 8,
+              pointerEvents: 'none',
+              background: 'var(--action-call, #34C759)',
+              boxShadow:
+                '0 0 32px var(--action-call, #34C759),' +
+                ' inset 0 0 0 2px rgba(255, 255, 255, 0.45)',
+              mixBlendMode: 'screen',
+              zIndex: 1,
+            }}
+          />
+        )}
+      </AnimatePresence>
     </motion.div>
   )
 }
