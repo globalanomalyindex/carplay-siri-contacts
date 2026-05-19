@@ -1,10 +1,10 @@
 import { AnimatePresence, motion } from 'motion/react'
-import { useRef, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { useMagnifierContext } from './MagnifierContext'
 import { useMagnifiable } from './useMagnifiable'
 import { dur, easing } from '../../tokens/motion'
 import { useReducedMotion } from '../../a11y/useReducedMotion'
-import type { MagnifierBehavior } from './types'
+import type { MagnifierBehavior, QuickAction } from './types'
 
 export interface MagnifiableFrameProps {
   id: string
@@ -14,6 +14,12 @@ export interface MagnifiableFrameProps {
   index?: number
   children: ReactNode
   className?: string
+  /**
+   * Optional cardinal-quadrant menu. When set, a long-press on this
+   * cell opens the QuickActions menu instead of starting rotary mode.
+   * Tap still routes through the underlying child.
+   */
+  quickActions?: QuickAction[]
 }
 
 /**
@@ -30,21 +36,33 @@ export function MagnifiableFrame({
   index = 0,
   children,
   className,
+  quickActions,
 }: MagnifiableFrameProps) {
   const ref = useRef<HTMLDivElement>(null)
   const { lockedId, rotaryActive, lastCommittedId, lastCommittedAt } = useMagnifierContext()
   const reduced = useReducedMotion()
 
-  useMagnifiable({ id, ref, behavior, onCommit, label })
+  useMagnifiable({ id, ref, behavior, onCommit, label, quickActions })
 
   const locked = lockedId === id
   const stagger = Math.min(index * 0.02, 0.10)
 
-  // True for ~360ms after this frame's id was committed. AnimatePresence is
-  // keyed on the timestamp so a re-commit re-mounts the overlay and the
-  // flash plays again rather than skipping while the prior overlay sits.
-  const flashActive =
-    lastCommittedId === id && Date.now() - lastCommittedAt < COMMIT_FLASH_MS
+  // Track the most recently SHOWN commit timestamp. The render derives
+  // `flashActive` from the published timestamp vs. the dismissed-at ref;
+  // a useEffect schedules a re-render after COMMIT_FLASH_MS to clear it.
+  // This avoids the "setState in effect" warning while still being pure
+  // during render. AnimatePresence keyed on lastCommittedAt re-mounts the
+  // overlay on every commit so the flash retriggers.
+  const [dismissedAt, setDismissedAt] = useState(0)
+  const isOurCommit = lastCommittedId === id && lastCommittedAt > 0
+  const flashActive = isOurCommit && lastCommittedAt > dismissedAt
+  useEffect(() => {
+    if (!isOurCommit) return
+    if (lastCommittedAt <= dismissedAt) return
+    const at = lastCommittedAt
+    const timer = window.setTimeout(() => setDismissedAt(at), COMMIT_FLASH_MS)
+    return () => window.clearTimeout(timer)
+  }, [isOurCommit, lastCommittedAt, dismissedAt])
 
   return (
     <motion.div

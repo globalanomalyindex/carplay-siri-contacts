@@ -24,6 +24,35 @@ export interface MagnifierInternalAPI {
   recordCommit: (id: string) => void
 }
 
+/**
+ * Find the smallest registered target whose bounding rect contains the
+ * point AND which carries a quickActions list. Returns null when no such
+ * target sits under the point. Used by the long-press path to decide
+ * whether to open the contextual menu vs. start rotary mode.
+ */
+export function findQuickActionsTargetAtPoint(
+  targets: Map<string, MagnifiableTarget>,
+  point: { x: number; y: number },
+): MagnifiableTarget | null {
+  let best: { target: MagnifiableTarget; area: number } | null = null
+  for (const [, t] of targets) {
+    if (!t.quickActions || t.quickActions.length === 0) continue
+    const el = t.ref.current
+    if (!el) continue
+    const r = el.getBoundingClientRect()
+    if (
+      point.x >= r.left &&
+      point.x <= r.right &&
+      point.y >= r.top &&
+      point.y <= r.bottom
+    ) {
+      const area = r.width * r.height
+      if (!best || area < best.area) best = { target: t, area }
+    }
+  }
+  return best ? best.target : null
+}
+
 export const InternalContext = createContext<MagnifierInternalAPI | null>(null)
 
 export function useMagnifierInternal(): MagnifierInternalAPI {

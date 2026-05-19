@@ -1,5 +1,5 @@
-import { useCallback, useRef, useState } from 'react'
-import { MagnifiableFrame } from '../Magnifier'
+import { useCallback, useMemo, useRef, useState } from 'react'
+import { MagnifiableFrame, type QuickAction } from '../Magnifier'
 import { space } from '../../tokens/spatial'
 
 /** Render variant of the ContactRow. Used by Figma Code Connect. */
@@ -59,12 +59,35 @@ export function ContactRow({ id, name, avatar, onCall, onText, index = 0 }: Cont
   const callRevealed = swipeOffset > 0
   const textRevealed = swipeOffset < 0
 
+  // Quick-action menu shown on long-press. Memoized so identity is stable
+  // and useMagnifiable's effect does not re-register on every render.
+  const quickActions = useMemo<QuickAction[]>(
+    () => [
+      {
+        id: 'call',
+        label: 'Call',
+        position: 'up',
+        icon: <span aria-hidden>C</span>,
+        onAction: onCall,
+      },
+      {
+        id: 'text',
+        label: 'Text',
+        position: 'down',
+        icon: <span aria-hidden>T</span>,
+        onAction: onText,
+      },
+    ],
+    [onCall, onText],
+  )
+
   return (
     <MagnifiableFrame
       id={`contact-row-${id}`}
       index={index}
       onCommit={onCall}
       label={`Call ${name}`}
+      quickActions={quickActions}
     >
       <div
         data-testid={`contact-row-${id}`}

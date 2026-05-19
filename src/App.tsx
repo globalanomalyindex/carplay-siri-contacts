@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { CarPlayChrome } from './prototype/chrome/CarPlayChrome'
 import { DockSwitcher, type DockSurface } from './prototype/chrome/DockSwitcher'
 import { ScreenEdgeAura } from './prototype/chrome/ScreenEdgeAura'
@@ -8,7 +8,14 @@ import { OrbControlProvider } from './prototype/MasterOrb/OrbControlProvider'
 import { useOrbControl } from './prototype/MasterOrb/OrbControlContext'
 import { useGlobalSiriDismiss } from './prototype/MasterOrb/useGlobalSiriDismiss'
 import { useSwipeOffScreenAbort } from './prototype/MasterOrb/useSwipeOffScreenAbort'
-import { MagnifierProvider, useMagnifierDriver } from './prototype/Magnifier'
+import {
+  MagnifierProvider,
+  QuickActions,
+  findQuickActionsTargetAtPoint,
+  useMagnifierDriver,
+  useMagnifierInternal,
+  type MagnifiableTarget,
+} from './prototype/Magnifier'
 import { useLongPressAnywhere } from './prototype/Magnifier/useLongPressAnywhere'
 import { useLongPressRotarySession } from './prototype/Magnifier/useLongPressRotarySession'
 import { useAccessibilitySettings } from './a11y/useAccessibilitySettings'
@@ -83,14 +90,43 @@ function App() {
  * context. Long-press-anywhere is always on (default tap-rescue). Global Siri
  * dismiss listens for taps outside the orb when Siri is active. Swipe-off-
  * screen aborts rotary if the pointer leaves the CarPlay screen bounds.
+ *
+ * Long-press triage: when the touch point sits over a magnifiable target
+ * that carries `quickActions`, the contextual menu opens instead of rotary.
+ * Otherwise the rotary path runs as before.
  */
 function ShellWiring({ screenRef }: { screenRef: React.RefObject<HTMLDivElement | null> }) {
   const driver = useMagnifierDriver()
-  useLongPressAnywhere({ enabled: true, onLongPress: () => driver.start() })
+  const { getTargets } = useMagnifierInternal()
+  const [quickActions, setQuickActions] = useState<{
+    target: MagnifiableTarget
+    anchor: { x: number; y: number }
+  } | null>(null)
+
+  const onLongPress = useCallback(
+    (p: { x: number; y: number }) => {
+      const target = findQuickActionsTargetAtPoint(getTargets(), p)
+      if (target) {
+        setQuickActions({ target, anchor: p })
+      } else {
+        driver.start()
+      }
+    },
+    [driver, getTargets],
+  )
+
+  useLongPressAnywhere({ enabled: !quickActions, onLongPress })
   useLongPressRotarySession()
   useGlobalSiriDismiss()
   useSwipeOffScreenAbort({ screenRef })
-  return null
+
+  return quickActions ? (
+    <QuickActions
+      anchor={quickActions.anchor}
+      actions={quickActions.target.quickActions!}
+      onClose={() => setQuickActions(null)}
+    />
+  ) : null
 }
 
 /**
