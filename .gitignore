@@ -31,3 +31,6 @@ test-results/
 playwright-report/
 
 .playwright-mcp/
+
+# Visual verification screenshots written to repo root during prototype QA
+/prototype-*.png
