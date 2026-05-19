@@ -1,7 +1,13 @@
 import { useMemo } from 'react'
 import { motion } from 'motion/react'
-import { dur, easing } from '../../tokens/motion'
+import { easing } from '../../tokens/motion'
 import { useReducedMotion } from '../../a11y/useReducedMotion'
+
+/**
+ * Particle flight duration in seconds. Matched to the orb's spring
+ * reform so particles land into the orb as it reaches full scale.
+ */
+const PARTICLE_DURATION = 0.20
 
 export interface CoalesceProps {
   active: boolean
@@ -70,7 +76,7 @@ export function Coalesce({ active, from, to, onComplete }: CoalesceProps) {
             scale: [0.4, 1, 0.6],
           }}
           transition={{
-            duration: dur.reform,
+            duration: PARTICLE_DURATION,
             ease: easing.liquidIn,
           }}
           onAnimationComplete={i === 0 ? onComplete : undefined}

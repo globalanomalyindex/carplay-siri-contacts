@@ -10,7 +10,6 @@ import { LiquidGlassFrame } from '../chrome/LiquidGlassFrame'
 import { useMagnifierDriver } from '../Magnifier/useMagnifierDriver'
 import { useSettings } from '../../a11y/SettingsContext'
 import { OrbControlContext } from './OrbControlContext'
-import { dur, easing } from '../../tokens/motion'
 import { space } from '../../tokens/spatial'
 
 export function MasterOrb() {
@@ -166,9 +165,18 @@ export function MasterOrb() {
             {!inRotary && (
               <motion.div
                 key={reforming ? 'reforming' : 'solid'}
-                initial={reforming ? { opacity: 0, scale: 0.4 } : false}
+                // Tight spring reform: 0.6 -> 1.0 scale, opacity 0 -> 1.
+                // Targets ~180ms of perceived motion so the orb is back
+                // before the user's eye looks for it. Stiff + low mass
+                // so it lands fast without overshoot.
+                initial={reforming ? { opacity: 0, scale: 0.6 } : false}
                 animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: dur.reform, ease: easing.liquidIn }}
+                transition={{
+                  type: 'spring',
+                  stiffness: 380,
+                  damping: 30,
+                  mass: 0.4,
+                }}
                 style={{ display: 'flex' }}
               >
                 <Orb breath={state === 'idle' && !reforming} />
