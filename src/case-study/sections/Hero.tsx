@@ -19,14 +19,36 @@ export function Hero() {
   const auraY = useTransform(scrollYProgress, [0, 1], reduced ? [0, 0] : [0, -60])
   const auraOpacity = useTransform(scrollYProgress, [0, 1], [1, 0.55])
 
-  // Blob positions and colors form a soft rainbow framing the headline.
-  // Heavy blur + low opacity keeps text fully legible.
+  // Blob positions and motion paths form a soft rainbow that drifts
+  // behind the headline. Positions stay inset from the section edges so
+  // the soft falloff of each blob never clips against the section's
+  // overflow boundary.
   const blobs = [
-    { color: '#FF6E7F', left: '8%',  top: '18%' },
-    { color: '#FFD86B', left: '78%', top: '14%' },
-    { color: '#6BFFD1', left: '90%', top: '70%' },
-    { color: '#6B9AFF', left: '12%', top: '78%' },
-    { color: '#B573FF', left: '50%', top: '50%' },
+    {
+      color: '#FF6E7F',
+      x: ['22%', '28%', '18%', '24%', '22%'],
+      y: ['22%', '16%', '28%', '20%', '22%'],
+    },
+    {
+      color: '#FFD86B',
+      x: ['72%', '66%', '78%', '70%', '72%'],
+      y: ['20%', '28%', '22%', '14%', '20%'],
+    },
+    {
+      color: '#6BFFD1',
+      x: ['78%', '70%', '74%', '82%', '78%'],
+      y: ['72%', '78%', '66%', '74%', '72%'],
+    },
+    {
+      color: '#6B9AFF',
+      x: ['24%', '20%', '30%', '22%', '24%'],
+      y: ['74%', '68%', '78%', '72%', '74%'],
+    },
+    {
+      color: '#B573FF',
+      x: ['50%', '54%', '46%', '52%', '50%'],
+      y: ['48%', '54%', '44%', '50%', '48%'],
+    },
   ]
 
   return (
@@ -41,21 +63,22 @@ export function Hero() {
           <motion.span
             key={i}
             className="hero-aura-blob"
-            style={{ background: b.color, left: b.left, top: b.top }}
+            style={{ background: b.color }}
+            initial={{ left: b.x[0], top: b.y[0], scale: 1 }}
             animate={
               reduced
-                ? undefined
+                ? { left: b.x[0], top: b.y[0], scale: 1 }
                 : {
-                    x: [0, 24, -16, 0],
-                    y: [0, -18, 12, 0],
-                    scale: [1, 1.12, 0.94, 1],
+                    left: b.x,
+                    top: b.y,
+                    scale: [1, 1.08, 0.96, 1.04, 1],
                   }
             }
             transition={{
-              duration: 11 + i * 0.9,
+              duration: 18 + i * 1.4,
               repeat: Infinity,
               ease: 'easeInOut',
-              delay: i * 0.45,
+              delay: i * 0.6,
             }}
           />
         ))}

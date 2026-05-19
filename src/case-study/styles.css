@@ -257,33 +257,46 @@
   color: var(--cs-text);
 }
 
-/* Hero rainbow atmosphere. A handful of soft color blobs blurred to a
-   wash so the rainbow lives behind the text without competing with it. */
+/* Hero rainbow atmosphere. Soft color blobs drift behind the headline
+   and fade out toward the section edges so nothing ever clips. */
 .hero-aura {
   position: absolute;
   inset: 0;
   pointer-events: none;
   z-index: 0;
   overflow: hidden;
+  /* Radial mask fades the aura out before it can touch the section edges. */
+  -webkit-mask-image: radial-gradient(
+    ellipse 80% 70% at center,
+    rgba(0, 0, 0, 1) 0%,
+    rgba(0, 0, 0, 0.85) 45%,
+    rgba(0, 0, 0, 0) 95%
+  );
+  mask-image: radial-gradient(
+    ellipse 80% 70% at center,
+    rgba(0, 0, 0, 1) 0%,
+    rgba(0, 0, 0, 0.85) 45%,
+    rgba(0, 0, 0, 0) 95%
+  );
 }
 
 .hero-aura-blob {
   position: absolute;
   display: block;
-  width: clamp(280px, 32vw, 460px);
-  height: clamp(280px, 32vw, 460px);
+  width: clamp(360px, 38vw, 560px);
+  height: clamp(360px, 38vw, 560px);
   border-radius: 50%;
   transform: translate(-50%, -50%);
-  filter: blur(80px);
-  opacity: 0.22;
+  filter: blur(120px);
+  opacity: 0.18;
   mix-blend-mode: multiply;
-  will-change: transform;
+  will-change: left, top, transform;
 }
 
 @media (prefers-color-scheme: dark) {
   .hero-aura-blob {
     mix-blend-mode: screen;
-    opacity: 0.28;
+    opacity: 0.24;
   }
 }
 
