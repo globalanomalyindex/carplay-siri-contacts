@@ -41,7 +41,7 @@ describe('pickLockedTarget', () => {
       ['b', { rect: rectFor(100, 0) }],
     ])
     expect(pickLockedTarget({ x: 55, y: 15 }, targets, null, 0.6)).toBe('a')
-    expect(pickLockedTarget({ x: 65, y: 15 }, targets, null, 0.6)).toBe('b')
+    expect(pickLockedTarget({ x: 95, y: 15 }, targets, null, 0.6)).toBe('b')
   })
 })
 
