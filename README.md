@@ -1,73 +1,56 @@
-# React + TypeScript + Vite
+# One Master Affordance: CarPlay assistive-touch prototype
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Accessibility-led CarPlay redesign demonstrating a single persistent system
+orb that serves as Siri activation and AssistiveTouch-style rotary navigator.
 
-Currently, two official plugins are available:
+See `docs/superpowers/specs/2026-05-19-one-master-affordance-design.md` for
+the full design specification.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Running the prototype
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Then open <http://localhost:5173>.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Controls
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- Tap the orb: activate Siri (rainbow aura)
+- Tap the orb again (while active): cancel Siri
+- Swipe down on the orb: cancel Siri
+- Drag from the orb: enter rotary mode, drift over a target, lift to commit
+- Long-press anywhere (toggle in debug panel): tap-rescue. A misfired tap becomes a correction. Drift to the right target and lift to commit.
+
+## Debug panel
+
+Floating right-side panel:
+- Driving: toggles the binary parked vs driving state
+- Long-press anywhere = rotary: enables the tap-rescue gesture
+- Force Reduce Motion: manual override of OS reduce-motion
+- High contrast: brighter liquid-glass border for high-glare conditions
+- Surface: switch between Phone, Dialer, Maps sketch, Music sketch
+
+## Tests
+
+```bash
+npm run test          # Vitest watch mode
+npm run test:run      # Vitest single run
+npm run test:e2e      # Playwright E2E
+npm run typecheck     # TypeScript only
 ```
+
+## Architecture
+
+- `src/prototype/chrome/`: CarPlay system frame
+- `src/prototype/MasterOrb/`: orb state machine + visuals (dissipation, aura)
+- `src/prototype/Magnifier/`: context-aware magnifier provider + driver
+- `src/prototype/phone/`: Phone app surface (tabs, rows, dialer)
+- `src/prototype/surfaces/`: Maps + Music sketches
+- `src/tokens/`: design tokens (CSS custom props + TS mirrors)
+- `src/a11y/`: accessibility hooks + aria-live announcer
+
+## Built with
+
+React 19 . TypeScript . Vite . Motion . XState . Tailwind 4
