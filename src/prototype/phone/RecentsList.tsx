@@ -1,3 +1,4 @@
+import { motion } from 'motion/react'
 import { ContactRow } from './ContactRow'
 import { RECENTS } from './data'
 import { useToast } from '../useToast'
@@ -5,7 +6,11 @@ import { useToast } from '../useToast'
 export function RecentsList() {
   const toast = useToast()
   return (
-    <div data-testid="recents-list" className="flex flex-col gap-1 overflow-y-auto h-full">
+    <motion.div
+      layout
+      data-testid="recents-list"
+      className="flex flex-col gap-1 overflow-y-auto h-full"
+    >
       {RECENTS.map((c, i) => (
         <ContactRow
           key={c.id}
@@ -17,6 +22,6 @@ export function RecentsList() {
           onText={() => toast.show(`Texting ${c.name}`)}
         />
       ))}
-    </div>
+    </motion.div>
   )
 }

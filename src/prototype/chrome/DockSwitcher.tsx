@@ -1,5 +1,8 @@
-import type { CSSProperties } from 'react'
+import { motion } from 'motion/react'
+import { useMemo, type CSSProperties } from 'react'
 import { MagnifiableFrame } from '../Magnifier'
+import { ExpandableCell, type CellAction } from '../Magnifier/ExpandableCell'
+import { useToast } from '../useToast'
 
 export type DockSurface = 'phone' | 'music' | 'maps'
 
@@ -68,44 +71,107 @@ const DOCK_ITEMS: DockItem[] = [
   },
 ]
 
+/**
+ * Sensible per-surface actions revealed on hold. These are illustrative for
+ * the prototype: in a real CarPlay deployment each dock app would publish
+ * its own contextual shortcuts (Apple's CPDockShortcut or equivalent).
+ */
+function dockActionsFor(
+  id: DockSurface,
+  fire: (label: string) => void,
+  onSwitch: (s: DockSurface) => void,
+): CellAction[] {
+  switch (id) {
+    case 'phone':
+      return [
+        { id: 'switch', label: 'Open', tone: 'info', variant: 'primary', onAction: () => onSwitch(id) },
+        { id: 'recent', label: 'Call recent', tone: 'call', variant: 'primary', onAction: () => fire('Calling last contact') },
+        { id: 'voicemail', label: 'Voicemail', tone: 'text', variant: 'secondary', onAction: () => fire('Opening voicemail') },
+      ]
+    case 'music':
+      return [
+        { id: 'switch', label: 'Open', tone: 'info', variant: 'primary', onAction: () => onSwitch(id) },
+        { id: 'play', label: 'Play queue', tone: 'favorite', variant: 'primary', onAction: () => fire('Playing queue') },
+        { id: 'now', label: 'Now playing', tone: 'neutral', variant: 'secondary', onAction: () => fire('Now playing') },
+      ]
+    case 'maps':
+      return [
+        { id: 'switch', label: 'Open', tone: 'info', variant: 'primary', onAction: () => onSwitch(id) },
+        { id: 'home', label: 'Home', tone: 'favorite', variant: 'primary', onAction: () => fire('Navigating home') },
+        { id: 'recent', label: 'Recent', tone: 'neutral', variant: 'secondary', onAction: () => fire('Recent destinations') },
+      ]
+  }
+}
+
 export function DockSwitcher({ surface, onSelect }: DockSwitcherProps) {
+  const toast = useToast()
   return (
-    <div
+    <motion.div
+      layout
       data-testid="dock-switcher"
       data-variant="dock-switcher"
       style={{ display: 'flex', flexDirection: 'column', gap: 0, alignItems: 'center' }}
     >
       {DOCK_ITEMS.map((item) => (
-        <MagnifiableFrame
+        <DockSlot
           key={item.id}
-          id={`dock-${item.id}`}
-          label={`${item.label} surface`}
-          onCommit={() => onSelect(item.id)}
-        >
-          <DockButton
-            active={surface === item.id}
-            label={item.label}
-            onClick={() => onSelect(item.id)}
-          >
-            {item.glyph}
-          </DockButton>
-        </MagnifiableFrame>
+          item={item}
+          active={surface === item.id}
+          onSelect={onSelect}
+          onToast={toast.show}
+        />
       ))}
-    </div>
+    </motion.div>
+  )
+}
+
+interface DockSlotProps {
+  item: DockItem
+  active: boolean
+  onSelect: (s: DockSurface) => void
+  onToast: (msg: string) => void
+}
+
+function DockSlot({ item, active, onSelect, onToast }: DockSlotProps) {
+  const actions = useMemo(
+    () => dockActionsFor(item.id, onToast, onSelect),
+    [item.id, onToast, onSelect],
+  )
+
+  return (
+    <MagnifiableFrame
+      id={`dock-${item.id}`}
+      label={`${item.label} surface`}
+      onCommit={() => onSelect(item.id)}
+    >
+      <ExpandableCell
+        id={`dock-${item.id}`}
+        variant="dock"
+        expansionAxis="horizontal"
+        actions={actions}
+        onTap={() => onSelect(item.id)}
+        label={`${item.label} dock item`}
+      >
+        <DockButton
+          active={active}
+          label={item.label}
+        >
+          {item.glyph}
+        </DockButton>
+      </ExpandableCell>
+    </MagnifiableFrame>
   )
 }
 
 interface DockButtonProps {
   active: boolean
   label: string
-  onClick: () => void
   children: React.ReactNode
 }
 
 function DockButton({
   active,
   label,
-  onClick,
   children,
 }: DockButtonProps) {
   const baseStyle: CSSProperties = {
@@ -131,9 +197,12 @@ function DockButton({
   }
 
   return (
-    <button
-      type="button"
-      onClick={onClick}
+    // div, not button: the surrounding ExpandableCell owns the press
+    // recognition (tap, drag, hold). A nested button would steal focus and
+    // double-handle the events. We keep the accessible role + label on the
+    // outer cell.
+    <div
+      role="button"
       aria-label={label}
       aria-pressed={active}
       data-active={active || undefined}
@@ -181,6 +250,6 @@ function DockButton({
           />
         )}
       </span>
-    </button>
+    </div>
   )
 }

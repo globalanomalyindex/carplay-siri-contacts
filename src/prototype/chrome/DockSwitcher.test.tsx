@@ -1,10 +1,15 @@
 import { describe, it, expect, vi } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { act, render, screen, fireEvent } from '@testing-library/react'
 import { DockSwitcher } from './DockSwitcher'
 import { MagnifierProvider } from '../Magnifier'
+import { ToastProvider } from '../Toast'
 
 function renderInProvider(ui: React.ReactElement) {
-  return render(<MagnifierProvider>{ui}</MagnifierProvider>)
+  return render(
+    <MagnifierProvider>
+      <ToastProvider>{ui}</ToastProvider>
+    </MagnifierProvider>,
+  )
 }
 
 describe('DockSwitcher', () => {
@@ -26,13 +31,25 @@ describe('DockSwitcher', () => {
     expect(phoneBtn.hasAttribute('data-active')).toBe(false)
   })
 
-  it('fires onSelect with the right surface id on click', () => {
+  it('fires onSelect with the right surface id on tap', () => {
+    vi.useFakeTimers()
     const onSelect = vi.fn()
     renderInProvider(<DockSwitcher surface="phone" onSelect={onSelect} />)
-    fireEvent.click(screen.getByTestId('dock-music'))
-    expect(onSelect).toHaveBeenCalledWith('music')
-    fireEvent.click(screen.getByTestId('dock-maps'))
-    expect(onSelect).toHaveBeenCalledWith('maps')
+    // A tap is a short press + lift on the ExpandableCell wrapper. The dock
+    // item itself is a div; tapping the wrapper triggers the cell's onTap.
+    const musicCell = screen.getByTestId('expandable-dock-music')
+    fireEvent.pointerDown(musicCell, { pointerId: 1, clientX: 30, clientY: 30 })
+    act(() => { vi.advanceTimersByTime(50) })
+    fireEvent.pointerUp(musicCell, { pointerId: 1, clientX: 30, clientY: 30 })
+
+    const mapsCell = screen.getByTestId('expandable-dock-maps')
+    fireEvent.pointerDown(mapsCell, { pointerId: 2, clientX: 30, clientY: 30 })
+    act(() => { vi.advanceTimersByTime(50) })
+    fireEvent.pointerUp(mapsCell, { pointerId: 2, clientX: 30, clientY: 30 })
+
+    expect(onSelect).toHaveBeenNthCalledWith(1, 'music')
+    expect(onSelect).toHaveBeenNthCalledWith(2, 'maps')
+    vi.useRealTimers()
   })
 
   it('registers each dock item as a magnifiable target with id dock-<surface>', () => {
@@ -40,5 +57,12 @@ describe('DockSwitcher', () => {
     expect(screen.getByTestId('magnifiable-dock-phone')).toBeInTheDocument()
     expect(screen.getByTestId('magnifiable-dock-music')).toBeInTheDocument()
     expect(screen.getByTestId('magnifiable-dock-maps')).toBeInTheDocument()
+  })
+
+  it('wraps each dock item in an ExpandableCell with horizontal axis', () => {
+    renderInProvider(<DockSwitcher surface="phone" onSelect={() => {}} />)
+    const phone = screen.getByTestId('expandable-dock-phone')
+    expect(phone.getAttribute('data-variant')).toBe('dock')
+    expect(phone.getAttribute('data-expansion-axis')).toBe('horizontal')
   })
 })

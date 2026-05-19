@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useRef, useState } from 'react'
-import { MagnifiableFrame, type QuickAction } from '../Magnifier'
+import { MagnifiableFrame } from '../Magnifier'
+import { ExpandableCell, type CellAction } from '../Magnifier/ExpandableCell'
 import { space } from '../../tokens/spatial'
 
 /** Render variant of the ContactRow. Used by Figma Code Connect. */
@@ -16,6 +17,20 @@ export interface ContactRowProps {
   index?: number
 }
 
+/**
+ * A contact row in the Phone app. Three input paths:
+ *
+ *   - Tap: fires `onCall` (the primary action of the row).
+ *   - Swipe right: also fires `onCall`, with a green indicator slide.
+ *   - Swipe left: fires `onText`, with a blue indicator slide.
+ *   - Sustained hold (>= 250ms, < 8pt motion): expands the row inline,
+ *     surfacing Call / Text action chips. Drift to a chip and lift to fire.
+ *
+ * The hold path is owned by ExpandableCell. The two swipe paths are owned
+ * locally. The two coexist because ExpandableCell cancels its own hold timer
+ * as soon as the pointer moves past 8pt, handing the gesture back to the
+ * row's swipe handlers.
+ */
 export function ContactRow({ id, name, avatar, onCall, onText, index = 0 }: ContactRowProps) {
   const downRef = useRef<{ x: number; y: number } | null>(null)
   const [swipeOffset, setSwipeOffset] = useState(0)
@@ -59,22 +74,21 @@ export function ContactRow({ id, name, avatar, onCall, onText, index = 0 }: Cont
   const callRevealed = swipeOffset > 0
   const textRevealed = swipeOffset < 0
 
-  // Quick-action menu shown on long-press. Memoized so identity is stable
-  // and useMagnifiable's effect does not re-register on every render.
-  const quickActions = useMemo<QuickAction[]>(
+  // Action chips revealed inline when the row is held.
+  const actions = useMemo<CellAction[]>(
     () => [
       {
         id: 'call',
         label: 'Call',
-        position: 'up',
-        icon: <span aria-hidden>C</span>,
+        tone: 'call',
+        variant: 'primary',
         onAction: onCall,
       },
       {
         id: 'text',
         label: 'Text',
-        position: 'down',
-        icon: <span aria-hidden>T</span>,
+        tone: 'text',
+        variant: 'secondary',
         onAction: onText,
       },
     ],
@@ -87,66 +101,75 @@ export function ContactRow({ id, name, avatar, onCall, onText, index = 0 }: Cont
       index={index}
       onCommit={onCall}
       label={`Call ${name}`}
-      quickActions={quickActions}
     >
-      <div
-        data-testid={`contact-row-${id}`}
-        data-variant="contact-row"
-        data-state={callRevealed ? 'call-revealed' : textRevealed ? 'text-revealed' : 'idle'}
-        onPointerDown={onPointerDown}
-        onPointerMove={onPointerMove}
-        onPointerUp={onPointerUp}
-        onPointerCancel={() => {
-          downRef.current = null
-          setDragging(false)
-          setSwipeOffset(0)
-        }}
-        style={{
-          position: 'relative',
-          display: 'flex',
-          alignItems: 'center',
-          gap: 10,
-          minHeight: 44,
-          padding: '8px 12px',
-          color: 'var(--text-primary)',
-          fontSize: 13,
-          fontWeight: 400,
-          letterSpacing: '-0.01em',
-          borderRadius: 8,
-          touchAction: 'pan-y',
-          cursor: 'pointer',
-          transform: `translateX(${swipeOffset}px)`,
-          // Custom Apple-feel ease curve when not dragging. Snaps back fast
-          // with a touch of overshoot resistance via the bezier shape.
-          transition: dragging
-            ? 'none'
-            : 'transform 0.28s cubic-bezier(0.2, 0.85, 0.3, 1)',
-          background: 'rgba(255,255,255,0.05)',
-        }}
+      <ExpandableCell
+        id={`contact-row-${id}`}
+        variant="row"
+        expansionAxis="vertical"
+        actions={actions}
+        onTap={onCall}
+        label={`Contact ${name}`}
       >
-        {callRevealed && (
+        <div
+          data-testid={`contact-row-${id}`}
+          data-variant="contact-row"
+          data-state={callRevealed ? 'call-revealed' : textRevealed ? 'text-revealed' : 'idle'}
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
+          onPointerUp={onPointerUp}
+          onPointerCancel={() => {
+            downRef.current = null
+            setDragging(false)
+            setSwipeOffset(0)
+          }}
+          style={{
+            position: 'relative',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 10,
+            minHeight: 44,
+            padding: '8px 12px',
+            color: 'var(--text-primary)',
+            fontSize: 13,
+            fontWeight: 400,
+            letterSpacing: '-0.01em',
+            borderRadius: 8,
+            touchAction: 'pan-y',
+            cursor: 'pointer',
+            transform: `translateX(${swipeOffset}px)`,
+            // Custom Apple-feel ease curve when not dragging. Snaps back fast
+            // with a touch of overshoot resistance via the bezier shape.
+            transition: dragging
+              ? 'none'
+              : 'transform 0.28s cubic-bezier(0.2, 0.85, 0.3, 1)',
+            background: 'rgba(255,255,255,0.05)',
+            flex: '1 1 auto',
+          }}
+        >
+          {callRevealed && (
+            <div style={{
+              position: 'absolute', left: -60, top: 0, bottom: 0,
+              width: 60, display: 'flex', alignItems: 'center', justifyContent: 'center',
+              color: 'var(--action-call)', fontWeight: 600, fontSize: 16,
+            }}>C</div>
+          )}
+          {textRevealed && (
+            <div style={{
+              position: 'absolute', right: -60, top: 0, bottom: 0,
+              width: 60, display: 'flex', alignItems: 'center', justifyContent: 'center',
+              color: 'var(--action-text)', fontWeight: 600, fontSize: 16,
+            }}>T</div>
+          )}
           <div style={{
-            position: 'absolute', left: -60, top: 0, bottom: 0,
-            width: 60, display: 'flex', alignItems: 'center', justifyContent: 'center',
-            color: 'var(--action-call)', fontWeight: 600, fontSize: 16,
-          }}>C</div>
-        )}
-        {textRevealed && (
-          <div style={{
-            position: 'absolute', right: -60, top: 0, bottom: 0,
-            width: 60, display: 'flex', alignItems: 'center', justifyContent: 'center',
-            color: 'var(--action-text)', fontWeight: 600, fontSize: 16,
-          }}>T</div>
-        )}
-        <div style={{
-          width: 26, height: 26, borderRadius: '50%',
-          background: 'linear-gradient(135deg, #7fa3c4, #b8a3c4)',
-          fontSize: 11, fontWeight: 600, color: 'white',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.18)',
-        }}>{avatar}</div>
-        <span style={{ fontWeight: 500 }}>{name}</span>
-      </div>
+            width: 26, height: 26, borderRadius: '50%',
+            background: 'linear-gradient(135deg, #7fa3c4, #b8a3c4)',
+            fontSize: 11, fontWeight: 600, color: 'white',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.18)',
+          }}>{avatar}</div>
+          <span style={{ fontWeight: 500 }}>{name}</span>
+        </div>
+      </ExpandableCell>
     </MagnifiableFrame>
   )
 }

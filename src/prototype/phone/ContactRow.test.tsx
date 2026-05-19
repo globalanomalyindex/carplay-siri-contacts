@@ -41,4 +41,16 @@ describe('ContactRow', () => {
     fireEvent.pointerUp(row, { pointerId: 1, clientX: 30, clientY: 50 })
     expect(onText).toHaveBeenCalledTimes(1)
   })
+
+  it('wraps the row in an ExpandableCell for the long-press path', () => {
+    render(
+      <MagnifierProvider>
+        <ContactRow id="sarah" name="Sarah" avatar="S" onCall={() => {}} onText={() => {}} />
+      </MagnifierProvider>,
+    )
+    const cell = screen.getByTestId('expandable-contact-row-sarah')
+    expect(cell).toBeInTheDocument()
+    expect(cell.getAttribute('data-variant')).toBe('row')
+    expect(cell.getAttribute('data-expansion-axis')).toBe('vertical')
+  })
 })
