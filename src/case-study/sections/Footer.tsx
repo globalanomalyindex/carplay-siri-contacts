@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 
 /**
- * Footer. Designer credit, date, links to repo and the standalone
+ * Footer. Build credit, date, links to repo and the standalone
  * prototype route.
  */
 export function Footer() {
@@ -36,9 +36,10 @@ export function Footer() {
         <div className="cs-footer-meta">
           <div>
             <div style={{ marginBottom: 6, color: 'var(--cs-text-3)', fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-              Designer
+              Designed + built by
             </div>
-            <div style={{ color: 'var(--cs-text)' }}>Chris Fiore</div>
+            <div style={{ color: 'var(--cs-text)' }}>Christopher Robin Fiore</div>
+            <div style={{ color: 'var(--cs-text-2)', fontSize: 13, marginTop: 2 }}>Design Engineer</div>
           </div>
           <div>
             <div style={{ marginBottom: 6, color: 'var(--cs-text-3)', fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
@@ -51,7 +52,7 @@ export function Footer() {
           <div style={{ display: 'flex', gap: 24 }}>
             <Link to="/prototype">Open the prototype</Link>
             <a
-              href="https://github.com/cgfiore/carplay-siri-contacts"
+              href="https://github.com/globalanomalyindex/carplay-siri-contacts"
               target="_blank"
               rel="noopener noreferrer"
             >

@@ -103,7 +103,7 @@ export function Hero() {
               margin: 0,
             }}
           >
-            A CarPlay case study by Chris Fiore
+            A CarPlay case study, designed + built by Christopher Robin Fiore
           </p>
         </motion.div>
 
@@ -145,7 +145,7 @@ export function Hero() {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.32 }}
         >
-          <span><strong style={{ color: 'var(--cs-text)', fontWeight: 600 }}>Designer</strong> &nbsp; Chris Fiore</span>
+          <span><strong style={{ color: 'var(--cs-text)', fontWeight: 600 }}>Designed + built by</strong> &nbsp; Christopher Robin Fiore, Design Engineer</span>
           <span><strong style={{ color: 'var(--cs-text)', fontWeight: 600 }}>Reading time</strong> &nbsp; 8 min</span>
           <span><strong style={{ color: 'var(--cs-text)', fontWeight: 600 }}>Published</strong> &nbsp; May 2026</span>
         </motion.div>
