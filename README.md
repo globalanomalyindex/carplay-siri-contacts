@@ -3,8 +3,7 @@
 Accessibility-led CarPlay redesign demonstrating a single persistent system
 orb that serves as Siri activation and AssistiveTouch-style rotary navigator.
 
-See `docs/superpowers/specs/2026-05-19-one-master-affordance-design.md` for
-the full design specification.
+See `docs/one-master-affordance-design.md` for the full design specification.
 
 ## Running the prototype
 

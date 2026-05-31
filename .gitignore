@@ -23,8 +23,8 @@ dist-ssr
 *.sln
 *.sw?
 
-# Brainstorming workspace runtime state (server pid, idle markers)
-.superpowers/brainstorm/**/state/
+# Local design-process workspace (not part of the project)
+.superpowers/
 
 # Playwright artifacts
 test-results/
