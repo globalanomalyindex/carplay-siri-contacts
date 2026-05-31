@@ -43,6 +43,7 @@ function UtilButton({ label, disabled, title }: { label: string; disabled?: bool
           background: 'rgba(255,255,255,0.08)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.08)',
+          transition: 'transform 140ms cubic-bezier(0.08,0.82,0.17,1)',
         }}
       >
         {label}

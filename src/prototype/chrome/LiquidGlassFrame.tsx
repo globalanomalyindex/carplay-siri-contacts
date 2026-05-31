@@ -50,8 +50,10 @@ export function LiquidGlassFrame({
         background: 'var(--glass-fill)',
         border: `1px solid ${borderColor}`,
         boxShadow: [
-          'inset 0 1px 0 var(--glass-highlight)',
-          'inset 0 -1px 0 var(--glass-shadow)',
+          'inset 0 1.5px 1px rgba(255, 255, 255, 0.5)', //   convex top light
+          'inset 0 -2px 4px rgba(0, 0, 0, 0.18)', //          convex underside
+          '-1px -0.5px 0 0.5px rgba(255, 120, 180, 0.22)', // chromatic fringe, warm
+          '1px 0.5px 0 0.5px rgba(120, 170, 255, 0.30)', //   chromatic fringe, cool
           '0 1px 3px rgba(0, 0, 0, 0.12)',
           '0 6px 24px var(--glass-glow)',
         ].join(', '),

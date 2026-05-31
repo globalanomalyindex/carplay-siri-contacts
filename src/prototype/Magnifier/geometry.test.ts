@@ -1,5 +1,15 @@
 import { describe, it, expect } from 'vitest'
-import { distance, pickLockedTarget, isPastHysteresis, computeGestureDirection } from './geometry'
+import {
+  distance,
+  pickLockedTarget,
+  isPastHysteresis,
+  computeGestureDirection,
+  pointInRect,
+  regionOfPoint,
+  pickMagnifierTarget,
+  type TargetGeometry,
+} from './geometry'
+import type { MagnifierRegion } from './types'
 
 const rectFor = (x: number, y: number, w = 60, h = 30): DOMRect =>
   ({
@@ -111,5 +121,90 @@ describe('computeGestureDirection', () => {
     expect(computeGestureDirection(trail)).toBe('horizontal')
     // Stricter 0.9 threshold: same trail no longer qualifies.
     expect(computeGestureDirection(trail, { dominantFraction: 0.9 })).toBe('idle')
+  })
+})
+
+// Mirrors the real CarPlay layout: a dock icon on the left rail, a tab in the
+// top band, and a wide content row whose centre sits far to the right.
+const geo = (
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  region: MagnifierRegion,
+): TargetGeometry => ({ rect: rectFor(x, y, w, h), region })
+
+describe('pointInRect', () => {
+  it('is inclusive of the rect edges', () => {
+    const r = rectFor(10, 10, 40, 40)
+    expect(pointInRect({ x: 30, y: 30 }, r)).toBe(true)
+    expect(pointInRect({ x: 10, y: 10 }, r)).toBe(true)
+    expect(pointInRect({ x: 51, y: 30 }, r)).toBe(false)
+  })
+})
+
+describe('regionOfPoint', () => {
+  const targets = new Map<string, TargetGeometry>([
+    ['dock-phone', geo(10, 100, 40, 40, 'dock')], // right edge 50
+    ['tab-a', geo(200, 10, 80, 30, 'tabs')], // bottom edge 40
+    ['row-a', geo(120, 100, 300, 40, 'content')],
+  ])
+
+  it('classifies the left rail as dock', () => {
+    expect(regionOfPoint({ x: 30, y: 120 }, targets)).toBe('dock')
+  })
+  it('classifies the top band (right of the dock) as tabs', () => {
+    expect(regionOfPoint({ x: 240, y: 25 }, targets)).toBe('tabs')
+  })
+  it('classifies the rest as content', () => {
+    expect(regionOfPoint({ x: 300, y: 120 }, targets)).toBe('content')
+  })
+})
+
+describe('pickMagnifierTarget', () => {
+  // dock centre (30,120); row spans x[120..420] y[100..140], centre (270,120).
+  const targets = new Map<string, TargetGeometry>([
+    ['dock-phone', geo(10, 100, 40, 40, 'dock')],
+    ['tab-a', geo(200, 10, 80, 30, 'tabs')],
+    ['row-a', geo(120, 100, 300, 40, 'content')],
+  ])
+
+  it('locks the row under the finger even when a dock centre is nearer', () => {
+    // (140,120) is inside the row but its centre (270,120) is 130px away,
+    // while the dock centre (30,120) is only 110px away. Nearest-centre would
+    // wrongly pick the dock; containment + region gating pick the row.
+    expect(pickMagnifierTarget({ x: 140, y: 120 }, targets, null, 0.6)).toBe('row-a')
+  })
+
+  it('never returns a dock target while the pointer is in the content region', () => {
+    // A gap below the row, far from any content centre, must still not fall
+    // back to the dock (different region).
+    expect(pickMagnifierTarget({ x: 300, y: 200 }, targets, null, 0.6)).toBe('row-a')
+  })
+
+  it('selects the dock only when the pointer is over the left rail', () => {
+    expect(pickMagnifierTarget({ x: 30, y: 120 }, targets, null, 0.6)).toBe('dock-phone')
+  })
+
+  it('holds the current lock while the pointer stays inside its bounds', () => {
+    const nested = new Map<string, TargetGeometry>([
+      ['row-wide', geo(120, 100, 300, 40, 'content')],
+      ['row-tiny', geo(130, 110, 20, 20, 'content')], // smaller, centre (140,120)
+    ])
+    // With no lock, the smaller contained target wins.
+    expect(pickMagnifierTarget({ x: 140, y: 120 }, nested, null, 0.6)).toBe('row-tiny')
+    // With the wide row already locked and the pointer still inside it, the
+    // membrane holds: it does not jump to the smaller target.
+    expect(pickMagnifierTarget({ x: 140, y: 120 }, nested, 'row-wide', 0.6)).toBe('row-wide')
+  })
+
+  it('falls back to nearest centre within the region for gaps between rows', () => {
+    const rows = new Map<string, TargetGeometry>([
+      ['row-a', geo(120, 100, 100, 40, 'content')], // centre (170,120)
+      ['row-b', geo(120, 160, 100, 40, 'content')], // centre (170,180)
+    ])
+    // Gap at y=150 sits between the two rows; nearest centre is row-a (30 vs 30,
+    // ties to first by iteration order, which is row-a).
+    expect(pickMagnifierTarget({ x: 170, y: 150 }, rows, null, 0.6)).toBe('row-a')
   })
 })

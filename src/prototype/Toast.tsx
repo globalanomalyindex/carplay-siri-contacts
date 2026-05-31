@@ -28,10 +28,12 @@ export function ToastProvider({ children }: { children: ReactNode }) {
         data-variant="toast"
         data-state={message ? 'visible' : 'hidden'}
         style={{
-          position: 'fixed',
-          bottom: 32,
+          // Anchored to the device frame (the nearest positioned ancestor)
+          // rather than the viewport, so the confirmation reads as part of the
+          // screen and never collides with the surrounding page chrome.
+          position: 'absolute',
+          bottom: 10,
           left: '50%',
-          transform: 'translateX(-50%)',
           background: 'rgba(20, 30, 40, 0.72)',
           color: 'white',
           padding: '10px 18px',
@@ -46,8 +48,11 @@ export function ToastProvider({ children }: { children: ReactNode }) {
             '0 1px 3px rgba(0,0,0,0.12), 0 4px 16px rgba(0,0,0,0.18)',
           zIndex: 300,
           opacity: message ? 1 : 0,
+          // Rise into place and settle back down on dismiss: the toast always
+          // enters and exits from the same direction, so it reads as one object.
+          transform: message ? 'translate(-50%, 0)' : 'translate(-50%, 8px)',
           pointerEvents: message ? 'auto' : 'none',
-          transition: 'opacity 0.2s ease',
+          transition: 'opacity 0.22s ease, transform 0.22s cubic-bezier(0.08, 0.82, 0.17, 1)',
         }}
       >
         {message ?? ''}

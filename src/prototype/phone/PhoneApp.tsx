@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { motion } from 'motion/react'
 import { useMagnifierContext } from '../Magnifier'
 import { useDriving } from './useDriving'
@@ -27,9 +27,13 @@ const TAB_LOCK_PREFIX = 'tab-'
  */
 export function PhoneApp() {
   const driving = useDriving()
-  const tabs: TabId[] = driving ? ['favorites', 'recents'] : ['favorites', 'recents', 'contacts']
+  const tabs = useMemo<TabId[]>(
+    () => (driving ? ['favorites', 'recents'] : ['favorites', 'recents', 'contacts']),
+    [driving],
+  )
   const [active, setActive] = useState<TabId>('favorites')
-  const { lockedId, gestureDirection } = useMagnifierContext()
+  const [latched, setLatched] = useState<TabId | null>(null)
+  const { lockedId, gestureDirection, rotaryActive } = useMagnifierContext()
 
   // Derive the previewed tab from the magnifier lock. Falls back to the
   // committed active tab when there is no tab lock OR when the gesture
@@ -40,9 +44,30 @@ export function PhoneApp() {
       ? (lockedId.slice(TAB_LOCK_PREFIX.length) as TabId)
       : null
   const previewTab: TabId | null =
-    tabLockId && gestureDirection !== 'vertical' ? tabLockId : null
+    tabLockId && gestureDirection !== 'vertical' && tabs.includes(tabLockId)
+      ? tabLockId
+      : null
+
+  // Latch the previewed tab so a drag that continues DOWN into the list keeps
+  // that list on screen (drill-through), instead of snapping back to the
+  // committed tab the instant the lock leaves the top tab band.
+  useEffect(() => {
+    if (previewTab) setLatched(previewTab)
+  }, [previewTab])
+
+  // When the rotary session ends, persist whichever tab the user drilled into
+  // and clear the latch for next time.
+  const prevRotary = useRef(false)
+  useEffect(() => {
+    if (prevRotary.current && !rotaryActive) {
+      if (latched && tabs.includes(latched)) setActive(latched)
+      setLatched(null)
+    }
+    prevRotary.current = rotaryActive
+  }, [rotaryActive, latched, tabs])
+
   const displayed: TabId =
-    previewTab && tabs.includes(previewTab) ? previewTab : active
+    previewTab ?? (rotaryActive && latched && tabs.includes(latched) ? latched : active)
 
   const onSwitch = (next: TabId) => {
     if (tabs.includes(next)) setActive(next)

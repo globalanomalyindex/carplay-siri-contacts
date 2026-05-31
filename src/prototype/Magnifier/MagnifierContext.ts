@@ -22,6 +22,11 @@ export interface MagnifierInternalAPI {
    * key: re-committing the same id still bumps it so the flash retriggers.
    */
   recordCommit: (id: string) => void
+  /**
+   * Raise a menu request for `id` at the resting point. Driver calls this when
+   * the lens has dwelled on a target long enough to open its contextual menu.
+   */
+  requestMenu: (id: string, point: { x: number; y: number }) => void
 }
 
 export const InternalContext = createContext<MagnifierInternalAPI | null>(null)

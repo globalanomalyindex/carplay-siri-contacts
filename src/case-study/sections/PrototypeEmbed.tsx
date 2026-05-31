@@ -5,12 +5,12 @@ import { SectionLabel } from '../components/SectionLabel'
 import { PrototypeStage } from '../../prototype/PrototypeStage'
 
 const HINTS: { title: string; body: string }[] = [
-  { title: 'Tap the orb', body: 'Activates Siri. Tap again or swipe down to cancel.' },
-  { title: 'Drag from the orb', body: 'Enters magnifier mode. Glass frames materialize around every discrete component.' },
-  { title: 'Long-press anywhere', body: 'Same magnifier, but rescues a misfired tap in place. Layered over tap, never replaces it.' },
-  { title: 'Long-press a contact', body: 'Opens the contextual quick-action menu (call / text / favorite).' },
-  { title: 'Swipe a row', body: 'Right calls, left opens a text. Indicators slide in from the screen edges.' },
-  { title: 'Use the dock', body: 'Switch surfaces from the left rail. Phone, Maps, and Music are all magnifier-aware.' },
+  { title: 'Tap the orb', body: 'Wakes Siri and blooms a rainbow halo around the whole screen. Tap again, or swipe down, to cancel.' },
+  { title: 'Drag from the orb', body: 'Enters magnifier mode. Every control swells under your finger; lift on the one you want and it fires.' },
+  { title: 'Hold a contact', body: 'The row expands in place to reveal Call and Text. Neighbours reflow to make room, nothing hides behind a menu.' },
+  { title: 'Swipe a row', body: 'Right calls, left opens a message. The action indicator slides in from the screen edge.' },
+  { title: 'Hold a dock app', body: 'The icon expands sideways into its quick actions. Open, call recent, voicemail, all without leaving the surface.' },
+  { title: 'Cell-membrane lock', body: 'The magnifier holds a target until you cross 60 percent toward the next, so a bump in the road never mis-selects.' },
 ]
 
 /**

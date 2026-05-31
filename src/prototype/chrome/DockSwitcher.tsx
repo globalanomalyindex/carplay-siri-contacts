@@ -141,6 +141,8 @@ function DockSlot({ item, active, onSelect, onToast }: DockSlotProps) {
   return (
     <MagnifiableFrame
       id={`dock-${item.id}`}
+      region="dock"
+      quickdraw
       label={`${item.label} surface`}
       onCommit={() => onSelect(item.id)}
     >
@@ -184,7 +186,7 @@ function DockButton({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    transition: 'background-color 180ms cubic-bezier(0.2,0.8,0.3,1), box-shadow 180ms cubic-bezier(0.2,0.8,0.3,1), color 180ms cubic-bezier(0.2,0.8,0.3,1)',
+    transition: 'background-color 180ms cubic-bezier(0.2,0.8,0.3,1), box-shadow 180ms cubic-bezier(0.2,0.8,0.3,1), color 180ms cubic-bezier(0.2,0.8,0.3,1), transform 140ms cubic-bezier(0.08,0.82,0.17,1)',
     color: active ? 'rgba(255, 255, 255, 0.96)' : 'rgba(255, 255, 255, 0.66)',
     background: active
       ? 'linear-gradient(180deg, rgba(120, 220, 240, 0.32), rgba(120, 220, 240, 0.18))'

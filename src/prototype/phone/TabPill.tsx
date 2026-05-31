@@ -65,6 +65,7 @@ export function TabPill({ tabs, active, onChange }: TabPillProps) {
         <MagnifiableFrame
           key={t}
           id={`tab-${t}`}
+          region="tabs"
           index={i}
           onCommit={() => onChange(t)}
           label={`${LABELS[t]} tab`}
@@ -84,7 +85,7 @@ export function TabPill({ tabs, active, onChange }: TabPillProps) {
               letterSpacing: '-0.01em',
               border: 'none',
               cursor: 'pointer',
-              transition: 'background-color 220ms cubic-bezier(0.2,0.8,0.3,1), color 220ms cubic-bezier(0.2,0.8,0.3,1)',
+              transition: 'background-color 220ms cubic-bezier(0.2,0.8,0.3,1), color 220ms cubic-bezier(0.2,0.8,0.3,1), transform 140ms cubic-bezier(0.08,0.82,0.17,1)',
             }}
           >
             {LABELS[t]}

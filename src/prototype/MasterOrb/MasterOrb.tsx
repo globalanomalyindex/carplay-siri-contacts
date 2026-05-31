@@ -24,9 +24,17 @@ export function MasterOrb() {
   const draggingRef = useRef(false)
   const [dissipateCenter, setDissipateCenter] = useState<{ x: number; y: number } | null>(null)
   const [reform, setReform] = useState<{ from: { x: number; y: number }; to: { x: number; y: number } } | null>(null)
+  // Press feedback: the orb scales down the instant it is touched so a tap
+  // feels heard before Siri's aura has a chance to bloom. Cleared the moment a
+  // drag is recognised (the orb dissipates then) or the pointer lifts.
+  const [pressed, setPressed] = useState(false)
 
   const previousStateRef = useRef<'idle' | 'siriActive' | 'rotary'>('idle')
   const state = snapshot.value as 'idle' | 'siriActive' | 'rotary'
+  // Mirror the machine state into a ref so the window-level pointer listeners
+  // (registered once) always read the current value without re-subscribing.
+  const stateRef = useRef(state)
+  stateRef.current = state
 
   // Publish state up to the shell so global hooks (tap-to-dismiss-Siri,
   // swipe-to-edge cancel) can react. The shell provider sets up _publish
@@ -38,16 +46,6 @@ export function MasterOrb() {
       rotaryActive: state === 'rotary',
     })
   }, [orbControl, state])
-
-  useEffect(() => {
-    if (!orbControl) return
-    orbControl._register({
-      isSiriActive: () => state === 'siriActive',
-      isRotaryActive: () => state === 'rotary',
-      dismissSiri: () => send({ type: 'SWIPE_DOWN' }),
-      abortRotary: () => send({ type: 'ABORT' }),
-    })
-  }, [orbControl, send, state])
 
   // Detect rotary -> idle transition. When that fires and the user did not
   // commit on a target (driver clears lockedId before exit), play the reform
@@ -68,73 +66,145 @@ export function MasterOrb() {
     }
   }, [state])
 
+  // --- Gesture resolvers -----------------------------------------------------
+  // The drag is driven from window-level listeners (below) as the load-bearing
+  // path, with the orb's own React handlers as the in-element mirror. Both call
+  // these resolvers, which are idempotent: the first to consume downStartRef
+  // wins, so a finalise from either path fires exactly once. This is what lets
+  // a drag survive a list reflow mid-gesture, where pointer capture is broken
+  // by Motion's layout animation and the lift lands off the orb.
+
+  const resolveMove = useCallback(
+    (x: number, y: number) => {
+      const start = downStartRef.current
+      if (!start) return
+      lastPointerRef.current = { x, y }
+
+      if (!draggingRef.current) {
+        const dist = Math.hypot(x - start.x, y - start.y)
+        if (dist >= space.thresholdDragDistPx && stateRef.current === 'idle') {
+          draggingRef.current = true
+          const el = hitRef.current
+          if (el) {
+            const r = el.getBoundingClientRect()
+            setDissipateCenter({ x: r.left + r.width / 2, y: r.top + r.height / 2 })
+          }
+          send({ type: 'DRAG_START' })
+          driver.start()
+          setPressed(false)
+        }
+      }
+
+      if (draggingRef.current) driver.move({ x, y })
+    },
+    [send, driver],
+  )
+
+  const resolveUp = useCallback(
+    (x: number, y: number) => {
+      const start = downStartRef.current
+      downStartRef.current = null
+      setPressed(false)
+      if (!start) return
+      lastPointerRef.current = { x, y }
+
+      if (draggingRef.current) {
+        draggingRef.current = false
+        setDissipateCenter(null)
+        const lockedId = driver.end({ x, y })
+        send(lockedId ? { type: 'COMMIT', targetId: lockedId } : { type: 'ABORT' })
+        return
+      }
+
+      const dx = x - start.x
+      const dy = y - start.y
+      const dt = performance.now() - start.t
+      const dist = Math.hypot(dx, dy)
+
+      if (dy >= space.thresholdSwipeCancelPx && dy > Math.abs(dx)) {
+        send({ type: 'SWIPE_DOWN' })
+        return
+      }
+      if (dt <= space.thresholdTapTimeMs && dist < space.thresholdDragDistPx) {
+        send({ type: 'TAP' })
+      }
+    },
+    [send, driver],
+  )
+
+  const resolveCancel = useCallback(
+    (x: number, y: number) => {
+      // Motion's layout animation fires an implicit pointercancel at (0,0) on
+      // the captured orb whenever sibling bounds animate (a list reflow, a tab
+      // swap). The pointer has NOT actually lifted, so ignore it and let the
+      // window listeners carry the drag to its real lift. A genuine OS cancel
+      // carries real coordinates and does abort.
+      if (x === 0 && y === 0) return
+      const start = downStartRef.current
+      if (!start) return
+      downStartRef.current = null
+      setPressed(false)
+      if (draggingRef.current) {
+        draggingRef.current = false
+        setDissipateCenter(null)
+        driver.end({ x: 0, y: 0 })
+        send({ type: 'ABORT' })
+      }
+    },
+    [send, driver],
+  )
+
+  // External abort (e.g. flicking off the screen edge). Tear the drag down
+  // locally so a later lift cannot re-finalise it.
+  const cancelDrag = useCallback(() => {
+    if (!downStartRef.current && !draggingRef.current) return
+    downStartRef.current = null
+    setPressed(false)
+    draggingRef.current = false
+    setDissipateCenter(null)
+    driver.end({ x: 0, y: 0 })
+    send({ type: 'ABORT' })
+  }, [send, driver])
+
+  useEffect(() => {
+    if (!orbControl) return
+    orbControl._register({
+      isSiriActive: () => stateRef.current === 'siriActive',
+      isRotaryActive: () => stateRef.current === 'rotary',
+      dismissSiri: () => send({ type: 'SWIPE_DOWN' }),
+      abortRotary: cancelDrag,
+    })
+  }, [orbControl, send, cancelDrag])
+
+  // Window-level listeners: the load-bearing path. They keep driving the drag
+  // after pointer capture is lost to a layout reflow, and they deliver the lift
+  // wherever it actually happens (which, after a reflow, is off the orb).
+  useEffect(() => {
+    const onMove = (e: PointerEvent) => resolveMove(e.clientX, e.clientY)
+    const onUp = (e: PointerEvent) => resolveUp(e.clientX, e.clientY)
+    const onCancel = (e: PointerEvent) => resolveCancel(e.clientX, e.clientY)
+    window.addEventListener('pointermove', onMove)
+    window.addEventListener('pointerup', onUp)
+    window.addEventListener('pointercancel', onCancel)
+    return () => {
+      window.removeEventListener('pointermove', onMove)
+      window.removeEventListener('pointerup', onUp)
+      window.removeEventListener('pointercancel', onCancel)
+    }
+  }, [resolveMove, resolveUp, resolveCancel])
+
   const onPointerDown = useCallback((e: React.PointerEvent) => {
     downStartRef.current = { x: e.clientX, y: e.clientY, t: performance.now() }
     lastPointerRef.current = { x: e.clientX, y: e.clientY }
     draggingRef.current = false
+    setPressed(true)
+    // Capture keeps the gesture on the orb for touch; if Motion's layout
+    // breaks it mid-drag the window listeners take over (see resolveCancel).
     const el = e.currentTarget as HTMLElement
     if (typeof el.setPointerCapture === 'function') {
       try { el.setPointerCapture(e.pointerId) } catch { /* jsdom */ }
     }
   }, [])
-
-  const onPointerMove = useCallback((e: React.PointerEvent) => {
-    const start = downStartRef.current
-    if (!start) return
-    lastPointerRef.current = { x: e.clientX, y: e.clientY }
-
-    if (!draggingRef.current) {
-      const dist = Math.hypot(e.clientX - start.x, e.clientY - start.y)
-      if (dist >= space.thresholdDragDistPx && snapshot.value === 'idle') {
-        draggingRef.current = true
-        const rect = (e.currentTarget as HTMLElement).getBoundingClientRect()
-        setDissipateCenter({
-          x: rect.left + rect.width / 2,
-          y: rect.top + rect.height / 2,
-        })
-        send({ type: 'DRAG_START' })
-        driver.start()
-      }
-    }
-
-    if (draggingRef.current) {
-      driver.move({ x: e.clientX, y: e.clientY })
-    }
-  }, [send, snapshot.value, driver])
-
-  const onPointerUp = useCallback((e: React.PointerEvent) => {
-    const start = downStartRef.current
-    downStartRef.current = null
-    if (!start) return
-    lastPointerRef.current = { x: e.clientX, y: e.clientY }
-
-    if (draggingRef.current) {
-      draggingRef.current = false
-      setDissipateCenter(null)
-      const lockedId = driver.end({ x: e.clientX, y: e.clientY })
-      if (lockedId) {
-        send({ type: 'COMMIT', targetId: lockedId })
-      } else {
-        send({ type: 'ABORT' })
-      }
-      return
-    }
-
-    const dx = e.clientX - start.x
-    const dy = e.clientY - start.y
-    const dt = performance.now() - start.t
-    const dist = Math.hypot(dx, dy)
-
-    if (dy >= space.thresholdSwipeCancelPx && dy > Math.abs(dx)) {
-      send({ type: 'SWIPE_DOWN' })
-      return
-    }
-
-    if (dt <= space.thresholdTapTimeMs && dist < space.thresholdDragDistPx) {
-      send({ type: 'TAP' })
-      return
-    }
-  }, [send, driver])
 
   const inRotary = state === 'rotary'
   const reforming = reform !== null
@@ -146,17 +216,9 @@ export function MasterOrb() {
         data-state={state}
         ref={hitRef}
         onPointerDown={onPointerDown}
-        onPointerMove={onPointerMove}
-        onPointerUp={onPointerUp}
-        onPointerCancel={() => {
-          if (draggingRef.current) {
-            draggingRef.current = false
-            driver.end({ x: 0, y: 0 })
-          }
-          downStartRef.current = null
-          setDissipateCenter(null)
-          if (snapshot.value === 'rotary') send({ type: 'ABORT' })
-        }}
+        onPointerMove={(e) => resolveMove(e.clientX, e.clientY)}
+        onPointerUp={(e) => resolveUp(e.clientX, e.clientY)}
+        onPointerCancel={(e) => resolveCancel(e.clientX, e.clientY)}
         style={{ cursor: 'pointer', touchAction: 'none' }}
       >
         <LiquidGlassFrame bright={settings.highContrast}>
@@ -170,7 +232,7 @@ export function MasterOrb() {
                 // before the user's eye looks for it. Stiff + low mass
                 // so it lands fast without overshoot.
                 initial={reforming ? { opacity: 0, scale: 0.6 } : false}
-                animate={{ opacity: 1, scale: 1 }}
+                animate={{ opacity: 1, scale: pressed ? 0.92 : 1 }}
                 transition={{
                   type: 'spring',
                   stiffness: 380,

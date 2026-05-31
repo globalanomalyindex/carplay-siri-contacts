@@ -1,4 +1,5 @@
 import { AnimatePresence, motion } from 'motion/react'
+import { easing } from '../../tokens/motion'
 import { useReducedMotion } from '../../a11y/useReducedMotion'
 
 export interface ScreenEdgeAuraProps {
@@ -43,7 +44,7 @@ export function ScreenEdgeAura({ active }: ScreenEdgeAuraProps) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.32 }}
+          transition={{ duration: 0.32, ease: easing.liquidOut }}
           style={{
             position: 'absolute',
             // Extend past the screen edges so blobs anchored at the corners
@@ -83,6 +84,9 @@ function FluidBlob({
   peakOpacity,
 }: FluidBlobProps) {
   const reduced = useReducedMotion()
+  // Lift the whole band and hold a floor so the eight blobs always overlap
+  // into one continuous rainbow ring instead of pulsing in and out of gaps.
+  const peak = Math.min(1, peakOpacity * 1.15)
 
   return (
     <motion.div
@@ -90,20 +94,30 @@ function FluidBlob({
       initial={{ x: 0, y: 0, scale: 1, opacity: 0 }}
       animate={
         reduced
-          ? { x: 0, y: 0, scale: 1, opacity: peakOpacity * 0.85 }
+          ? { x: 0, y: 0, scale: 1, opacity: peak * 0.9 }
           : {
               // Small drift loop (~80-120px) so the blob stays near its
               // anchor and the rainbow ring's distribution is preserved.
               x: [0, 40, -30, 50, 0],
               y: [0, -40, 30, -20, 0],
               scale: [1, 1.12, 0.92, 1.08, 1],
-              opacity: [0, peakOpacity, peakOpacity * 0.78, peakOpacity, 0],
+              // Floor never returns to 0: the ring stays continuous and only
+              // breathes in intensity as blobs drift across one another.
+              opacity: [peak * 0.6, peak, peak * 0.72, peak, peak * 0.6],
             }
       }
       transition={
         reduced
           ? { duration: 0.4, ease: 'easeOut' }
-          : { duration, delay, repeat: Infinity, ease: 'easeInOut' }
+          : {
+              duration,
+              // Compress the start offsets so the whole ring blooms within
+              // ~1.5s of Siri waking. The varied durations still desync the
+              // drift forever, so the ring never pulses in lockstep.
+              delay: delay * 0.18,
+              repeat: Infinity,
+              ease: 'easeInOut',
+            }
       }
       style={{
         position: 'absolute',

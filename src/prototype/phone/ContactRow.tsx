@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { MagnifiableFrame } from '../Magnifier'
+import { useMagnifierContext } from '../Magnifier/MagnifierContext'
 import { ExpandableCell, type CellAction } from '../Magnifier/ExpandableCell'
 import { space } from '../../tokens/spatial'
 
@@ -35,6 +36,7 @@ export function ContactRow({ id, name, avatar, onCall, onText, index = 0 }: Cont
   const downRef = useRef<{ x: number; y: number } | null>(null)
   const [swipeOffset, setSwipeOffset] = useState(0)
   const [dragging, setDragging] = useState(false)
+  const { rotaryActive } = useMagnifierContext()
 
   /**
    * Check the surrounding ExpandableCell's state. Once it has taken over the
@@ -46,7 +48,7 @@ export function ContactRow({ id, name, avatar, onCall, onText, index = 0 }: Cont
     if (!el) return false
     const cell = el.closest<HTMLElement>('[data-testid^="expandable-contact-row-"]')
     const s = cell?.getAttribute('data-state')
-    return s === 'expanded' || s === 'committing'
+    return s === 'armed' || s === 'sliding' || s === 'expanded' || s === 'committing'
   }, [])
 
   const onPointerDown = useCallback((e: React.PointerEvent) => {
@@ -60,9 +62,10 @@ export function ContactRow({ id, name, avatar, onCall, onText, index = 0 }: Cont
   const onPointerMove = useCallback((e: React.PointerEvent) => {
     const start = downRef.current
     if (!start) return
-    // If the ExpandableCell has taken over (the user is interacting with the
-    // expanded action chips), abandon the swipe-pan visual entirely.
-    if (isCellExpanded(e.currentTarget as HTMLElement)) {
+    // Yield the gesture once a magnifier session is running (the held cell has
+    // handed off to the lens) or the contextual menu is open. The swipe-pan
+    // only owns quick horizontal drags before any hold is recognised.
+    if (rotaryActive || isCellExpanded(e.currentTarget as HTMLElement)) {
       if (swipeOffset !== 0) setSwipeOffset(0)
       return
     }
@@ -71,7 +74,7 @@ export function ContactRow({ id, name, avatar, onCall, onText, index = 0 }: Cont
     if (Math.abs(dy) > Math.abs(dx)) return
     const clamped = Math.max(-120, Math.min(120, dx))
     setSwipeOffset(clamped)
-  }, [isCellExpanded, swipeOffset])
+  }, [isCellExpanded, swipeOffset, rotaryActive])
 
   const onPointerUp = useCallback((e: React.PointerEvent) => {
     const start = downRef.current
@@ -79,9 +82,9 @@ export function ContactRow({ id, name, avatar, onCall, onText, index = 0 }: Cont
     setDragging(false)
     setSwipeOffset(0)
     if (!start) return
-    // Same guard on lift: a lift from an expanded action chip must not also
-    // fire the swipe action.
-    if (isCellExpanded(e.currentTarget as HTMLElement)) return
+    // Same guard on lift: a lift during a magnifier session or from an expanded
+    // chip must not also fire the swipe action.
+    if (rotaryActive || isCellExpanded(e.currentTarget as HTMLElement)) return
     const dx = e.clientX - start.x
     const dy = e.clientY - start.y
     if (Math.abs(dy) > Math.abs(dx)) return
@@ -90,7 +93,7 @@ export function ContactRow({ id, name, avatar, onCall, onText, index = 0 }: Cont
     } else if (dx <= -space.thresholdSwipeRowPx) {
       onText()
     }
-  }, [isCellExpanded, onCall, onText])
+  }, [isCellExpanded, onCall, onText, rotaryActive])
 
   const callRevealed = swipeOffset > 0
   const textRevealed = swipeOffset < 0
@@ -162,7 +165,7 @@ export function ContactRow({ id, name, avatar, onCall, onText, index = 0 }: Cont
             // with a touch of overshoot resistance via the bezier shape.
             transition: dragging
               ? 'none'
-              : 'transform 0.28s cubic-bezier(0.2, 0.85, 0.3, 1)',
+              : 'transform 0.2s cubic-bezier(0.2, 0.85, 0.3, 1)',
             background: 'rgba(255,255,255,0.05)',
             flex: '1 1 auto',
           }}

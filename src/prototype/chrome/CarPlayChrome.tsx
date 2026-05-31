@@ -53,6 +53,10 @@ export function CarPlayChrome({
           style={{
             width: 'var(--dock-width)',
             background: 'var(--carplay-dock-bg)',
+            // Lift the rail above the content so a held dock app's menu popover
+            // can fan out to the right without being painted over by the list.
+            position: 'relative',
+            zIndex: 5,
           }}
         >
           {/* Orb home above dock, separator between */}

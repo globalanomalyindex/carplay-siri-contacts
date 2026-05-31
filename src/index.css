@@ -31,3 +31,20 @@
   outline-offset: 2px;
   border-radius: inherit;
 }
+
+/* Press feedback for the flat, CSS-styled CarPlay chrome (tabs, dock icons,
+   utility chips). The orb owns its own press response via Motion. Each control
+   already lists transform in its inline transition, so the scale eases rather
+   than snaps. Movement is gated to people who have not requested reduced
+   motion; the press is still registered functionally for everyone. */
+@media (prefers-reduced-motion: no-preference) {
+  [data-variant="tab"]:active {
+    transform: scale(0.94);
+  }
+  [data-variant="dock-button"]:active > span {
+    transform: scale(0.92);
+  }
+  [data-variant="util-button"]:not(:disabled):active > span {
+    transform: scale(0.9);
+  }
+}

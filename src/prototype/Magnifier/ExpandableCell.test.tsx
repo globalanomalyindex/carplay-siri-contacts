@@ -1,5 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { act, render, screen, fireEvent } from '@testing-library/react'
+import { MagnifierProvider } from './MagnifierProvider'
+import { useMagnifierInternal } from './MagnifierContext'
 import { ExpandableCell, type CellAction } from './ExpandableCell'
 
 function actions(onCall: () => void, onText: () => void): CellAction[] {
@@ -7,6 +9,11 @@ function actions(onCall: () => void, onText: () => void): CellAction[] {
     { id: 'call', label: 'Call', tone: 'call', variant: 'primary', onAction: onCall },
     { id: 'text', label: 'Text', tone: 'text', variant: 'secondary', onAction: onText },
   ]
+}
+
+/** The cell now hands off to the magnifier driver, which needs the provider. */
+function renderCell(ui: React.ReactNode) {
+  return render(<MagnifierProvider>{ui}</MagnifierProvider>)
 }
 
 /**
@@ -17,7 +24,6 @@ function stubChipRects() {
   const chips = document.querySelectorAll<HTMLElement>('[data-expandable-chip="true"]')
   let x = 100
   chips.forEach((chip) => {
-    const id = chip.dataset.actionId
     const rect = {
       x,
       y: 80,
@@ -32,7 +38,6 @@ function stubChipRects() {
     chip.getBoundingClientRect = () => rect
     chip.dataset.stubX = String(x)
     x += 100
-    void id // satisfy lint about unused id
   })
 }
 
@@ -42,13 +47,8 @@ describe('ExpandableCell', () => {
 
   it('fires onTap when tapped (short press, no movement)', () => {
     const onTap = vi.fn()
-    render(
-      <ExpandableCell
-        id="row-1"
-        expansionAxis="vertical"
-        onTap={onTap}
-        actions={actions(vi.fn(), vi.fn())}
-      >
+    renderCell(
+      <ExpandableCell id="row-1" expansionAxis="vertical" onTap={onTap} actions={actions(vi.fn(), vi.fn())}>
         <div>Sarah</div>
       </ExpandableCell>,
     )
@@ -59,14 +59,9 @@ describe('ExpandableCell', () => {
     expect(onTap).toHaveBeenCalledTimes(1)
   })
 
-  it('enters expanded state after a sustained hold without movement', () => {
-    render(
-      <ExpandableCell
-        id="row-1"
-        expansionAxis="vertical"
-        onTap={vi.fn()}
-        actions={actions(vi.fn(), vi.fn())}
-      >
+  it('arms after a brief hold, then opens the menu on a sustained hold', () => {
+    renderCell(
+      <ExpandableCell id="row-1" expansionAxis="vertical" onTap={vi.fn()} actions={actions(vi.fn(), vi.fn())}>
         <div>Sarah</div>
       </ExpandableCell>,
     )
@@ -74,71 +69,69 @@ describe('ExpandableCell', () => {
     fireEvent.pointerDown(root, { pointerId: 1, clientX: 50, clientY: 50 })
     expect(root.getAttribute('data-state')).toBe('pressing')
 
-    act(() => { vi.advanceTimersByTime(280) })
+    act(() => { vi.advanceTimersByTime(200) })
+    expect(root.getAttribute('data-state')).toBe('armed')
+
+    act(() => { vi.advanceTimersByTime(320) }) // ~520ms total, past the menu hold
     expect(root.getAttribute('data-state')).toBe('expanded')
   })
 
-  it('cancels the hold if the pointer moves past the drag threshold', () => {
-    render(
-      <ExpandableCell
-        id="row-1"
-        expansionAxis="vertical"
-        onTap={vi.fn()}
-        actions={actions(vi.fn(), vi.fn())}
-      >
+  it('hands off to the magnifier when armed then slid', () => {
+    renderCell(
+      <ExpandableCell id="row-1" expansionAxis="vertical" onTap={vi.fn()} actions={actions(vi.fn(), vi.fn())}>
         <div>Sarah</div>
       </ExpandableCell>,
     )
     const root = screen.getByTestId('expandable-row-1')
     fireEvent.pointerDown(root, { pointerId: 1, clientX: 50, clientY: 50 })
-    fireEvent.pointerMove(root, { pointerId: 1, clientX: 80, clientY: 50 })
-    act(() => { vi.advanceTimersByTime(300) })
+    act(() => { vi.advanceTimersByTime(200) }) // arm
+    // A decisive slide (>= 24pt) lifts into the magnifier session.
+    fireEvent.pointerMove(root, { pointerId: 1, clientX: 90, clientY: 52 })
+    expect(root.getAttribute('data-state')).toBe('sliding')
+  })
+
+  it('yields the hold if the pointer moves before arming', () => {
+    renderCell(
+      <ExpandableCell id="row-1" expansionAxis="vertical" onTap={vi.fn()} actions={actions(vi.fn(), vi.fn())}>
+        <div>Sarah</div>
+      </ExpandableCell>,
+    )
+    const root = screen.getByTestId('expandable-row-1')
+    fireEvent.pointerDown(root, { pointerId: 1, clientX: 50, clientY: 50 })
+    fireEvent.pointerMove(root, { pointerId: 1, clientX: 80, clientY: 50 }) // 30pt, pre-arm
+    act(() => { vi.advanceTimersByTime(600) })
     expect(root.getAttribute('data-state')).toBe('collapsed')
   })
 
-  it('highlights the chip nearest the pointer when expanded', () => {
-    render(
-      <ExpandableCell
-        id="row-1"
-        expansionAxis="vertical"
-        onTap={vi.fn()}
-        actions={actions(vi.fn(), vi.fn())}
-      >
+  it('highlights the chip nearest the pointer when the menu is open', () => {
+    renderCell(
+      <ExpandableCell id="row-1" expansionAxis="vertical" onTap={vi.fn()} actions={actions(vi.fn(), vi.fn())}>
         <div>Sarah</div>
       </ExpandableCell>,
     )
     const root = screen.getByTestId('expandable-row-1')
     fireEvent.pointerDown(root, { pointerId: 1, clientX: 50, clientY: 50 })
-    act(() => { vi.advanceTimersByTime(280) })
+    act(() => { vi.advanceTimersByTime(520) })
     stubChipRects()
 
-    // First chip at x in [100, 180].
     fireEvent.pointerMove(root, { pointerId: 1, clientX: 140, clientY: 100 })
-    const callChip = screen.getByLabelText('Call')
-    expect(callChip.getAttribute('data-state')).toBe('hovered')
+    expect(screen.getByLabelText('Call').getAttribute('data-state')).toBe('hovered')
 
-    // Second chip at x in [200, 280].
     fireEvent.pointerMove(root, { pointerId: 1, clientX: 240, clientY: 100 })
-    const textChip = screen.getByLabelText('Text')
-    expect(textChip.getAttribute('data-state')).toBe('hovered')
+    expect(screen.getByLabelText('Text').getAttribute('data-state')).toBe('hovered')
   })
 
   it('fires the hovered chip onAction on lift', () => {
     const onCall = vi.fn()
     const onText = vi.fn()
-    render(
-      <ExpandableCell
-        id="row-1"
-        expansionAxis="vertical"
-        onTap={vi.fn()}
-        actions={actions(onCall, onText)}
-      >
+    renderCell(
+      <ExpandableCell id="row-1" expansionAxis="vertical" onTap={vi.fn()} actions={actions(onCall, onText)}>
         <div>Sarah</div>
       </ExpandableCell>,
     )
     const root = screen.getByTestId('expandable-row-1')
     fireEvent.pointerDown(root, { pointerId: 1, clientX: 50, clientY: 50 })
-    act(() => { vi.advanceTimersByTime(280) })
+    act(() => { vi.advanceTimersByTime(520) })
     stubChipRects()
 
     fireEvent.pointerMove(root, { pointerId: 1, clientX: 140, clientY: 100 })
@@ -152,22 +145,16 @@ describe('ExpandableCell', () => {
     const onCall = vi.fn()
     const onText = vi.fn()
     const onTap = vi.fn()
-    render(
-      <ExpandableCell
-        id="row-1"
-        expansionAxis="vertical"
-        onTap={onTap}
-        actions={actions(onCall, onText)}
-      >
+    renderCell(
+      <ExpandableCell id="row-1" expansionAxis="vertical" onTap={onTap} actions={actions(onCall, onText)}>
         <div>Sarah</div>
       </ExpandableCell>,
     )
     const root = screen.getByTestId('expandable-row-1')
     fireEvent.pointerDown(root, { pointerId: 1, clientX: 50, clientY: 50 })
-    act(() => { vi.advanceTimersByTime(280) })
+    act(() => { vi.advanceTimersByTime(520) })
     stubChipRects()
 
-    // Lift far below the chip cluster (chips live around y=80-124).
     fireEvent.pointerUp(root, { pointerId: 1, clientX: 50, clientY: 600 })
 
     expect(onCall).not.toHaveBeenCalled()
@@ -176,14 +163,59 @@ describe('ExpandableCell', () => {
     expect(root.getAttribute('data-state')).toBe('collapsed')
   })
 
-  it('exposes data-variant and data-expansion-axis for design-system export', () => {
+  it('opens its menu when the magnifier requests it, then fires the chip on lift', () => {
+    const onCall = vi.fn()
+    const onText = vi.fn()
+    let requestMenu: ((id: string, p: { x: number; y: number }) => void) | null = null
+    function Trigger() {
+      requestMenu = useMagnifierInternal().requestMenu
+      return null
+    }
     render(
-      <ExpandableCell
-        id="dock-phone"
-        expansionAxis="horizontal"
-        variant="dock"
-        actions={actions(vi.fn(), vi.fn())}
-      >
+      <MagnifierProvider>
+        <Trigger />
+        <ExpandableCell id="row-1" expansionAxis="vertical" onTap={vi.fn()} actions={actions(onCall, onText)}>
+          <div>Sarah</div>
+        </ExpandableCell>
+      </MagnifierProvider>,
+    )
+    const root = screen.getByTestId('expandable-row-1')
+    expect(root.getAttribute('data-state')).toBe('collapsed')
+
+    // The driver rested its lens here and asked for the menu (no pointerdown
+    // ever landed on this cell; the gesture began elsewhere and slid over).
+    act(() => { requestMenu!('row-1', { x: 140, y: 100 }) })
+    expect(root.getAttribute('data-state')).toBe('expanded')
+
+    stubChipRects()
+    fireEvent.pointerMove(root, { pointerId: 1, clientX: 140, clientY: 100 })
+    fireEvent.pointerUp(root, { pointerId: 1, clientX: 140, clientY: 100 })
+    expect(onCall).toHaveBeenCalledTimes(1)
+    expect(onText).not.toHaveBeenCalled()
+  })
+
+  it('ignores a menu request addressed to another cell', () => {
+    let requestMenu: ((id: string, p: { x: number; y: number }) => void) | null = null
+    function Trigger() {
+      requestMenu = useMagnifierInternal().requestMenu
+      return null
+    }
+    render(
+      <MagnifierProvider>
+        <Trigger />
+        <ExpandableCell id="row-1" expansionAxis="vertical" onTap={vi.fn()} actions={actions(vi.fn(), vi.fn())}>
+          <div>Sarah</div>
+        </ExpandableCell>
+      </MagnifierProvider>,
+    )
+    const root = screen.getByTestId('expandable-row-1')
+    act(() => { requestMenu!('row-2', { x: 0, y: 0 }) })
+    expect(root.getAttribute('data-state')).toBe('collapsed')
+  })
+
+  it('exposes data-variant and data-expansion-axis for design-system export', () => {
+    renderCell(
+      <ExpandableCell id="dock-phone" expansionAxis="horizontal" variant="dock" actions={actions(vi.fn(), vi.fn())}>
         <div>Phone</div>
       </ExpandableCell>,
     )

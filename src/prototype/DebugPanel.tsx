@@ -41,7 +41,7 @@ export function DebugPanel({ settings, update, driving, setDriving }: DebugPanel
         marginBottom: 10,
         color: 'rgba(120,220,240,0.85)',
       }}>
-        Debug controls
+        Demo controls
       </div>
       <Toggle
         label="Driving (binary state)"

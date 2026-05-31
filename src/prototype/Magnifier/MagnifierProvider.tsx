@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useRef, useState, type ReactNode } from 'react'
-import type { GestureDirection, MagnifiableTarget, MagnifierContextValue } from './types'
+import type { GestureDirection, MagnifiableTarget, MagnifierContextValue, MenuRequest } from './types'
 import {
   MagnifierContext,
   InternalContext,
@@ -18,6 +18,7 @@ export function MagnifierProvider({ children }: MagnifierProviderProps) {
   const [lastCommit, setLastCommit] = useState<{ id: string | null; at: number }>(
     { id: null, at: 0 },
   )
+  const [menuRequest, setMenuRequest] = useState<MenuRequest | null>(null)
 
   const register = useCallback((t: MagnifiableTarget) => {
     targetsRef.current.set(t.id, t)
@@ -30,16 +31,26 @@ export function MagnifierProvider({ children }: MagnifierProviderProps) {
     setLastCommit({ id, at: Date.now() })
   }, [])
 
+  const requestMenu = useCallback((id: string, point: { x: number; y: number }) => {
+    setMenuRequest({ id, at: Date.now(), x: point.x, y: point.y })
+  }, [])
+
+  const clearMenuRequest = useCallback(() => {
+    setMenuRequest(null)
+  }, [])
+
   const publicValue = useMemo<MagnifierContextValue>(
     () => ({
       register,
       lockedId,
       rotaryActive,
       gestureDirection,
+      menuRequest,
+      clearMenuRequest,
       lastCommittedId: lastCommit.id,
       lastCommittedAt: lastCommit.at,
     }),
-    [register, lockedId, rotaryActive, gestureDirection, lastCommit],
+    [register, lockedId, rotaryActive, gestureDirection, menuRequest, clearMenuRequest, lastCommit],
   )
 
   const internalValue = useMemo<MagnifierInternalAPI>(
@@ -49,8 +60,9 @@ export function MagnifierProvider({ children }: MagnifierProviderProps) {
       setRotaryActive,
       setGestureDirection,
       recordCommit,
+      requestMenu,
     }),
-    [recordCommit],
+    [recordCommit, requestMenu],
   )
 
   return (

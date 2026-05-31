@@ -1,3 +1,5 @@
+import type { MagnifierRegion } from './types'
+
 export interface Point {
   x: number
   y: number
@@ -5,6 +7,15 @@ export interface Point {
 
 export interface TargetGeometry {
   rect: DOMRect
+  /** Spatial region. Defaults to 'content' when omitted. */
+  region?: MagnifierRegion
+}
+
+/** Pixels of slack added to a region boundary so a target's own edge counts. */
+export const REGION_MARGIN_PX = 10
+
+export function pointInRect(p: Point, r: DOMRect): boolean {
+  return p.x >= r.left && p.x <= r.right && p.y >= r.top && p.y <= r.bottom
 }
 
 export function rectCenter(r: DOMRect): Point {
@@ -62,6 +73,90 @@ export function isPastHysteresis(
   const dot = (px * dx + py * dy) / len
   const t = dot / len
   return t >= fraction
+}
+
+/**
+ * Decide which region the pointer is in, derived from the targets' own extents
+ * so it adapts to the live layout. The dock occupies the left rail, the tabs a
+ * top band; everything to the right of the dock and below the tabs is content.
+ * A small margin lets a target's own edge count as still inside its region.
+ */
+export function regionOfPoint(
+  point: Point,
+  targets: Map<string, TargetGeometry>,
+  margin: number = REGION_MARGIN_PX,
+): MagnifierRegion {
+  let dockRight = -Infinity
+  let tabBottom = -Infinity
+  let hasDock = false
+  let hasTabs = false
+  for (const t of targets.values()) {
+    const region = t.region ?? 'content'
+    if (region === 'dock') {
+      hasDock = true
+      if (t.rect.right > dockRight) dockRight = t.rect.right
+    } else if (region === 'tabs') {
+      hasTabs = true
+      if (t.rect.bottom > tabBottom) tabBottom = t.rect.bottom
+    }
+  }
+  if (hasDock && point.x <= dockRight + margin) return 'dock'
+  if (hasTabs && point.y <= tabBottom + margin) return 'tabs'
+  return 'content'
+}
+
+/**
+ * The magnifier hit-test. Three rules, in order:
+ *
+ *   1. Region gating: only targets in the pointer's region compete, so a wide
+ *      content row is never out-competed by a dock icon or a tab that merely
+ *      sits nearer by centre distance. This is the fix for the axis overlap
+ *      where dragging down a list could switch apps.
+ *   2. Membrane hold: keep the current lock while the pointer is still inside
+ *      its (magnified) bounds. The grown rect of the locked cell IS the
+ *      membrane, so the hold is grounded in real geometry, not a fixed radius.
+ *   3. Containment, then nearest centre: lock whatever sits under the finger
+ *      (smallest rect wins when nested); fall back to nearest centre, with the
+ *      usual hysteresis, only when the pointer is in a gap between targets.
+ */
+export function pickMagnifierTarget(
+  point: Point,
+  targets: Map<string, TargetGeometry>,
+  currentLockId: string | null,
+  fraction: number,
+): string | null {
+  if (targets.size === 0) return null
+
+  const region = regionOfPoint(point, targets)
+  const candidates = new Map<string, TargetGeometry>()
+  for (const [id, t] of targets) {
+    if ((t.region ?? 'content') === region) candidates.set(id, t)
+  }
+  if (candidates.size === 0) return null
+
+  // Membrane hold: stay on the current lock while still inside its bounds.
+  if (currentLockId && candidates.has(currentLockId)) {
+    const cur = candidates.get(currentLockId)!
+    if (pointInRect(point, cur.rect)) return currentLockId
+  }
+
+  // Containment: the smallest target physically under the finger.
+  let contained: { id: string; area: number } | null = null
+  for (const [id, t] of candidates) {
+    if (pointInRect(point, t.rect)) {
+      const area = t.rect.width * t.rect.height
+      if (!contained || area < contained.area) contained = { id, area }
+    }
+  }
+  if (contained) return contained.id
+
+  // Gap: nearest centre within the region, with membrane hysteresis.
+  return pickLockedTarget(
+    point,
+    candidates,
+    currentLockId && candidates.has(currentLockId) ? currentLockId : null,
+    fraction,
+  )
 }
 
 export type GestureDirection = 'horizontal' | 'vertical' | 'idle'

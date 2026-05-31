@@ -13,6 +13,14 @@ export const easing = {
 
 export const springs = {
   glassFlex: { damping: 0.62, stiffness: 240 },
+  /** The single liquid lens flowing between locked targets. */
+  lensFlow: { stiffness: 480, damping: 34, mass: 0.7 },
+  /** A small control snapping to its magnified lock. */
+  lockSnap: { stiffness: 340, damping: 26, mass: 0.45 },
+  /** An ExpandableCell reflowing as its menu opens. */
+  cellExpand: { stiffness: 280, damping: 28, mass: 0.5 },
+  /** Action chips fanning into a menu. */
+  chipFan: { stiffness: 320, damping: 28, mass: 0.5 },
 } as const
 
 /* Durations in seconds (Motion uses seconds, CSS uses ms). */
