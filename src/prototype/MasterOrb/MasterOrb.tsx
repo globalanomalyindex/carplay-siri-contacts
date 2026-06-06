@@ -34,7 +34,9 @@ export function MasterOrb() {
   // Mirror the machine state into a ref so the window-level pointer listeners
   // (registered once) always read the current value without re-subscribing.
   const stateRef = useRef(state)
-  stateRef.current = state
+  useEffect(() => {
+    stateRef.current = state
+  }, [state])
 
   // Publish state up to the shell so global hooks (tap-to-dismiss-Siri,
   // swipe-to-edge cancel) can react. The shell provider sets up _publish

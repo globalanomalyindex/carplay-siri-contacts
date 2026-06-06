@@ -51,7 +51,7 @@ export function Thesis() {
           <h2 className="cs-h2">
             One persistent orb.
             <br />
-            <PastelText variant="gradient-1">Every interaction</PastelText> the car needs.
+            <PastelText variant="gradient-1">Every Phone interaction</PastelText> today. The system tomorrow.
           </h2>
           <p className="cs-body">
             A system-level affordance in the top-left negative space above
@@ -59,8 +59,8 @@ export function Thesis() {
             magnifier mode that snaps to discrete components and free-drifts
             over continuous canvases. Hold a cell directly and it expands
             inline, surfacing its actions alongside its existing content.
-            Cell-membrane hysteresis keeps the lock honest. The orb is the
-            only thing a driver needs to learn.
+            Cell-membrane hysteresis keeps the lock honest. A driver learns
+            one gesture grammar, not a screen full of controls.
           </p>
         </motion.div>
 

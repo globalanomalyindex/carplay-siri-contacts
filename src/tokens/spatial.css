@@ -1,5 +1,6 @@
 /* Spatial tokens: sizes, radii, thresholds.
-   Values from spec section 4.3, 5.3, 6. */
+   spatial.ts is the source of truth for JS-driven values (hit-testing,
+   distances); this stylesheet mirrors the subset CSS consumes. Keep in sync. */
 
 :root {
   /* Orb + glass */
@@ -8,10 +9,8 @@
   --glass-radius:    14px;
   --glass-flex-scale: 1.08;
 
-  /* Magnifier */
-  --magnify-scale:        1.25;
-  --lock-radius:          40px;
-  --lock-radius-resistive:50px;
+  /* Magnifier (mirrors spatial.ts magnifyScale) */
+  --magnify-scale:        1.12;
 
   /* Hysteresis: lock holds until finger is 60 percent past the next center */
   --membrane-hysteresis-fraction: 0.60;

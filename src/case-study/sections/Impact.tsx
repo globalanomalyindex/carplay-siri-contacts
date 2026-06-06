@@ -44,7 +44,8 @@ export function Impact() {
               <Counter value={20} suffix="M+" />
             </div>
             <div className="cs-stat-label">
-              US adults with significant motor variability. Direct beneficiaries.
+              US adults with significant motor impairment, counted once across
+              overlapping conditions. Direct beneficiaries.
             </div>
           </motion.div>
           <motion.div

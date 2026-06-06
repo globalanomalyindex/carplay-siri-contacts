@@ -50,18 +50,23 @@ export function PhoneApp() {
 
   // Latch the previewed tab so a drag that continues DOWN into the list keeps
   // that list on screen (drill-through), instead of snapping back to the
-  // committed tab the instant the lock leaves the top tab band.
-  useEffect(() => {
-    if (previewTab) setLatched(previewTab)
-  }, [previewTab])
+  // committed tab the instant the lock leaves the top tab band. This adjusts
+  // state during render, React's recommended alternative to a syncing effect
+  // for state derived from a changing value, and avoids a wasted commit.
+  if (previewTab && previewTab !== latched) setLatched(previewTab)
 
-  // When the rotary session ends, persist whichever tab the user drilled into
-  // and clear the latch for next time.
+  // Commit the drilled tab when the rotary session ends. This is edge-triggered
+  // synchronization with the magnifier lifecycle: prevRotary detects the
+  // rotary-to-idle transition so the commit fires once per session. It cannot be
+  // a render-time derivation because it reacts to a transition, not to current
+  // state (deriving it would re-commit every idle frame and loop).
   const prevRotary = useRef(false)
   useEffect(() => {
     if (prevRotary.current && !rotaryActive) {
+      /* eslint-disable react-hooks/set-state-in-effect */
       if (latched && tabs.includes(latched)) setActive(latched)
       setLatched(null)
+      /* eslint-enable react-hooks/set-state-in-effect */
     }
     prevRotary.current = rotaryActive
   }, [rotaryActive, latched, tabs])

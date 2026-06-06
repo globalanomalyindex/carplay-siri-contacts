@@ -344,8 +344,14 @@ export function ExpandableCell({
       expandedAt: now,
     }
     cancelTimers()
+    // This synchronizes the cell to a one-shot interaction signal (the driver's
+    // dwell-driven menu request, delivered through context). Responding to an
+    // external event by setting state is a valid use of an effect, and it cannot
+    // move into render because it also clears the shared request.
+    /* eslint-disable react-hooks/set-state-in-effect */
     setState('expanded')
     setHoveredActionId(findActionAtPoint({ x: menuRequest.x, y: menuRequest.y }))
+    /* eslint-enable react-hooks/set-state-in-effect */
   }, [menuRequest, id, actions.length, cancelTimers, clearMenuRequest, findActionAtPoint])
 
   const expanded = state === 'expanded' || state === 'committing'

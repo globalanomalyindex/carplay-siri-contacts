@@ -42,8 +42,8 @@ export function Reflection() {
             <p className="cs-body">
               The pivot from pinecone to water was the second strongest
               decision. Forcing the metaphor to live in motion rather than
-              decoration kept the visual surface clean Apple HIG. The water
-              feel is entirely in the curves.
+              decoration kept the visual surface clean and close to Apple HIG.
+              The water feel is entirely in the curves.
             </p>
           </motion.div>
 

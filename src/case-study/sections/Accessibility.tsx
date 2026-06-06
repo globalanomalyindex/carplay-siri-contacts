@@ -30,7 +30,7 @@ const BENEFICIARIES: Beneficiary[] = [
     group: 'Arthritis, low precision',
     prevalence: '~58M US adults',
     constraint: 'Joint pain on repeated precise actuations; sustained hover is costly.',
-    response: 'Fixed orb location (zero hunt). Screen-as-anchor means the arm rests. ~50% drop in joint actuations to place a call.',
+    response: 'Fixed orb location (zero hunt). Screen-as-anchor means the arm rests. A predicted ~50% drop in joint actuations to place a call.',
     accent: 'var(--pastel-yellow)',
   },
   {
