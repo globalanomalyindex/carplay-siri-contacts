@@ -3,11 +3,11 @@ import { PastelText } from '../components/PastelText'
 import { SectionLabel } from '../components/SectionLabel'
 import { SpecTable } from '../components/SpecTable'
 import { Counter } from '../components/Counter'
+import { AsciiArrow } from '../components/AsciiArrow'
 
 /**
- * Impact and validation. KPIs, hypothetical research plan,
- * and a two-phase rollout outline. Numbers anchor the design in
- * falsifiable claims.
+ * Impact and validation. KPIs, a hypothetical research plan, and a two-phase
+ * rollout outline. The numbers anchor the design in falsifiable claims.
  */
 export function Impact() {
   return (
@@ -19,15 +19,16 @@ export function Impact() {
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.7, ease: [0.2, 0.8, 0.3, 1.0] }}
         >
-          <SectionLabel stop="mint">08 &middot; Impact</SectionLabel>
+          <AsciiArrow length={5} />
+          <SectionLabel stop="mint">08 &middot; impact</SectionLabel>
           <h2 className="cs-h2">
-            <PastelText variant="gradient-1">Measurable</PastelText> on day one.
+            <PastelText variant="gradient-1">measurable</PastelText> on day one.
           </h2>
           <p className="cs-body">
-            Every claim in this design is set up to be tested. The KPIs below
-            are baselines and targets. The hypothesis sheet behind them lists
-            stop-ship criteria. If the prototype shipped at Apple, this is
-            how the team would know it worked.
+            every claim in this design is set up to be tested. the KPIs below
+            are baselines and targets, and the hypothesis sheet behind them
+            lists stop-ship criteria. if the prototype shipped at Apple, this
+            is how the team would know it worked.
           </p>
         </motion.div>
 
@@ -45,7 +46,7 @@ export function Impact() {
             </div>
             <div className="cs-stat-label">
               US adults with significant motor impairment, counted once across
-              overlapping conditions. Direct beneficiaries.
+              overlapping conditions. the direct beneficiaries.
             </div>
           </motion.div>
           <motion.div
@@ -59,7 +60,7 @@ export function Impact() {
               <Counter value={230} suffix="M" />
             </div>
             <div className="cs-stat-label">
-              US licensed drivers. Curb-cut beneficiaries from the same affordances.
+              US licensed drivers. curb-cut beneficiaries of the same affordances.
             </div>
           </motion.div>
           <motion.div
@@ -73,7 +74,7 @@ export function Impact() {
               <Counter value={40} suffix="%" />
             </div>
             <div className="cs-stat-label">
-              Predicted reduction in mis-actions on bumpy roads. Hypothesis H3.
+              predicted drop in mis-actions on bumpy roads. hypothesis H3.
             </div>
           </motion.div>
           <motion.div
@@ -87,7 +88,7 @@ export function Impact() {
               <Counter value={85} suffix="%" />
             </div>
             <div className="cs-stat-label">
-              Target first-try task completion for motor-constrained users. Baseline 45%.
+              target first-try task completion for motor-constrained users. baseline 45%.
             </div>
           </motion.div>
         </div>
@@ -100,7 +101,7 @@ export function Impact() {
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.6 }}
           >
-            <h3 className="cs-h3">Primary KPIs</h3>
+            <h3 className="cs-h3">primary KPIs</h3>
             <SpecTable
               rows={[
                 { label: 'Eyes-off-road time per task',  value: '3.4s -> <= 2.5s' },
@@ -118,7 +119,7 @@ export function Impact() {
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.6, delay: 0.08 }}
           >
-            <h3 className="cs-h3">Latency targets</h3>
+            <h3 className="cs-h3">latency targets</h3>
             <SpecTable
               rows={[
                 { label: 'Tap-to-visual (orb)',         value: '<= 100ms' },
@@ -139,7 +140,7 @@ export function Impact() {
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.6 }}
         >
-          <h3 className="cs-h3">Phased rollout</h3>
+          <h3 className="cs-h3">phased rollout</h3>
           <div className="cs-grid cs-grid-2">
             <div className="cs-card">
               <div
@@ -152,13 +153,13 @@ export function Impact() {
                   marginBottom: 12,
                 }}
               >
-                Phase 1 &middot; Phone deep build
+                phase 1 &middot; phone deep build
               </div>
               <p style={{ fontSize: 14.5, lineHeight: 1.55, margin: 0, color: 'var(--cs-text)' }}>
-                Master orb shipped as system chrome. Phone app adopts the
-                magnifier first. Contacts tab disappears from driving state
-                instead of redirecting. Radial dialer replaces the keypad
-                in parked-only state. Opt-in for general users; default-on
+                master orb ships as system chrome. the Phone app adopts the
+                magnifier first. the contacts tab disappears from the driving
+                state instead of redirecting. a radial dialer replaces the
+                keypad in parked-only state. opt-in for general users, default-on
                 for paired-iPhone AssistiveTouch users.
               </p>
             </div>
@@ -173,13 +174,13 @@ export function Impact() {
                   marginBottom: 12,
                 }}
               >
-                Phase 2 &middot; System-wide
+                phase 2 &middot; system-wide
               </div>
               <p style={{ fontSize: 14.5, lineHeight: 1.55, margin: 0, color: 'var(--cs-text)' }}>
                 Maps adopts the magnifier for point-of-interest pins and the
                 quick-controls strip. Music adopts it for queue selection and
-                scrub-bar drift. Third-party API <code className="spec-value">CPMagnifiableTarget</code> ships
-                at the following WWDC. Cellular widget-grid layout begins
+                scrub-bar drift. the third-party API <code className="spec-value">CPMagnifiableTarget</code> ships
+                at the following WWDC. the cellular widget-grid layout kicks off
                 as the second case study in the series.
               </p>
             </div>

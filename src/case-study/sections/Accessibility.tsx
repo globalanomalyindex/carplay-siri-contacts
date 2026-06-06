@@ -1,4 +1,5 @@
 import { motion } from 'motion/react'
+import { AsciiArrow } from '../components/AsciiArrow'
 import { PastelText } from '../components/PastelText'
 import { PullQuote } from '../components/PullQuote'
 import { SectionLabel } from '../components/SectionLabel'
@@ -15,43 +16,43 @@ const BENEFICIARIES: Beneficiary[] = [
   {
     group: "Parkinson's disease",
     prevalence: '~1M US adults',
-    constraint: '3-6Hz resting tremor and rigidity reduce precise tap timing.',
-    response: 'Magnifier averages tremor across the gesture. Only the lift point matters; no tap-timing window.',
+    constraint: '3-6Hz resting tremor and rigidity make precise tap timing hard.',
+    response: 'the magnifier averages the tremor out across the gesture. only the lift point matters, so there is no tap-timing window to miss.',
     accent: 'var(--pastel-pink)',
   },
   {
-    group: 'Essential tremor',
+    group: 'essential tremor',
     prevalence: '~10M US adults',
-    constraint: 'Action tremor amplifies when reaching for small targets.',
-    response: '40pt lock radius. Land within range; shake can continue without breaking the lock.',
+    constraint: 'action tremor gets worse the moment you reach for a small target.',
+    response: '40pt lock radius. land anywhere in range and the shake can keep going without breaking the lock.',
     accent: 'var(--pastel-peach)',
   },
   {
-    group: 'Arthritis, low precision',
+    group: 'arthritis, low precision',
     prevalence: '~58M US adults',
-    constraint: 'Joint pain on repeated precise actuations; sustained hover is costly.',
-    response: 'Fixed orb location (zero hunt). Screen-as-anchor means the arm rests. A predicted ~50% drop in joint actuations to place a call.',
+    constraint: 'joint pain on repeated precise actuations; holding a hover is expensive.',
+    response: 'the orb sits in a fixed spot (zero hunt). screen-as-anchor lets the arm rest. a predicted ~50% drop in joint actuations to place a call.',
     accent: 'var(--pastel-yellow)',
   },
   {
-    group: 'Post-stroke, MS, low dexterity',
+    group: 'post-stroke, MS, low dexterity',
     prevalence: '~8M US adults',
-    constraint: 'Limited finger isolation; pinch and spread are out of reach.',
-    response: 'Single-finger drag is the only required input. Region-mirrored layout for RHD vehicles.',
+    constraint: 'limited finger isolation; pinch and spread are out of reach.',
+    response: 'a single-finger drag is the only input the system asks for. layout mirrors for RHD vehicles.',
     accent: 'var(--pastel-mint)',
   },
   {
-    group: 'One-handed users',
-    prevalence: 'Situational',
-    constraint: 'Holding a child, a coffee, a phone. A broken arm. Cold gloved hands.',
-    response: 'Every action is a single drag. No two-handed gesture exists. Glove input works as long as capacitance triggers.',
+    group: 'one-handed users',
+    prevalence: 'situational',
+    constraint: 'holding a kid, a coffee, a phone. a broken arm. cold gloved hands.',
+    response: 'every action is one drag. there is no two-handed gesture anywhere. gloves work fine as long as they trip capacitance.',
     accent: 'var(--pastel-sky)',
   },
   {
-    group: 'Drivers, generally',
+    group: 'drivers, generally',
     prevalence: '~230M US adults',
-    constraint: 'Bumpy roads, fatigue, distraction, glare, cold hands, unfamiliar rental cars.',
-    response: 'The same primitive serves every one of those. Curb-cut effect: design for the margin, lift everyone.',
+    constraint: 'bumpy roads, fatigue, distraction, glare, cold hands, an unfamiliar rental.',
+    response: 'the same primitive covers all of it. curb-cut effect: design for the margin, lift everyone.',
     accent: 'var(--pastel-lavender)',
   },
 ]
@@ -64,17 +65,17 @@ interface AxisRecap {
 const AXIS_EXAMPLES: AxisRecap[] = [
   {
     axis: "Fitts' Law",
-    example: 'Orb sits in the same chrome cell across every app. Locating it is reflex, not perception.',
+    example: 'the orb sits in the same chrome cell across every app. finding it is reflex, not a thing you look for.',
   },
   {
-    axis: 'Jitter tolerance',
+    axis: 'jitter tolerance',
     example:
-      'Drift, snap radius, and cell-membrane hysteresis compound. A bump on the road does not transfer to the lock.',
+      'drift, snap radius, and cell-membrane hysteresis stack up. a bump in the road never reaches the lock.',
   },
   {
-    axis: 'Fatigue (arm anchor)',
+    axis: 'fatigue (arm anchor)',
     example:
-      'The finger lives on the screen for the whole gesture. The screen is the rest. Lift commits in one motion.',
+      'the finger stays on the screen for the whole gesture. the screen is the armrest. lift commits in one motion.',
   },
 ]
 
@@ -93,40 +94,40 @@ export function Accessibility() {
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.7, ease: [0.2, 0.8, 0.3, 1.0] }}
         >
-          <SectionLabel stop="blue">04 &middot; Accessibility</SectionLabel>
+          <AsciiArrow length={5} />
+          <SectionLabel stop="blue">04 &middot; accessibility</SectionLabel>
           <h2 className="cs-statement">
-            Designed for the most motor-constrained user.
+            built for the most motor-constrained driver.
             <br />
-            <PastelText variant="gradient-1">Everyone</PastelText> gets the same affordance.
+            <PastelText variant="gradient-1">everyone</PastelText> gets the same affordance.
           </h2>
           <p className="cs-body">
-            CarPlay's accessibility surface today is materially thinner than
-            iOS's. There is no AssistiveTouch equivalent. The most
-            safety-critical entry point in the Phone app is buried behind a
-            locked tab. Users who rely on AssistiveTouch on their iPhone
-            arrive in the car without it. This redesign reverses that.
+            CarPlay's accessibility surface today is a lot thinner than iOS's.
+            there is no AssistiveTouch equivalent. the most safety-critical
+            thing in the Phone app is buried behind a locked tab, which is a
+            little wild. people who lean on AssistiveTouch on their iPhone get
+            in the car and it's just gone. this redesign hands it back.
           </p>
           <p className="cs-body">
-            Each population below sees the same orb. The same gesture grammar.
-            The same magnifier. The accessibility path is not a mode toggle.
-            It is the default behavior of the system.
+            every population below sees the same orb. the same gesture grammar.
+            the same magnifier. the accessibility path isn't a mode toggle you
+            go hunting for, it's just how the system behaves by default.
           </p>
           <p className="cs-body">
-            Framed plainly, this is capability, not accommodation. A driver who
-            could not reliably place a call while the car was moving gets that
-            control back, unassisted. The measure that matters is not seconds
-            saved or screens avoided. It is first-try completion, and the target
+            plainly: this is capability, not accommodation. a driver who
+            couldn't reliably place a call while the car was moving gets that
+            control back, on their own. the measure that matters isn't seconds
+            saved or screens avoided. it's first-try completion, and the target
             is to carry motor-constrained drivers from a 45 percent baseline to
             85 percent.
           </p>
           <p className="cs-body">
-            Holding a cell expands it inline rather than opening a separate
-            menu. Neighbors shift to make room. Nothing disappears. That
-            matters for users who navigate by spatial memory, who lose their
-            place when content reshuffles, or who cannot recover from a screen
-            that suddenly looks unfamiliar. The action chips appear right where
-            the user is already looking, attached to the cell that produced
-            them.
+            holding a cell expands it inline instead of opening a separate menu.
+            the neighbors shift to make room. nothing disappears. that matters
+            for people who work by spatial memory, who lose their place when
+            content reshuffles, or who can't recover from a screen that suddenly
+            looks unfamiliar. the action chips show up right where the eye
+            already is, attached to the cell that produced them.
           </p>
         </motion.div>
 
@@ -143,10 +144,9 @@ export function Accessibility() {
             >
               <div
                 style={{
-                  width: 32,
-                  height: 32,
-                  borderRadius: 8,
-                  background: b.accent,
+                  width: 24,
+                  height: 1,
+                  background: 'var(--cs-text)',
                   marginBottom: 18,
                 }}
                 aria-hidden="true"
@@ -191,9 +191,9 @@ export function Accessibility() {
           ))}
         </div>
 
-        <PullQuote cite="The principle, by name">
-          The <PastelText variant="gradient-2">curb-cut effect</PastelText>: build the ramp for wheelchairs,
-          and the strollers, the bikes, and the rolling luggage benefit too.
+        <PullQuote cite="the principle, by name">
+          the <PastelText variant="gradient-2">curb-cut effect</PastelText>: build the ramp for wheelchairs,
+          and the strollers, the bikes, and the rolling luggage get it for free.
         </PullQuote>
 
         {/* Three-axis recap */}
@@ -205,7 +205,7 @@ export function Accessibility() {
           transition={{ duration: 0.6, ease: [0.2, 0.8, 0.3, 1.0] }}
         >
           <h3 className="cs-h3" style={{ marginBottom: 24 }}>
-            Three ergonomic axes, one primitive.
+            three ergonomic axes, one primitive.
           </h3>
           <div className="cs-grid cs-grid-3">
             {AXIS_EXAMPLES.map((a, i) => (
@@ -226,7 +226,7 @@ export function Accessibility() {
                     marginBottom: 10,
                   }}
                 >
-                  Axis 0{i + 1}
+                  axis 0{i + 1}
                 </div>
                 <h4
                   style={{

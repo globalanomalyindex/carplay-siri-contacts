@@ -20,16 +20,16 @@ import { Footer } from './sections/Footer'
 export function CaseStudyPage() {
   return (
     <div className="case-study">
-      <a href="#main-content" className="cs-skip-link">Skip to content</a>
+      <a href="#main-content" className="cs-skip-link">skip to content</a>
       <nav className="cs-nav" aria-label="Case study navigation">
         <div className="cs-nav-inner">
-          <span className="cs-nav-brand">One Master Affordance</span>
+          <span className="cs-nav-brand">one master affordance</span>
           <div style={{ display: 'flex', gap: 24, alignItems: 'center' }}>
-            <a href="#prototype" className="cs-nav-link">Try it</a>
-            <a href="#accessibility" className="cs-nav-link">Accessibility</a>
-            <a href="#motion" className="cs-nav-link">Motion</a>
-            <a href="#impact" className="cs-nav-link">Outcomes</a>
-            <Link to="/prototype" className="cs-nav-link">Open prototype</Link>
+            <a href="#prototype" className="cs-nav-link">try it</a>
+            <a href="#accessibility" className="cs-nav-link">accessibility</a>
+            <a href="#motion" className="cs-nav-link">motion</a>
+            <a href="#impact" className="cs-nav-link">outcomes</a>
+            <Link to="/prototype" className="cs-nav-link">open prototype</Link>
           </div>
         </div>
       </nav>

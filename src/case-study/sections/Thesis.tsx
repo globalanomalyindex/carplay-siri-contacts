@@ -1,4 +1,5 @@
 import { motion } from 'motion/react'
+import { AsciiArrow } from '../components/AsciiArrow'
 import { PastelText } from '../components/PastelText'
 import { SectionLabel } from '../components/SectionLabel'
 
@@ -12,30 +13,31 @@ interface Axis {
 const AXES: Axis[] = [
   {
     name: "Fitts' Law",
-    problem: 'Targets are far, small, or unpredictably placed.',
+    problem: 'targets are far, small, or dropped wherever the layout felt like putting them.',
     response:
-      'The orb sits in a fixed system-level home above the dock. Always there, always reachable. No hunt cost.',
+      'the orb lives in one fixed system-level spot above the dock. always there, always reachable. no hunting for it.',
     accent: 'pink',
   },
   {
-    name: 'Jitter tolerance',
-    problem: 'Road vibration and tremor turn precise taps into mis-taps.',
+    name: 'jitter tolerance',
+    problem: 'road vibration and tremor turn precise taps into mis-taps.',
     response:
-      'Sustained gestures average noise across a path. A 40pt magnetic radius and 60% hysteresis hold the lock through small disturbances.',
+      'sustained gestures average the noise out across a path. a 40pt magnetic radius and 60% hysteresis hold the lock through small bumps.',
     accent: 'mint',
   },
   {
-    name: 'Fatigue (arm anchor)',
-    problem: 'Hover-and-tap forces the arm to hold itself aloft for every action.',
+    name: 'fatigue (arm anchor)',
+    problem: 'hover-and-tap makes the arm hold itself up for every single action.',
     response:
-      'Drag-and-lift keeps the finger on the screen for the duration of the gesture. The screen becomes a physical rest. One decisive lift commits.',
+      'drag-and-lift keeps the finger on the screen for the whole gesture, so the screen does the holding. one decisive lift commits.',
     accent: 'sky',
   },
 ]
 
 /**
  * Thesis. States the one-master-affordance idea in plain
- * language and lays out the three-axis ergonomic frame.
+ * language and lays out the three-axis ergonomic frame. Grayscale
+ * plus the ASCII arrow; no pastel halo, no rainbow orb disc.
  */
 export function Thesis() {
   return (
@@ -47,48 +49,22 @@ export function Thesis() {
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.7, ease: [0.2, 0.8, 0.3, 1.0] }}
         >
-          <SectionLabel stop="amber">02 &middot; Thesis</SectionLabel>
+          <AsciiArrow length={5} />
+          <SectionLabel stop="amber">02 &middot; thesis</SectionLabel>
           <h2 className="cs-h2">
-            One persistent orb.
+            one persistent orb.
             <br />
-            <PastelText variant="gradient-1">Every Phone interaction</PastelText> today. The system tomorrow.
+            <PastelText variant="gradient-1">every Phone interaction</PastelText> today. the system tomorrow.
           </h2>
           <p className="cs-body">
-            A system-level affordance in the top-left negative space above
-            the dock. Tap to invoke Siri. Drag to enter a context-aware
-            magnifier mode that snaps to discrete components and free-drifts
-            over continuous canvases. Hold a cell directly and it expands
-            inline, surfacing its actions alongside its existing content.
-            Cell-membrane hysteresis keeps the lock honest. A driver learns
-            one gesture grammar, not a screen full of controls.
+            one system-level affordance in the top-left negative space above
+            the dock. tap it to call Siri. drag it to enter a context-aware
+            magnifier that snaps to discrete components and free-drifts over
+            continuous canvases. hold a cell directly and it expands inline,
+            surfacing its actions next to the content already there.
+            cell-membrane hysteresis keeps the lock honest. a driver learns
+            one gesture grammar instead of a screen full of controls.
           </p>
-        </motion.div>
-
-        {/* Hero orb visual with soft pastel halo */}
-        <motion.div
-          style={{
-            margin: '64px auto',
-            display: 'flex',
-            justifyContent: 'center',
-            position: 'relative',
-            paddingBlock: 48,
-          }}
-          initial={{ opacity: 0, scale: 0.94 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.9, ease: [0.2, 0.8, 0.3, 1.0] }}
-        >
-          <div
-            aria-hidden="true"
-            style={{
-              position: 'absolute',
-              inset: 0,
-              background: 'radial-gradient(closest-side, var(--pastel-mint), transparent 60%), radial-gradient(closest-side, var(--pastel-sky) 0%, transparent 70%)',
-              opacity: 0.7,
-              filter: 'blur(40px)',
-            }}
-          />
-          <div className="hero-orb" style={{ width: 220, height: 220 }} />
         </motion.div>
 
         {/* Three-axis grid */}
@@ -118,13 +94,12 @@ export function Thesis() {
                 <span
                   aria-hidden="true"
                   style={{
-                    width: 10,
-                    height: 10,
-                    borderRadius: 3,
-                    background: `var(--pastel-${axis.accent})`,
+                    width: 14,
+                    height: 1,
+                    background: 'var(--cs-text)',
                   }}
                 />
-                Axis 0{i + 1}
+                axis 0{i + 1}
               </div>
               <h3
                 style={{

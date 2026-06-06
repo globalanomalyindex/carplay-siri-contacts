@@ -1,4 +1,5 @@
 import { motion } from 'motion/react'
+import { AsciiArrow } from '../components/AsciiArrow'
 import { PastelText } from '../components/PastelText'
 import { PullQuote } from '../components/PullQuote'
 import { SectionLabel } from '../components/SectionLabel'
@@ -20,22 +21,23 @@ export function Friction() {
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.7, ease: [0.2, 0.8, 0.3, 1.0] }}
         >
-          <SectionLabel stop="pink">01 &middot; The friction</SectionLabel>
+          <AsciiArrow length={5} />
+          <SectionLabel stop="pink">01 &middot; the friction</SectionLabel>
           <h2 className="cs-h2">
-            The Contacts tab is a sign that points back to itself.
+            the Contacts tab is a sign that points back to itself.
           </h2>
           <p className="cs-body">
-            CarPlay's Phone app renders three tabs while parked: Favorites,
-            Recents, Contacts. In driving state, the Contacts tab stays
-            visible. Its body locks. The only interactive element it offers
-            is a button labeled <em>Ask Siri to Make a Call</em>.
+            CarPlay's Phone app shows three tabs while you're parked: Favorites,
+            Recents, Contacts. start driving and the Contacts tab stays
+            visible, but its body locks. the only thing left to tap is a
+            button labeled <em>Ask Siri to Make a Call</em>.
           </p>
           <p className="cs-body">
-            The user has already navigated to a tab that exists only to direct
-            them to a feature they could have used from any other tab, or by
-            pressing the steering-wheel Siri button, or by saying "Hey Siri."
-            Two motor actions and three cognitive checks deliver no value.
-            Any attention spent here is attention diverted from the road.
+            so you've tapped your way to a tab whose only job is to point you at
+            a feature you could've used from any other tab, or by pressing the
+            steering-wheel Siri button, or by just saying "Hey Siri." two motor
+            actions and three cognitive checks, zero payoff. and every bit of
+            attention spent here is attention off the road.
           </p>
         </motion.div>
 
@@ -82,15 +84,15 @@ export function Friction() {
             className="friction-pin"
             style={{ left: 40, top: -14 }}
           >
-            <div className="friction-pin-dot" style={{ background: 'var(--pastel-pink)' }} />
-            <div className="friction-pin-text">Locked tab</div>
+            <div className="friction-pin-dot" style={{ background: 'var(--cs-text)' }} />
+            <div className="friction-pin-text">locked tab</div>
           </div>
           <div
             className="friction-pin"
             style={{ right: 40, top: 90 }}
           >
-            <div className="friction-pin-dot" style={{ background: 'var(--pastel-sky)' }} />
-            <div className="friction-pin-text">Redundant action</div>
+            <div className="friction-pin-dot" style={{ background: 'var(--cs-text)' }} />
+            <div className="friction-pin-text">redundant action</div>
           </div>
 
           <figcaption
@@ -101,12 +103,12 @@ export function Friction() {
               textAlign: 'center',
             }}
           >
-            The CarPlay Phone Contacts tab while driving, reproduced from the current iOS implementation.
+            the CarPlay Phone Contacts tab while driving, reproduced from the current iOS implementation.
           </figcaption>
         </motion.figure>
 
         <PullQuote>
-          A tab that signposts to a feature the user could have used
+          a tab that signposts a feature you could've reached
           from <PastelText variant="lavender">any other state</PastelText> is attention spent on nothing.
         </PullQuote>
 
@@ -129,15 +131,15 @@ export function Friction() {
               marginBottom: 12,
             }}
           >
-            Research insight
+            research insight
           </div>
           <p style={{ margin: 0, fontSize: 17, lineHeight: 1.55, color: 'var(--cs-text)' }}>
-            Customer-service representatives at a major US broadband and TV
-            provider report routine calls from customers with motor conditions
-            who lean on iOS AssistiveTouch on their phones. In CarPlay, those
-            affordances are largely absent. The recurring outcome: drivers
-            wait until they can pull over to do anything that needs
-            precision. This case study addresses the gap directly.
+            customer-service reps at a major US broadband and TV provider
+            field routine calls from customers with motor conditions who lean
+            on iOS AssistiveTouch on their phones. in CarPlay those affordances
+            are mostly gone. so the pattern is the same every time: drivers
+            just wait until they can pull over to do anything that needs
+            precision. this case study goes straight at that gap.
           </p>
         </motion.aside>
       </div>

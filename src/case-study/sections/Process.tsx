@@ -1,4 +1,5 @@
 import { motion } from 'motion/react'
+import { AsciiArrow } from '../components/AsciiArrow'
 import { PastelText } from '../components/PastelText'
 import { PullQuote } from '../components/PullQuote'
 import { SectionLabel } from '../components/SectionLabel'
@@ -13,32 +14,32 @@ interface NatureCandidate {
 const CANDIDATES: NatureCandidate[] = [
   {
     name: 'Mimosa pudica',
-    trait: 'Folds on touch; reopens after delay',
-    outcome: 'Modeled a fail-safe close. Too binary for continuous gestures.',
+    trait: 'folds on touch, reopens after a delay',
+    outcome: 'modeled a fail-safe close. too binary for continuous gestures.',
     accent: 'mint',
   },
   {
     name: 'Sea anemone',
-    trait: 'Polyps reach toward stimulus, retract from danger',
-    outcome: 'Captured directional attention but the kinetic vocabulary read as decorative, not functional.',
+    trait: 'polyps reach toward stimulus, retract from danger',
+    outcome: 'caught directional attention, but the kinetic vocabulary read as decorative, not functional.',
     accent: 'sky',
   },
   {
     name: 'Starling murmuration',
-    trait: 'Thousands of birds, one body',
-    outcome: 'Beautiful systems metaphor for collective interaction. Solo-driver context did not fit.',
+    trait: 'thousands of birds, one body',
+    outcome: 'a lovely systems metaphor for collective interaction. solo-driver context did not fit.',
     accent: 'lavender',
   },
   {
     name: 'Pinecone',
-    trait: 'Hinged scales open and close with humidity',
-    outcome: 'Early front-runner. Eventually replaced by water for continuous-gesture support.',
+    trait: 'hinged scales open and close with humidity',
+    outcome: 'early front-runner. eventually swapped for water once i needed continuous-gesture support.',
     accent: 'peach',
   },
 ]
 
 /**
- * Process. Walks through the four nature candidates and the
+ * process. walks through the four nature candidates and the
  * pivot from pinecone to water once the gesture-first principle landed.
  */
 export function Process() {
@@ -51,16 +52,17 @@ export function Process() {
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.7, ease: [0.2, 0.8, 0.3, 1.0] }}
         >
-          <SectionLabel stop="amber">07 &middot; Process</SectionLabel>
+          <AsciiArrow length={5} />
+          <SectionLabel stop="amber">07 &middot; process</SectionLabel>
           <h2 className="cs-h2">
-            Looking to <PastelText variant="gradient-2">nature</PastelText> for an anchor metaphor.
+            i went looking at <PastelText variant="gradient-2">nature</PastelText> for an anchor metaphor.
           </h2>
           <p className="cs-body">
-            The brief asked for a single primitive that could absorb the
-            most-jitter-vulnerable interaction class in a moving vehicle.
-            Nature was a useful frame: living systems handle noise, motion,
-            and uncertainty as a default condition. Four candidates were
-            studied for their kinetic vocabulary.
+            the brief needed a single primitive that could absorb the
+            most-jitter-vulnerable interaction class in a moving car.
+            nature was a useful frame: living systems treat noise, motion,
+            and uncertainty as the default condition, not the exception. i
+            studied four candidates for their kinetic vocabulary.
           </p>
         </motion.div>
 
@@ -77,9 +79,8 @@ export function Process() {
               <div
                 style={{
                   width: 36,
-                  height: 36,
-                  borderRadius: 10,
-                  background: `var(--pastel-${c.accent})`,
+                  height: 1,
+                  background: 'var(--cs-text)',
                   marginBottom: 16,
                 }}
                 aria-hidden="true"
@@ -118,20 +119,20 @@ export function Process() {
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.7, ease: [0.2, 0.8, 0.3, 1.0] }}
         >
-          <h3 className="cs-h3">From hinge to flow.</h3>
+          <h3 className="cs-h3">from hinge to flow.</h3>
           <p className="cs-body">
-            Pinecone won the first round. The hinged scales mapped cleanly to
-            an opening and closing affordance, calm and predictable. Once the
-            design grew a gesture grammar (drag, drift, lock, lift) the hinge
-            model started to bend. Pinecone modeled discrete state change.
-            The gestures it had to carry were continuous.
+            pinecone won the first round. the hinged scales mapped cleanly to
+            an opening and closing affordance, calm and predictable. then the
+            design grew a gesture grammar (drag, drift, lock, lift) and the
+            hinge model started to bend. pinecone modeled discrete state change.
+            the gestures it had to carry were continuous.
           </p>
           <p className="cs-body">
-            Water became the working metaphor. Water dampens jitter as a
-            material property. Its surface tension matches the feel of a
-            magnetic snap that resists casual disturbance. Apple's existing
+            so water became the working metaphor. water dampens jitter as a
+            material property. its surface tension matches the feel of a
+            magnetic snap that resists a casual nudge. Apple's existing
             Liquid Glass language and Dynamic Island vocabulary already
-            speak it. The same metaphor scales to dissipation: the orb
+            speak it. the same metaphor scales to dissipation: the orb
             dissolves and reforms like an eddy finding a new vessel.
           </p>
         </motion.div>
@@ -143,29 +144,29 @@ export function Process() {
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.7, ease: [0.2, 0.8, 0.3, 1.0] }}
         >
-          <h3 className="cs-h3">Iterating on the contextual menu.</h3>
+          <h3 className="cs-h3">iterating on the contextual menu.</h3>
           <p className="cs-body">
-            An early version of the hold-to-act path put four action chips in
-            the cardinal directions around the touch point: Call up, Text down,
-            and so on. It read well in isolation but broke spatial continuity.
-            The chips floated as a separate constellation, severed from the
-            row that produced them. Drivers had to re-acquire the affordance
-            visually rather than feel it grow from where their finger already
+            an early version of the hold-to-act path put four action chips in
+            the cardinal directions around the touch point: call up, text down,
+            and so on. it read well in isolation but broke spatial continuity.
+            the chips floated as a separate constellation, cut off from the
+            row that produced them. drivers had to re-acquire the affordance
+            visually instead of feeling it grow from where their finger already
             sat.
           </p>
           <p className="cs-body">
-            The current model expands the cell in place. The row grows; its
-            actions appear alongside the existing content; the rows above and
-            below shift to make room. Nothing disappears. The visual map of
-            the screen is preserved through the gesture, which matters most
-            for the users who can least afford to lose it.
+            the current model expands the cell in place. the row grows, its
+            actions show up alongside the existing content, and the rows above
+            and below shift to make room. nothing disappears. the visual map of
+            the screen survives the whole gesture, which matters most for the
+            users who can least afford to lose it.
           </p>
         </motion.div>
 
-        <PullQuote cite="The curb-cut effect">
-          Design for the most motor-constrained user.
+        <PullQuote cite="the curb-cut effect">
+          build for the most motor-constrained driver.
           <br />
-          <PastelText variant="gradient-1">Everyone else benefits.</PastelText>
+          <PastelText variant="gradient-1">everyone else benefits.</PastelText>
         </PullQuote>
       </div>
     </section>

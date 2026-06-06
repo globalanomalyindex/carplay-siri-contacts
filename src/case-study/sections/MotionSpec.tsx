@@ -4,6 +4,7 @@ import { PastelText } from '../components/PastelText'
 import { SectionLabel } from '../components/SectionLabel'
 import { SpecTable } from '../components/SpecTable'
 import { EasingCurveDemo } from '../components/EasingCurveDemo'
+import { AsciiArrow } from '../components/AsciiArrow'
 import { easing, dur } from '../../tokens/motion'
 
 interface Curve {
@@ -16,53 +17,62 @@ const CURVES: Curve[] = [
   {
     token: '--ease-liquid-out',
     bezier: easing.liquidOut,
-    use: 'Dissipation outgoing. Particles disperse fast then drift outward.',
+    use: 'dissipation outgoing. particles scatter fast, then drift outward.',
   },
   {
     token: '--ease-liquid-in',
     bezier: easing.liquidIn,
-    use: 'Reform incoming. Particles gather slowly then lock at home.',
+    use: 'reform incoming. particles gather slowly, then lock at home.',
   },
   {
     token: '--ease-magnify-lock',
     bezier: easing.magnifyLock,
-    use: 'Target magnification on drift-over. Snappy commit feel.',
+    use: 'target magnification on drift-over. snappy commit feel.',
   },
   {
     token: '--ease-ambient-breathe',
     bezier: easing.ambientBreathe,
-    use: 'Idle orb breathing loop. +/-5% scale, 6s cycle.',
+    use: 'idle orb breathing loop. +/-5% scale, 6s cycle.',
   },
   {
     token: '--ease-snap-fire',
     bezier: easing.snapFire,
-    use: 'Commit flash on lift. Tight onset, soft fall.',
+    use: 'commit flash on lift. tight onset, soft fall.',
   },
   {
     token: '--ease-frame-emerge',
     bezier: easing.frameEmerge,
-    use: 'Glass-frame hitboxes materializing around discrete components.',
+    use: 'glass-frame hitboxes materializing around discrete components.',
   },
   {
     token: '--ease-aura-travel',
     bezier: easing.auraTravel,
-    use: 'Locked-cell aura crossing from one component to its neighbor.',
+    use: 'locked-cell aura crossing from one component to its neighbor.',
   },
   {
     token: '--ease-cell-membrane',
     bezier: easing.cellMembrane,
-    use: 'Hysteresis resistance. Slight inertia before the lock transitions.',
+    use: 'hysteresis resistance. a little inertia before the lock transitions.',
   },
 ]
 
 /**
  * Motion spec. The most "tech-spec" looking section. Named
  * curves with live demos, durations, and the performance budget. Built to
- * resemble Apple developer documentation more than a portfolio page.
+ * read more like Apple developer documentation than a portfolio page.
  */
 export function MotionSpec() {
   return (
     <section className="cs-section cs-section--dense" id="motion" style={{ background: 'var(--cs-bg-tint)' }}>
+      {/* Neutralize the curve-card puck to a solid ink dot. The page is
+          grayscale plus the ASCII arrow only, so the old rainbow conic-gradient
+          (and its purple-tinted shadow) is overridden here in monochrome. */}
+      <style>{`
+        #motion .curve-card-demo .puck {
+          background: var(--cs-text);
+          box-shadow: none;
+        }
+      `}</style>
       <div className="cs-container">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
@@ -70,15 +80,16 @@ export function MotionSpec() {
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.7, ease: [0.2, 0.8, 0.3, 1.0] }}
         >
-          <SectionLabel stop="pink">06 &middot; Motion spec</SectionLabel>
+          <AsciiArrow length={5} />
+          <SectionLabel stop="pink">06 &middot; motion spec</SectionLabel>
           <h2 className="cs-h2">
-            Eight named curves. <PastelText variant="gradient-2">One feel.</PastelText>
+            eight named curves. <PastelText variant="gradient-2">one feel.</PastelText>
           </h2>
           <p className="cs-body">
-            Every animation in the prototype references a named easing token,
-            never a magic number. The same curve that pulls particles back to
-            the orb also lights the locked cell. The result reads as one
-            material in motion across the whole system.
+            every animation in the prototype points at a named easing token,
+            never a magic number. the same curve that pulls particles back to
+            the orb also lights the locked cell, so the whole system reads as
+            one material in motion.
           </p>
         </motion.div>
 
@@ -105,15 +116,15 @@ export function MotionSpec() {
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.6, ease: [0.2, 0.8, 0.3, 1.0] }}
         >
-          <h3 className="cs-h3">Expand-in-place timing</h3>
+          <h3 className="cs-h3">expand-in-place timing</h3>
           <p className="cs-body" style={{ marginBottom: 24 }}>
-            When a cell is held past the long-press threshold, it grows into
-            its expanded state with a critically-damped spring (stiffness 280,
-            damping 28, mass 0.5). Action chips fade and slide in via opacity
-            plus a small transform offset. Total perceived motion lands at
-            roughly 280ms, fast enough to feel responsive without feeling
-            jumpy. Under Reduce Motion the expansion is instant and the chips
-            fade over 120ms.
+            hold a cell past the long-press threshold and it grows into its
+            expanded state with a critically-damped spring (stiffness 280,
+            damping 28, mass 0.5). action chips fade and slide in on opacity
+            plus a small transform offset. total perceived motion lands around
+            280ms, fast enough to feel responsive without feeling jumpy. under
+            Reduce Motion the expansion is instant and the chips fade over
+            120ms.
           </p>
           <ExpandableCellDemo />
         </motion.div>
@@ -126,7 +137,7 @@ export function MotionSpec() {
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.6, ease: [0.2, 0.8, 0.3, 1.0] }}
           >
-            <h3 className="cs-h3">Duration tokens</h3>
+            <h3 className="cs-h3">duration tokens</h3>
             <SpecTable
               rows={[
                 { label: 'dur-dissipate',           value: `${dur.dissipate * 1000}ms` },
@@ -149,7 +160,7 @@ export function MotionSpec() {
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.6, ease: [0.2, 0.8, 0.3, 1.0] }}
           >
-            <h3 className="cs-h3">Performance budget</h3>
+            <h3 className="cs-h3">performance budget</h3>
             <SpecTable
               rows={[
                 { label: 'Frame rate',          value: '60fps gesture / 30fps idle' },

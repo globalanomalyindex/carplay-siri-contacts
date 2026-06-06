@@ -1,4 +1,5 @@
 import { motion } from 'motion/react'
+import { AsciiArrow } from '../components/AsciiArrow'
 import { PastelText } from '../components/PastelText'
 import { SectionLabel } from '../components/SectionLabel'
 
@@ -89,15 +90,15 @@ const GESTURES: Gesture[] = [
   },
 ]
 
-const GROUP_LABELS: Record<Gesture['group'], { label: string; accent: string }> = {
-  orb:       { label: 'Orb',       accent: 'var(--pastel-lavender)' },
-  magnifier: { label: 'Magnifier', accent: 'var(--pastel-mint)' },
-  app:       { label: 'App',       accent: 'var(--pastel-peach)' },
+const GROUP_LABELS: Record<Gesture['group'], { label: string }> = {
+  orb:       { label: 'orb' },
+  magnifier: { label: 'magnifier' },
+  app:       { label: 'app' },
 }
 
 /**
  * Gesture grammar. Tech-spec table listing every gesture with
- * its outcome and recognition threshold. Pastel pill on the left indicates
+ * its outcome and recognition threshold. The mono pill on the left indicates
  * which layer of the system owns the gesture.
  */
 export function GestureGrammar() {
@@ -110,17 +111,19 @@ export function GestureGrammar() {
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.7, ease: [0.2, 0.8, 0.3, 1.0] }}
         >
-          <SectionLabel stop="violet">05 &middot; Gesture grammar</SectionLabel>
+          <AsciiArrow length={5} />
+          <SectionLabel stop="violet">05 &middot; gesture grammar</SectionLabel>
           <h2 className="cs-h2">
-            <PastelText variant="gradient-1">Twelve gestures.</PastelText> One vocabulary.
+            <PastelText variant="gradient-1">twelve gestures.</PastelText> one vocabulary.
           </h2>
           <p className="cs-body">
-            The orb owns two. The magnifier owns six. Apps own four. Every
-            threshold is published so adopters know exactly how much motion
-            triggers what, and so accessibility users can predict the system
-            instead of guessing. Because every control opts in through one
-            registration interface, the whole grammar could ship as a platform
-            primitive that any CarPlay app adopts, not a one-off in this design.
+            the orb owns two. the magnifier owns six. apps own four. every
+            threshold is published, so adopters know exactly how much motion
+            triggers what, and accessibility users can predict the system
+            instead of guessing at it. and because every control opts in through
+            one registration interface, the whole grammar could ship as a platform
+            primitive that any CarPlay app picks up, not a one-off bolted onto this
+            design.
           </p>
         </motion.div>
 
@@ -148,9 +151,9 @@ export function GestureGrammar() {
               color: 'var(--cs-text-2)',
             }}
           >
-            <span>Gesture</span>
-            <span>Outcome</span>
-            <span style={{ textAlign: 'right' }}>Threshold</span>
+            <span>gesture</span>
+            <span>outcome</span>
+            <span style={{ textAlign: 'right' }}>threshold</span>
           </div>
           {GESTURES.map((g, i) => (
             <motion.div
@@ -174,11 +177,12 @@ export function GestureGrammar() {
                     display: 'inline-flex',
                     alignSelf: 'flex-start',
                     padding: '3px 10px',
-                    background: GROUP_LABELS[g.group].accent,
+                    background: 'transparent',
+                    border: '1px solid var(--cs-rule)',
                     borderRadius: 999,
                     fontSize: 10.5,
                     fontWeight: 600,
-                    color: 'var(--cs-text)',
+                    color: 'var(--cs-text-2)',
                     letterSpacing: '0.06em',
                     textTransform: 'uppercase',
                   }}

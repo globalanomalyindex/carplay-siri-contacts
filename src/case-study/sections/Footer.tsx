@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 
 /**
- * Footer. Build credit, date, links to repo and the standalone
+ * footer. build credit, date, links to the repo and the standalone
  * prototype route.
  */
 export function Footer() {
@@ -18,7 +18,7 @@ export function Footer() {
           }}
         >
           <div style={{ fontSize: 24, fontWeight: 600, letterSpacing: '-0.015em' }}>
-            One Master Affordance
+            one master affordance
           </div>
           <div
             style={{
@@ -29,28 +29,28 @@ export function Footer() {
               color: 'var(--cs-text-2)',
             }}
           >
-            Case study, May 2026
+            case study, may 2026
           </div>
         </div>
 
         <div className="cs-footer-meta">
           <div>
             <div style={{ marginBottom: 6, color: 'var(--cs-text-3)', fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-              Designed + built by
+              designed + built by
             </div>
             <div style={{ color: 'var(--cs-text)' }}>Christopher Robin Fiore</div>
-            <div style={{ color: 'var(--cs-text-2)', fontSize: 13, marginTop: 2 }}>Design Engineer</div>
+            <div style={{ color: 'var(--cs-text-2)', fontSize: 13, marginTop: 2 }}>design engineer</div>
           </div>
           <div>
             <div style={{ marginBottom: 6, color: 'var(--cs-text-3)', fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-              Stack
+              stack
             </div>
             <div style={{ color: 'var(--cs-text)' }}>
               React 19 &middot; TypeScript &middot; Motion &middot; XState &middot; Vite &middot; Tailwind 4
             </div>
           </div>
           <div style={{ display: 'flex', gap: 24 }}>
-            <Link to="/prototype">Open the prototype</Link>
+            <Link to="/prototype">open the prototype</Link>
             <a
               href="https://github.com/globalanomalyindex/carplay-siri-contacts"
               target="_blank"
@@ -69,7 +69,7 @@ export function Footer() {
             maxWidth: 720,
           }}
         >
-          Independent portfolio work. Not affiliated with or endorsed by Apple Inc.
+          independent portfolio work. not affiliated with or endorsed by Apple Inc.
           CarPlay is a trademark of Apple Inc.
         </p>
       </div>

@@ -1,4 +1,5 @@
 import { motion } from 'motion/react'
+import { AsciiArrow } from '../components/AsciiArrow'
 import { PastelText } from '../components/PastelText'
 import { SectionLabel } from '../components/SectionLabel'
 
@@ -16,9 +17,10 @@ export function Reflection() {
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.7, ease: [0.2, 0.8, 0.3, 1.0] }}
         >
-          <SectionLabel stop="blue">09 &middot; Reflection</SectionLabel>
+          <AsciiArrow length={5} />
+          <SectionLabel stop="blue">09 &middot; reflection</SectionLabel>
           <h2 className="cs-h2">
-            What <PastelText variant="gradient-2">worked</PastelText>. What I would push further.
+            what <PastelText variant="gradient-2">worked</PastelText>. what i would push further.
           </h2>
         </motion.div>
 
@@ -29,24 +31,24 @@ export function Reflection() {
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.6 }}
           >
-            <h3 className="cs-h3">What worked</h3>
+            <h3 className="cs-h3">what worked</h3>
             <p className="cs-body">
-              Picking accessibility as the strategic frame did more work
-              than picking aesthetics. Once the design was sized for the
-              most motor-constrained user, every secondary decision fell
-              out cleanly: the magnifier, the cell-membrane hysteresis,
+              picking accessibility as the strategic frame did more work
+              than picking aesthetics ever would. once the design was sized
+              for the most motor-constrained driver, every secondary decision
+              fell out cleanly: the magnifier, the cell-membrane hysteresis,
               the long-press-anywhere rescue path, the dock as a magnifier
-              surface. The brief stayed honest because the constraint stayed
+              surface. the brief stayed honest because the constraint stayed
               honest.
             </p>
             <p className="cs-body">
-              The pivot from pinecone to water was the second strongest
-              decision. Forcing the metaphor to live in motion rather than
-              decoration kept the visual surface clean and close to Apple HIG.
-              The water feel is entirely in the curves.
+              the pivot from pinecone to water was the second strongest call.
+              forcing the metaphor to live in motion instead of decoration kept
+              the visual surface clean and close to Apple HIG. the water feel
+              is entirely in the curves.
             </p>
             <p className="cs-body">
-              Reframing the win as capability gained, not harm avoided, kept the
+              framing the win as capability gained, not harm avoided, kept the
               whole project pointed at one measurable outcome: whether a driver
               who could not place a call while moving can now do it on the first
               try.
@@ -59,19 +61,19 @@ export function Reflection() {
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.6, delay: 0.08 }}
           >
-            <h3 className="cs-h3">What I would push</h3>
+            <h3 className="cs-h3">what i would push</h3>
             <p className="cs-body">
-              The case study covers Phone deeply and Maps and Music as
-              sketches. With more time, a Maps deep build would let me test
-              the snap-to-component vs free-drift handoff under real
-              navigation pressure. Music's queue selection deserves a
-              proper test pass with eyes-off-road telemetry too.
+              this covers Phone deeply, and Maps and Music as sketches. with
+              more time, a Maps deep build would let me test the
+              snap-to-component vs free-drift handoff under real navigation
+              pressure. Music's queue selection deserves a proper test pass
+              with eyes-off-road telemetry too.
             </p>
             <p className="cs-body">
-              I would also prototype a passenger-side variant. The current
-              design declines that path on purpose (the driver and passenger
-              share the same input surface). Zonal touch detection might
-              eventually make a passenger mode safe; that's a research
+              i'd also prototype a passenger-side variant. the current design
+              declines that path on purpose, since the driver and passenger
+              share the same input surface. zonal touch detection might
+              eventually make a passenger mode safe, but that's a research
               question, not a design question.
             </p>
           </motion.div>
@@ -95,7 +97,7 @@ export function Reflection() {
               marginBottom: 14,
             }}
           >
-            Next in the series
+            next in the series
           </div>
           <h3
             style={{
@@ -105,13 +107,13 @@ export function Reflection() {
               letterSpacing: '-0.015em',
             }}
           >
-            Cellular CarPlay: a customizable widget-grid layout.
+            cellular CarPlay: a customizable widget-grid layout.
           </h3>
           <p style={{ margin: 0, fontSize: 15, color: 'var(--cs-text-2)', lineHeight: 1.55 }}>
-            The Master Orb is the foundation that makes the customizable grid
-            safe to drive. Composing a CarPlay home screen from cells of
-            varying sizes (Now Playing, navigation mini, contacts mini) is
-            the next case study.
+            the Master Orb is the foundation that makes the customizable grid
+            safe to drive. composing a CarPlay home screen from cells of
+            varying sizes (now playing, navigation mini, contacts mini) is the
+            next case study.
           </p>
         </motion.aside>
       </div>

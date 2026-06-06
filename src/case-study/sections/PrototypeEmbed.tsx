@@ -1,16 +1,17 @@
 import { motion } from 'motion/react'
 import { Link } from 'react-router-dom'
+import { AsciiArrow } from '../components/AsciiArrow'
 import { PastelText } from '../components/PastelText'
 import { SectionLabel } from '../components/SectionLabel'
 import { PrototypeStage } from '../../prototype/PrototypeStage'
 
 const HINTS: { title: string; body: string }[] = [
-  { title: 'Tap the orb', body: 'Wakes Siri and blooms a rainbow halo around the whole screen. Tap again, or swipe down, to cancel.' },
-  { title: 'Drag from the orb', body: 'Enters magnifier mode. Every control swells under your finger; lift on the one you want and it fires.' },
-  { title: 'Hold a contact', body: 'The row expands in place to reveal Call and Text. Neighbours reflow to make room, nothing hides behind a menu.' },
-  { title: 'Swipe a row', body: 'Right calls, left opens a message. The action indicator slides in from the screen edge.' },
-  { title: 'Hold a dock app', body: 'The icon expands sideways into its quick actions. Open, call recent, voicemail, all without leaving the surface.' },
-  { title: 'Cell-membrane lock', body: 'The magnifier holds a target until you cross 60 percent toward the next, so a bump in the road never mis-selects.' },
+  { title: 'tap the orb', body: 'wakes Siri and blooms a halo around the whole screen. tap again, or swipe down, to cancel.' },
+  { title: 'drag from the orb', body: 'drops you into magnifier mode. every control swells under your finger; lift on the one you want and it fires.' },
+  { title: 'hold a contact', body: 'the row expands in place to show call and text. neighbours reflow to make room, nothing hides behind a menu.' },
+  { title: 'swipe a row', body: 'right calls, left opens a message. the action indicator slides in from the screen edge.' },
+  { title: 'hold a dock app', body: 'the icon expands sideways into its quick actions. open, call recent, voicemail, all without leaving the surface.' },
+  { title: 'cell-membrane lock', body: 'the magnifier holds a target until you cross 60 percent toward the next, so a bump in the road never mis-selects.' },
 ]
 
 /**
@@ -28,20 +29,21 @@ export function PrototypeEmbed() {
           transition={{ duration: 0.7, ease: [0.2, 0.8, 0.3, 1.0] }}
           style={{ textAlign: 'center', maxWidth: 720, marginInline: 'auto' }}
         >
-          <SectionLabel stop="mint">03 &middot; Try it</SectionLabel>
+          <AsciiArrow length={5} />
+          <SectionLabel stop="mint">03 &middot; try it</SectionLabel>
           <h2 className="cs-h2" style={{ marginInline: 'auto' }}>
-            <PastelText variant="gradient-2">The prototype.</PastelText>
+            <PastelText variant="gradient-2">the prototype.</PastelText>
           </h2>
           <p className="cs-body" style={{ marginInline: 'auto' }}>
-            Everything in this case study lives in the screen below. Pointer
-            input is supported on desktop, touch on iOS or iPadOS. The orb,
-            the magnifier, the cell-membrane hysteresis, the rainbow aura,
-            the long-press rescue path. Try them.
+            everything in this case study lives in the screen below. pointer
+            input on desktop, touch on iOS or iPadOS. the orb, the magnifier,
+            the cell-membrane hysteresis, the long-press rescue path. go play
+            with them.
           </p>
           <p className="cs-body" style={{ marginInline: 'auto' }}>
-            Every layer here is one person's work: the design system and tokens,
+            every layer here is one person's work: the design system and tokens,
             the gesture engine and its state machine, the springs, the hit-test
-            math. This is the deliverable, not a render of it.
+            math. this is the actual deliverable, not a render of it.
           </p>
         </motion.div>
 
@@ -57,13 +59,13 @@ export function PrototypeEmbed() {
           viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.9, ease: [0.2, 0.8, 0.3, 1.0] }}
         >
-          {/* Soft pastel pad behind the prototype frame */}
+          {/* Subtle monochrome pad behind the prototype frame */}
           <div
             aria-hidden="true"
             style={{
               position: 'absolute',
               inset: '-32px -32px -32px -32px',
-              background: 'radial-gradient(closest-side at 30% 40%, rgba(120, 220, 240, 0.22), transparent 70%), radial-gradient(closest-side at 70% 60%, rgba(181, 115, 255, 0.18), transparent 70%)',
+              background: 'radial-gradient(closest-side at 50% 50%, rgba(255, 255, 255, 0.08), transparent 70%)',
               opacity: 0.7,
               filter: 'blur(44px)',
               borderRadius: 32,
@@ -112,7 +114,7 @@ export function PrototypeEmbed() {
                   marginBottom: 6,
                 }}
               >
-                Gesture {String(i + 1).padStart(2, '0')}
+                gesture {String(i + 1).padStart(2, '0')}
               </div>
               <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 4 }}>{h.title}</div>
               <div style={{ fontSize: 13.5, color: 'var(--cs-dark-text-2)', lineHeight: 1.5 }}>{h.body}</div>
@@ -137,7 +139,7 @@ export function PrototypeEmbed() {
               background: 'rgba(255, 255, 255, 0.06)',
             }}
           >
-            Open the prototype in its own window
+            open the prototype in its own window
             <span aria-hidden="true">&rarr;</span>
           </Link>
         </div>

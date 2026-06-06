@@ -133,15 +133,14 @@
 }
 
 .cs-eyebrow {
-  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif;
+  font-family: var(--cs-font-mono);
   font-size: 12px;
   font-weight: 500;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  letter-spacing: 0.01em;
   color: var(--cs-text-2);
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   margin: 0 0 24px;
 }
 
@@ -150,7 +149,7 @@
   display: inline-block;
   width: 18px;
   height: 1px;
-  background: var(--cs-text-2);
+  background: var(--cs-text);
 }
 
 .cs-lead {
@@ -192,8 +191,16 @@
 /* Hairline divider between section topics */
 .cs-divider {
   border: 0;
-  border-top: 1px solid var(--cs-rule);
-  margin: 64px 0;
+  border-top: 1.5px solid var(--cs-text);
+  margin: 56px 0;
+}
+
+/* Brutalist inline emphasis (replaces the old pastel gradient on key words). */
+.cs-emph {
+  text-decoration: underline;
+  text-decoration-thickness: 0.07em;
+  text-underline-offset: 0.1em;
+  text-decoration-color: var(--cs-text);
 }
 
 /* Pastel text accent. Applied via PastelText component. */
@@ -345,10 +352,8 @@
   position: sticky;
   top: 0;
   z-index: 10;
-  background: rgba(251, 251, 253, 0.78);
-  backdrop-filter: saturate(160%) blur(18px);
-  -webkit-backdrop-filter: saturate(160%) blur(18px);
-  border-bottom: 1px solid var(--cs-rule-soft);
+  background: var(--cs-bg);
+  border-bottom: 1px solid var(--cs-text);
 }
 
 .cs-nav-inner {
@@ -364,9 +369,10 @@
 .cs-nav a {
   color: var(--cs-text);
   text-decoration: none;
-  font-size: 14px;
+  font-family: var(--cs-font-mono);
+  font-size: 13px;
   font-weight: 500;
-  letter-spacing: -0.003em;
+  letter-spacing: 0;
 }
 
 .cs-nav-brand {
@@ -384,16 +390,16 @@
 /* Card and grid utilities */
 .cs-card {
   background: #FFFFFF;
-  border: 1px solid var(--cs-rule);
-  border-radius: 18px;
-  padding: 28px;
+  border: 1px solid var(--cs-text);
+  border-radius: 0;
+  padding: 24px;
 }
 
 .cs-card-tinted {
   background: var(--cs-bg-tint);
-  border: 1px solid transparent;
-  border-radius: 18px;
-  padding: 28px;
+  border: 1px solid var(--cs-rule);
+  border-radius: 0;
+  padding: 24px;
 }
 
 .cs-grid {
@@ -632,7 +638,7 @@
 
 /* Footer */
 .cs-footer {
-  border-top: 1px solid var(--cs-rule);
+  border-top: 1.5px solid var(--cs-text);
   padding: 56px 0 80px;
   background: var(--cs-bg-tint);
 }
@@ -720,8 +726,8 @@
 .cs-eyebrow[data-stop="mint"]   { --stop: var(--spectrum-mint); }
 .cs-eyebrow[data-stop="blue"]   { --stop: var(--spectrum-blue); }
 .cs-eyebrow[data-stop="violet"] { --stop: var(--spectrum-violet); }
-.cs-eyebrow[data-stop] .cs-eyebrow-num { color: var(--stop); font-weight: 600; }
-.cs-eyebrow[data-stop]::before { background: var(--stop); opacity: 0.95; }
+.cs-eyebrow[data-stop] .cs-eyebrow-num { color: var(--cs-text); font-weight: 600; }
+.cs-eyebrow[data-stop]::before { background: var(--cs-text); opacity: 1; }
 
 /* The single dark band wrapping the live prototype, tuned to the embed frame it
    contains so the two read as one object. Light resumes around it. */
