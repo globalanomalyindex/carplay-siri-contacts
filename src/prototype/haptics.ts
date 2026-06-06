@@ -17,7 +17,9 @@ export function lockHaptic(reduced: boolean): boolean {
   const vibrate = navigator.vibrate
   if (typeof vibrate !== 'function') return false
   try {
-    return vibrate.call(navigator, LOCK_TICK_MS)
+    // Pattern array form: this project's DOM lib types vibrate as taking an
+    // iterable, and [ms] is equivalent to a bare ms duration.
+    return vibrate.call(navigator, [LOCK_TICK_MS])
   } catch {
     return false
   }

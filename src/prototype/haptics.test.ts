@@ -20,7 +20,7 @@ describe('lockHaptic', () => {
     const fired = lockHaptic(false)
     expect(fired).toBe(true)
     expect(vibrate).toHaveBeenCalledTimes(1)
-    expect(vibrate).toHaveBeenCalledWith(10)
+    expect(vibrate).toHaveBeenCalledWith([10])
   })
 
   it('does not vibrate under reduced motion', () => {

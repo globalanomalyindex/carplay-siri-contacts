@@ -133,8 +133,8 @@ function Readout({ session }: { session: TelemetrySession }) {
   return (
     <dl style={STATS_GRID}>
       <Stat label="Committed" value={session.committedId ?? 'aborted'} mono />
-      <Stat label="Outcome" value={session.commitKind ?? '—'} />
-      <Stat label="Time to commit" value={session.committedId ? `${Math.round(session.durationMs)} ms` : '—'} />
+      <Stat label="Outcome" value={session.commitKind ?? '-'} />
+      <Stat label="Time to commit" value={session.committedId ? `${Math.round(session.durationMs)} ms` : '-'} />
       <Stat label="Path length" value={`${Math.round(session.pathLengthPx)} px`} />
       <Stat label="Region switches" value={String(session.regionSwitches)} />
       <Stat label="Membrane saves" value={String(session.membraneSaves)} />
