@@ -642,3 +642,33 @@
 }
 
 .cs-footer a:hover { border-color: var(--cs-text); }
+
+/* Accessibility: skip-to-content link, hidden until focused, and a visible
+   focus ring keyed to the orb spectrum so keyboard users see where they are. */
+.cs-skip-link {
+  position: absolute;
+  left: 12px;
+  top: -56px;
+  z-index: 20;
+  padding: 10px 16px;
+  border-radius: 10px;
+  background: var(--cs-text);
+  color: var(--cs-bg);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: top 160ms ease;
+}
+
+.cs-skip-link:focus { top: 12px; }
+
+.case-study a:focus-visible,
+.case-study button:focus-visible {
+  outline: 2px solid #6B9AFF;
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cs-skip-link { transition: none; }
+}

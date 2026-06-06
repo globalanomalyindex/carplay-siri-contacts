@@ -3,7 +3,7 @@ import { PastelText } from '../components/PastelText'
 import { SectionLabel } from '../components/SectionLabel'
 
 /**
- * Section 10. Reflection. Honest about what worked, what would change
+ * Reflection. Honest about what worked, what would change
  * with more time, and what's next in the series.
  */
 export function Reflection() {
@@ -44,6 +44,12 @@ export function Reflection() {
               decision. Forcing the metaphor to live in motion rather than
               decoration kept the visual surface clean and close to Apple HIG.
               The water feel is entirely in the curves.
+            </p>
+            <p className="cs-body">
+              Reframing the win as capability gained, not harm avoided, kept the
+              whole project pointed at one measurable outcome: whether a driver
+              who could not place a call while moving can now do it on the first
+              try.
             </p>
           </motion.div>
 

@@ -14,7 +14,7 @@ const HINTS: { title: string; body: string }[] = [
 ]
 
 /**
- * Section 5. The prototype itself, embedded. The CarPlay 720x400 screen
+ * The prototype itself, embedded. The CarPlay 720x400 screen
  * is rendered inline, surrounded by hint chips below.
  */
 export function PrototypeEmbed() {
@@ -28,7 +28,7 @@ export function PrototypeEmbed() {
           transition={{ duration: 0.7, ease: [0.2, 0.8, 0.3, 1.0] }}
           style={{ textAlign: 'center', maxWidth: 720, marginInline: 'auto' }}
         >
-          <SectionLabel>04 &middot; Try it</SectionLabel>
+          <SectionLabel>03 &middot; Try it</SectionLabel>
           <h2 className="cs-h2" style={{ marginInline: 'auto' }}>
             <PastelText variant="gradient-2">The prototype.</PastelText>
           </h2>
@@ -37,6 +37,11 @@ export function PrototypeEmbed() {
             input is supported on desktop, touch on iOS or iPadOS. The orb,
             the magnifier, the cell-membrane hysteresis, the rainbow aura,
             the long-press rescue path. Try them.
+          </p>
+          <p className="cs-body" style={{ marginInline: 'auto' }}>
+            Every layer here is one person's work: the design system and tokens,
+            the gesture engine and its state machine, the springs, the hit-test
+            math. This is the deliverable, not a render of it.
           </p>
         </motion.div>
 

@@ -1,6 +1,7 @@
 import { motion, useScroll, useTransform } from 'motion/react'
 import { useRef } from 'react'
 import { PastelText } from '../components/PastelText'
+import { Counter } from '../components/Counter'
 import { useReducedMotion } from '../../a11y/useReducedMotion'
 
 /**
@@ -127,14 +128,53 @@ export function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.75, ease: [0.2, 0.8, 0.3, 1.0], delay: 0.18 }}
         >
-          Accessibility-led gesture design for CarPlay. A redesign that closes
-          the gap between iOS AssistiveTouch and the car's center console with
-          a single persistent affordance.
+          A new system-level interaction primitive for CarPlay, designed and
+          built in code. One persistent orb that is both a Siri trigger and a
+          tremor-tolerant magnifier, so the whole interface stays reachable for
+          the drivers who need it most.
         </motion.p>
 
         <motion.div
           style={{
-            marginTop: 56,
+            marginTop: 44,
+            display: 'flex',
+            gap: 44,
+            flexWrap: 'wrap',
+            maxWidth: 720,
+          }}
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, ease: [0.2, 0.8, 0.3, 1.0], delay: 0.26 }}
+        >
+          <div>
+            <div className="cs-stat-value" style={{ fontSize: 30 }}>
+              <Counter value={45} suffix="%" /> <span aria-hidden="true" style={{ color: 'var(--cs-text-3)' }}>&rarr;</span> <Counter value={85} suffix="%" />
+            </div>
+            <div className="cs-stat-label" style={{ maxWidth: 210 }}>
+              Target first-try task completion for motor-constrained drivers.
+            </div>
+          </div>
+          <div>
+            <div className="cs-stat-value" style={{ fontSize: 30 }}>
+              <Counter value={40} suffix="%" />
+            </div>
+            <div className="cs-stat-label" style={{ maxWidth: 200 }}>
+              Predicted drop in mis-actions on bumpy roads.
+            </div>
+          </div>
+          <div>
+            <div className="cs-stat-value" style={{ fontSize: 30 }}>
+              <Counter value={20} suffix="M+" />
+            </div>
+            <div className="cs-stat-label" style={{ maxWidth: 210 }}>
+              US adults with significant motor impairment. Direct beneficiaries.
+            </div>
+          </div>
+        </motion.div>
+
+        <motion.div
+          style={{
+            marginTop: 48,
             display: 'flex',
             gap: 32,
             flexWrap: 'wrap',
@@ -143,7 +183,7 @@ export function Hero() {
           }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.32 }}
+          transition={{ duration: 0.6, delay: 0.4 }}
         >
           <span><strong style={{ color: 'var(--cs-text)', fontWeight: 600 }}>Designed + built by</strong> &nbsp; Christopher Robin Fiore, Design Engineer</span>
           <span><strong style={{ color: 'var(--cs-text)', fontWeight: 600 }}>Reading time</strong> &nbsp; 8 min</span>

@@ -34,7 +34,7 @@ const AXES: Axis[] = [
 ]
 
 /**
- * Section 4. Thesis. States the one-master-affordance idea in plain
+ * Thesis. States the one-master-affordance idea in plain
  * language and lays out the three-axis ergonomic frame.
  */
 export function Thesis() {
@@ -47,7 +47,7 @@ export function Thesis() {
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.7, ease: [0.2, 0.8, 0.3, 1.0] }}
         >
-          <SectionLabel>03 &middot; Thesis</SectionLabel>
+          <SectionLabel>02 &middot; Thesis</SectionLabel>
           <h2 className="cs-h2">
             One persistent orb.
             <br />

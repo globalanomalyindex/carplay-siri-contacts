@@ -79,7 +79,7 @@ const AXIS_EXAMPLES: AxisRecap[] = [
 ]
 
 /**
- * Section 8. Accessibility. The strategic centerpiece. States the
+ * Accessibility. The strategic centerpiece. States the
  * accessibility-led framing and lays out the beneficiary populations,
  * the curb-cut effect, and how each of the three axes plays out.
  */
@@ -93,7 +93,7 @@ export function Accessibility() {
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.7, ease: [0.2, 0.8, 0.3, 1.0] }}
         >
-          <SectionLabel>07 &middot; Accessibility</SectionLabel>
+          <SectionLabel>04 &middot; Accessibility</SectionLabel>
           <h2 className="cs-h2">
             Designed for the most motor-constrained user.
             <br />
@@ -110,6 +110,14 @@ export function Accessibility() {
             Each population below sees the same orb. The same gesture grammar.
             The same magnifier. The accessibility path is not a mode toggle.
             It is the default behavior of the system.
+          </p>
+          <p className="cs-body">
+            Framed plainly, this is capability, not accommodation. A driver who
+            could not reliably place a call while the car was moving gets that
+            control back, unassisted. The measure that matters is not seconds
+            saved or screens avoided. It is first-try completion, and the target
+            is to carry motor-constrained drivers from a 45 percent baseline to
+            85 percent.
           </p>
           <p className="cs-body">
             Holding a cell expands it inline rather than opening a separate

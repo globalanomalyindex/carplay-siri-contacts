@@ -56,7 +56,7 @@ const CURVES: Curve[] = [
 ]
 
 /**
- * Section 7. Motion spec. The most "tech-spec" looking section. Named
+ * Motion spec. The most "tech-spec" looking section. Named
  * curves with live demos, durations, and the performance budget. Built to
  * resemble Apple developer documentation more than a portfolio page.
  */

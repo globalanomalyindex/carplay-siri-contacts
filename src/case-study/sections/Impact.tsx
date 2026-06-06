@@ -5,7 +5,7 @@ import { SpecTable } from '../components/SpecTable'
 import { Counter } from '../components/Counter'
 
 /**
- * Section 9. Impact and validation. KPIs, hypothetical research plan,
+ * Impact and validation. KPIs, hypothetical research plan,
  * and a two-phase rollout outline. Numbers anchor the design in
  * falsifiable claims.
  */

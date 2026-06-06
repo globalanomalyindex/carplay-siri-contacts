@@ -96,7 +96,7 @@ const GROUP_LABELS: Record<Gesture['group'], { label: string; accent: string }> 
 }
 
 /**
- * Section 6. Gesture grammar. Tech-spec table listing every gesture with
+ * Gesture grammar. Tech-spec table listing every gesture with
  * its outcome and recognition threshold. Pastel pill on the left indicates
  * which layer of the system owns the gesture.
  */
@@ -118,7 +118,9 @@ export function GestureGrammar() {
             The orb owns two. The magnifier owns six. Apps own four. Every
             threshold is published so adopters know exactly how much motion
             triggers what, and so accessibility users can predict the system
-            instead of guessing.
+            instead of guessing. Because every control opts in through one
+            registration interface, the whole grammar could ship as a platform
+            primitive that any CarPlay app adopts, not a one-off in this design.
           </p>
         </motion.div>
 

@@ -4,7 +4,7 @@ import { PullQuote } from '../components/PullQuote'
 import { SectionLabel } from '../components/SectionLabel'
 
 /**
- * Section 2. The friction. Frames the problem with the current CarPlay
+ * The friction. Frames the problem with the current CarPlay
  * Phone Contacts tab: it's locked while driving and only offers "Ask Siri,"
  * which is redundant since the user could ask Siri from any state. Includes
  * an annotated reproduction of that screen and the anonymized customer-

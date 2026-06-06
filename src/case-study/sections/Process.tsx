@@ -38,7 +38,7 @@ const CANDIDATES: NatureCandidate[] = [
 ]
 
 /**
- * Section 3. Process. Walks through the four nature candidates and the
+ * Process. Walks through the four nature candidates and the
  * pivot from pinecone to water once the gesture-first principle landed.
  */
 export function Process() {
@@ -51,7 +51,7 @@ export function Process() {
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.7, ease: [0.2, 0.8, 0.3, 1.0] }}
         >
-          <SectionLabel>02 &middot; Process</SectionLabel>
+          <SectionLabel>07 &middot; Process</SectionLabel>
           <h2 className="cs-h2">
             Looking to <PastelText variant="gradient-2">nature</PastelText> for an anchor metaphor.
           </h2>
