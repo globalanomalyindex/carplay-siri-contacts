@@ -106,12 +106,49 @@ export function regionOfPoint(
 }
 
 /**
- * The magnifier hit-test. Three rules, in order:
+ * Outcome of one hit-test, split so the driver can tell WHY a lock landed:
+ *
+ *   - `lockId`     the target the magnifier actually locks on.
+ *   - `membraneHeld` true when the current lock was kept by the membrane hold
+ *     (pointer still inside the locked rect) even though a fresh nearest-centre
+ *     pass would have moved on. This is the cell-membrane stickiness firing.
+ *   - `naivePick`  what a pure nearest-centre picker (no region gating, no
+ *     containment, no membrane) would have chosen from the same targets. The
+ *     instrument compares this against `lockId` to count what the smart hit-test
+ *     prevented.
+ */
+export interface MagnifierPick {
+  lockId: string | null
+  membraneHeld: boolean
+  naivePick: string | null
+}
+
+/** Pure nearest-centre over ALL targets, ignoring region and containment. */
+function nearestCentreOverall(
+  point: Point,
+  targets: Map<string, TargetGeometry>,
+): string | null {
+  let nearestId: string | null = null
+  let nearestDist = Infinity
+  for (const [id, t] of targets) {
+    const d = distance(point, t.rect)
+    if (d < nearestDist) {
+      nearestDist = d
+      nearestId = id
+    }
+  }
+  return nearestId
+}
+
+/**
+ * The magnifier hit-test, with a diagnostic outcome. Three rules, in order:
  *
  *   1. Region gating: only targets in the pointer's region compete, so a wide
  *      content row is never out-competed by a dock icon or a tab that merely
  *      sits nearer by centre distance. This is the fix for the axis overlap
- *      where dragging down a list could switch apps.
+ *      where dragging down a list could switch apps. When `regionGating` is
+ *      false the whole target set competes (the naive picker), used by the
+ *      tremor replay to measure what gating buys.
  *   2. Membrane hold: keep the current lock while the pointer is still inside
  *      its (magnified) bounds. The grown rect of the locked cell IS the
  *      membrane, so the hold is grounded in real geometry, not a fixed radius.
@@ -119,25 +156,46 @@ export function regionOfPoint(
  *      (smallest rect wins when nested); fall back to nearest centre, with the
  *      usual hysteresis, only when the pointer is in a gap between targets.
  */
-export function pickMagnifierTarget(
+export function pickMagnifierTargetDiagnostic(
   point: Point,
   targets: Map<string, TargetGeometry>,
   currentLockId: string | null,
   fraction: number,
-): string | null {
-  if (targets.size === 0) return null
-
-  const region = regionOfPoint(point, targets)
-  const candidates = new Map<string, TargetGeometry>()
-  for (const [id, t] of targets) {
-    if ((t.region ?? 'content') === region) candidates.set(id, t)
+  regionGating = true,
+): MagnifierPick {
+  const naivePick = nearestCentreOverall(point, targets)
+  if (targets.size === 0) {
+    return { lockId: null, membraneHeld: false, naivePick }
   }
-  if (candidates.size === 0) return null
+
+  let candidates: Map<string, TargetGeometry>
+  if (regionGating) {
+    const region = regionOfPoint(point, targets)
+    candidates = new Map<string, TargetGeometry>()
+    for (const [id, t] of targets) {
+      if ((t.region ?? 'content') === region) candidates.set(id, t)
+    }
+  } else {
+    // Region gating off: every target competes by containment + nearest centre.
+    candidates = targets
+  }
+  if (candidates.size === 0) {
+    return { lockId: null, membraneHeld: false, naivePick }
+  }
 
   // Membrane hold: stay on the current lock while still inside its bounds.
   if (currentLockId && candidates.has(currentLockId)) {
     const cur = candidates.get(currentLockId)!
-    if (pointInRect(point, cur.rect)) return currentLockId
+    if (pointInRect(point, cur.rect)) {
+      // The membrane only "saved" the lock if a fresh nearest-centre pass over
+      // the same candidates would have moved somewhere else.
+      const freshPick = pickLockedTarget(point, candidates, null, fraction)
+      return {
+        lockId: currentLockId,
+        membraneHeld: freshPick !== currentLockId,
+        naivePick,
+      }
+    }
   }
 
   // Containment: the smallest target physically under the finger.
@@ -148,15 +206,40 @@ export function pickMagnifierTarget(
       if (!contained || area < contained.area) contained = { id, area }
     }
   }
-  if (contained) return contained.id
+  if (contained) {
+    return { lockId: contained.id, membraneHeld: false, naivePick }
+  }
 
   // Gap: nearest centre within the region, with membrane hysteresis.
-  return pickLockedTarget(
+  const lockId = pickLockedTarget(
     point,
     candidates,
     currentLockId && candidates.has(currentLockId) ? currentLockId : null,
     fraction,
   )
+  return { lockId, membraneHeld: false, naivePick }
+}
+
+/**
+ * Thin wrapper that returns only the lock id, preserving the original
+ * signature and default behaviour. The optional `regionGating` flag lets a
+ * replay run the naive (region-gating-off) picker; it defaults to true so
+ * every existing caller is unchanged.
+ */
+export function pickMagnifierTarget(
+  point: Point,
+  targets: Map<string, TargetGeometry>,
+  currentLockId: string | null,
+  fraction: number,
+  regionGating = true,
+): string | null {
+  return pickMagnifierTargetDiagnostic(
+    point,
+    targets,
+    currentLockId,
+    fraction,
+    regionGating,
+  ).lockId
 }
 
 export type GestureDirection = 'horizontal' | 'vertical' | 'idle'

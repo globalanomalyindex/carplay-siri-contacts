@@ -5,6 +5,8 @@ import {
   InternalContext,
   type MagnifierInternalAPI,
 } from './MagnifierContext'
+import { TelemetryContext } from './TelemetryContext'
+import { TelemetryRecorder } from './telemetry'
 
 export interface MagnifierProviderProps {
   children: ReactNode
@@ -12,6 +14,10 @@ export interface MagnifierProviderProps {
 
 export function MagnifierProvider({ children }: MagnifierProviderProps) {
   const targetsRef = useRef<Map<string, MagnifiableTarget>>(new Map())
+  // One in-memory telemetry recorder for the whole subtree, created once via a
+  // lazy state initializer so its identity is stable across renders. Strictly
+  // local; the driver writes gesture events, the Measurement panel reads it.
+  const [recorder] = useState(() => new TelemetryRecorder())
   const [lockedId, setLockedId] = useState<string | null>(null)
   const [rotaryActive, setRotaryActive] = useState(false)
   const [gestureDirection, setGestureDirection] = useState<GestureDirection>('idle')
@@ -61,15 +67,18 @@ export function MagnifierProvider({ children }: MagnifierProviderProps) {
       setGestureDirection,
       recordCommit,
       requestMenu,
+      telemetry: recorder,
     }),
-    [recordCommit, requestMenu],
+    [recordCommit, requestMenu, recorder],
   )
 
   return (
     <MagnifierContext.Provider value={publicValue}>
-      <InternalContext.Provider value={internalValue}>
-        {children}
-      </InternalContext.Provider>
+      <TelemetryContext.Provider value={recorder}>
+        <InternalContext.Provider value={internalValue}>
+          {children}
+        </InternalContext.Provider>
+      </TelemetryContext.Provider>
     </MagnifierContext.Provider>
   )
 }

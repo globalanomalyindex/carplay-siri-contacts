@@ -1,5 +1,6 @@
 import { createContext, useContext } from 'react'
 import type { GestureDirection, MagnifiableTarget, MagnifierContextValue } from './types'
+import type { TelemetryRecorder } from './telemetry'
 
 export const MagnifierContext = createContext<MagnifierContextValue | null>(null)
 
@@ -27,6 +28,12 @@ export interface MagnifierInternalAPI {
    * the lens has dwelled on a target long enough to open its contextual menu.
    */
   requestMenu: (id: string, point: { x: number; y: number }) => void
+  /**
+   * The shared in-memory telemetry recorder. The driver writes gesture events
+   * here; null is never seen in practice (the provider always supplies one) but
+   * the field is typed nullable so a future host could opt out.
+   */
+  telemetry: TelemetryRecorder | null
 }
 
 export const InternalContext = createContext<MagnifierInternalAPI | null>(null)

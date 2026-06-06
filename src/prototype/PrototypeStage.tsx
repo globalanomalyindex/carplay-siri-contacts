@@ -18,6 +18,7 @@ import { ToastProvider } from './Toast'
 import { AriaLockAnnouncer } from '../a11y/AriaLockAnnouncer'
 import { useAriaLabelMap } from '../a11y/useAriaLabelMap'
 import { DebugPanel } from './DebugPanel'
+import { MeasurementPanel } from './MeasurementPanel'
 import { FirstRunCoach } from './FirstRunCoach'
 import { DrivingProvider } from './phone/DrivingContext'
 import { PhoneApp } from './phone/PhoneApp'
@@ -52,6 +53,10 @@ export function PrototypeStage({ showDebugPanel = false, showCoach = false }: Pr
               <MagnifierSessionProvider>
               <AnnouncerShell />
               <ShellWiring screenRef={screenRef} />
+              {/* The live measurement instrument. Inside MagnifierProvider so
+                  it sees the telemetry recorder; gated to the standalone route
+                  so it never appears on the embedded case-study stage. */}
+              {showDebugPanel && <MeasurementPanel />}
               <div
                 ref={screenRef}
                 data-testid="carplay-screen-bounds"
