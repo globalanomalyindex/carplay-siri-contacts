@@ -94,7 +94,7 @@ export function Accessibility() {
           transition={{ duration: 0.7, ease: [0.2, 0.8, 0.3, 1.0] }}
         >
           <SectionLabel stop="blue">04 &middot; Accessibility</SectionLabel>
-          <h2 className="cs-h2">
+          <h2 className="cs-statement">
             Designed for the most motor-constrained user.
             <br />
             <PastelText variant="gradient-1">Everyone</PastelText> gets the same affordance.

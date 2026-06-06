@@ -102,7 +102,7 @@ const GROUP_LABELS: Record<Gesture['group'], { label: string; accent: string }> 
  */
 export function GestureGrammar() {
   return (
-    <section className="cs-section" id="gestures">
+    <section className="cs-section cs-section--dense" id="gestures">
       <div className="cs-container">
         <motion.div
           initial={{ opacity: 0, y: 24 }}

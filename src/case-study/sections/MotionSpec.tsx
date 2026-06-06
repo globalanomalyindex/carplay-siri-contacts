@@ -62,7 +62,7 @@ const CURVES: Curve[] = [
  */
 export function MotionSpec() {
   return (
-    <section className="cs-section" id="motion" style={{ background: 'var(--cs-bg-tint)' }}>
+    <section className="cs-section cs-section--dense" id="motion" style={{ background: 'var(--cs-bg-tint)' }}>
       <div className="cs-container">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
