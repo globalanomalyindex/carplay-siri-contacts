@@ -70,7 +70,7 @@ export function MotionSpec() {
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.7, ease: [0.2, 0.8, 0.3, 1.0] }}
         >
-          <SectionLabel>06 &middot; Motion spec</SectionLabel>
+          <SectionLabel stop="pink">06 &middot; Motion spec</SectionLabel>
           <h2 className="cs-h2">
             Eight named curves. <PastelText variant="gradient-2">One feel.</PastelText>
           </h2>

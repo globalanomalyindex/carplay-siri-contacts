@@ -18,6 +18,23 @@
     var(--orb-stop-1)
   );
 
+  /* The orb spectrum, named for use as a documented through-line that ties the
+     case study to the prototype: section index hues, dividers, structural
+     accents. The five stops are the single source; everything references them. */
+  --spectrum-pink:   var(--orb-stop-1);
+  --spectrum-amber:  var(--orb-stop-2);
+  --spectrum-mint:   var(--orb-stop-3);
+  --spectrum-blue:   var(--orb-stop-4);
+  --spectrum-violet: var(--orb-stop-5);
+  --spectrum-rule: linear-gradient(
+    90deg,
+    var(--spectrum-pink),
+    var(--spectrum-amber),
+    var(--spectrum-mint),
+    var(--spectrum-blue),
+    var(--spectrum-violet)
+  );
+
   /* Liquid glass */
   --glass-fill:          rgba(255, 255, 255, 0.06);
   --glass-border:        rgba(255, 255, 255, 0.22);

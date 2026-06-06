@@ -19,7 +19,7 @@ const HINTS: { title: string; body: string }[] = [
  */
 export function PrototypeEmbed() {
   return (
-    <section className="cs-section" id="prototype">
+    <section className="cs-section cs-section--dark cs-section--air" id="prototype">
       <div className="cs-container-wide">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
@@ -28,7 +28,7 @@ export function PrototypeEmbed() {
           transition={{ duration: 0.7, ease: [0.2, 0.8, 0.3, 1.0] }}
           style={{ textAlign: 'center', maxWidth: 720, marginInline: 'auto' }}
         >
-          <SectionLabel>03 &middot; Try it</SectionLabel>
+          <SectionLabel stop="mint">03 &middot; Try it</SectionLabel>
           <h2 className="cs-h2" style={{ marginInline: 'auto' }}>
             <PastelText variant="gradient-2">The prototype.</PastelText>
           </h2>
@@ -63,9 +63,9 @@ export function PrototypeEmbed() {
             style={{
               position: 'absolute',
               inset: '-32px -32px -32px -32px',
-              background: 'radial-gradient(closest-side at 30% 40%, var(--pastel-sky), transparent 70%), radial-gradient(closest-side at 70% 60%, var(--pastel-mint), transparent 70%)',
-              opacity: 0.45,
-              filter: 'blur(40px)',
+              background: 'radial-gradient(closest-side at 30% 40%, rgba(120, 220, 240, 0.22), transparent 70%), radial-gradient(closest-side at 70% 60%, rgba(181, 115, 255, 0.18), transparent 70%)',
+              opacity: 0.7,
+              filter: 'blur(44px)',
               borderRadius: 32,
               zIndex: 0,
             }}
@@ -98,8 +98,8 @@ export function PrototypeEmbed() {
               style={{
                 padding: '18px 20px',
                 borderRadius: 14,
-                background: '#FFFFFF',
-                border: '1px solid var(--cs-rule)',
+                background: 'rgba(255, 255, 255, 0.05)',
+                border: '1px solid var(--cs-dark-rule)',
               }}
             >
               <div
@@ -108,14 +108,14 @@ export function PrototypeEmbed() {
                   fontWeight: 600,
                   letterSpacing: '0.1em',
                   textTransform: 'uppercase',
-                  color: 'var(--cs-text-2)',
+                  color: 'var(--cs-dark-text-2)',
                   marginBottom: 6,
                 }}
               >
                 Gesture {String(i + 1).padStart(2, '0')}
               </div>
               <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 4 }}>{h.title}</div>
-              <div style={{ fontSize: 13.5, color: 'var(--cs-text-2)', lineHeight: 1.5 }}>{h.body}</div>
+              <div style={{ fontSize: 13.5, color: 'var(--cs-dark-text-2)', lineHeight: 1.5 }}>{h.body}</div>
             </motion.div>
           ))}
         </div>
@@ -129,12 +129,12 @@ export function PrototypeEmbed() {
               gap: 8,
               padding: '12px 22px',
               borderRadius: 999,
-              border: '1px solid var(--cs-rule)',
-              color: 'var(--cs-text)',
+              border: '1px solid var(--cs-dark-rule)',
+              color: 'var(--cs-dark-text)',
               fontSize: 14,
               fontWeight: 500,
               textDecoration: 'none',
-              background: '#FFFFFF',
+              background: 'rgba(255, 255, 255, 0.06)',
             }}
           >
             Open the prototype in its own window

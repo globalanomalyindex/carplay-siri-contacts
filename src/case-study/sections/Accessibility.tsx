@@ -93,7 +93,7 @@ export function Accessibility() {
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.7, ease: [0.2, 0.8, 0.3, 1.0] }}
         >
-          <SectionLabel>04 &middot; Accessibility</SectionLabel>
+          <SectionLabel stop="blue">04 &middot; Accessibility</SectionLabel>
           <h2 className="cs-h2">
             Designed for the most motor-constrained user.
             <br />

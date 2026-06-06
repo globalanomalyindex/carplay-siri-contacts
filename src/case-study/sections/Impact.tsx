@@ -19,7 +19,7 @@ export function Impact() {
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.7, ease: [0.2, 0.8, 0.3, 1.0] }}
         >
-          <SectionLabel>08 &middot; Impact</SectionLabel>
+          <SectionLabel stop="mint">08 &middot; Impact</SectionLabel>
           <h2 className="cs-h2">
             <PastelText variant="gradient-1">Measurable</PastelText> on day one.
           </h2>

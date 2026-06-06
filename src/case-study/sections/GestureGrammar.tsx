@@ -110,7 +110,7 @@ export function GestureGrammar() {
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.7, ease: [0.2, 0.8, 0.3, 1.0] }}
         >
-          <SectionLabel>05 &middot; Gesture grammar</SectionLabel>
+          <SectionLabel stop="violet">05 &middot; Gesture grammar</SectionLabel>
           <h2 className="cs-h2">
             <PastelText variant="gradient-1">Twelve gestures.</PastelText> One vocabulary.
           </h2>

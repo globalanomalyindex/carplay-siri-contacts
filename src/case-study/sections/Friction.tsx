@@ -20,7 +20,7 @@ export function Friction() {
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.7, ease: [0.2, 0.8, 0.3, 1.0] }}
         >
-          <SectionLabel>01 &middot; The friction</SectionLabel>
+          <SectionLabel stop="pink">01 &middot; The friction</SectionLabel>
           <h2 className="cs-h2">
             The Contacts tab is a sign that points back to itself.
           </h2>

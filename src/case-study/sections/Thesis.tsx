@@ -47,7 +47,7 @@ export function Thesis() {
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.7, ease: [0.2, 0.8, 0.3, 1.0] }}
         >
-          <SectionLabel>02 &middot; Thesis</SectionLabel>
+          <SectionLabel stop="amber">02 &middot; Thesis</SectionLabel>
           <h2 className="cs-h2">
             One persistent orb.
             <br />

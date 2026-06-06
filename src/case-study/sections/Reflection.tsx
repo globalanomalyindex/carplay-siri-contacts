@@ -16,7 +16,7 @@ export function Reflection() {
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.7, ease: [0.2, 0.8, 0.3, 1.0] }}
         >
-          <SectionLabel>09 &middot; Reflection</SectionLabel>
+          <SectionLabel stop="blue">09 &middot; Reflection</SectionLabel>
           <h2 className="cs-h2">
             What <PastelText variant="gradient-2">worked</PastelText>. What I would push further.
           </h2>

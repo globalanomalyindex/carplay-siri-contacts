@@ -22,6 +22,26 @@
   --cs-rule:        #D2D2D7;
   --cs-rule-soft:   rgba(0, 0, 0, 0.06);
   --cs-spec-bg:     rgba(0, 0, 0, 0.04);
+
+  /* Dark surface, used once: the full-bleed band that wraps the live prototype
+     so the artifact becomes the page's single dark peak. Tuned to the embed
+     frame color (#0E1419) it contains so the two read as one object. */
+  --cs-dark-bg:        #0B1015;
+  --cs-dark-bg-raised: #11202B;
+  --cs-dark-text:      rgba(255, 255, 255, 0.92);
+  --cs-dark-text-2:    rgba(255, 255, 255, 0.60);
+  --cs-dark-rule:      rgba(255, 255, 255, 0.12);
+
+  /* Two-step elevation so foreground cards read as a distinct plane. Very low
+     alpha keeps it premium, never a cheap drop shadow. */
+  --cs-elev-1: 0 1px 2px rgba(16, 24, 40, 0.04), 0 1px 3px rgba(16, 24, 40, 0.06);
+  --cs-elev-2: 0 4px 8px -2px rgba(16, 24, 40, 0.06), 0 12px 28px -8px rgba(16, 24, 40, 0.10);
+
+  /* Section rhythm: the page breathes wider into the live prototype and
+     compresses through the dense reference tables instead of one flat 120px. */
+  --cs-space-section-xl: 200px;
+  --cs-space-section:    120px;
+  --cs-space-section-sm: 84px;
 }
 
 .case-study {
@@ -311,14 +331,7 @@
   width: 72px;
   height: 3px;
   border-radius: 2px;
-  background: linear-gradient(
-    90deg,
-    #FF6E7F,
-    #FFD86B,
-    #6BFFD1,
-    #6B9AFF,
-    #B573FF
-  );
+  background: var(--spectrum-rule);
   flex-shrink: 0;
   opacity: 0.85;
 }
@@ -671,4 +684,69 @@
 
 @media (prefers-reduced-motion: reduce) {
   .cs-skip-link { transition: none; }
+}
+
+/* ============================================================
+   Visual signature: the orb spectrum as a documented through-line.
+   ============================================================ */
+
+/* The signature bar from the hero, reused as a divider at the two highest
+   narrative seams (into the dark prototype band, out of the reference tables). */
+.cs-divider-spectrum {
+  border: 0;
+  width: 72px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--spectrum-rule);
+  opacity: 0.9;
+  margin: 72px auto;
+}
+
+/* Section index: each numbered eyebrow takes one spectrum hue on its number and
+   leading rule only. The title text stays neutral, so color indexes the
+   document without becoming wallpaper. */
+.cs-eyebrow { font-variant-numeric: tabular-nums; }
+.cs-eyebrow[data-stop="pink"]   { --stop: var(--spectrum-pink); }
+.cs-eyebrow[data-stop="amber"]  { --stop: var(--spectrum-amber); }
+.cs-eyebrow[data-stop="mint"]   { --stop: var(--spectrum-mint); }
+.cs-eyebrow[data-stop="blue"]   { --stop: var(--spectrum-blue); }
+.cs-eyebrow[data-stop="violet"] { --stop: var(--spectrum-violet); }
+.cs-eyebrow[data-stop] .cs-eyebrow-num { color: var(--stop); font-weight: 600; }
+.cs-eyebrow[data-stop]::before { background: var(--stop); opacity: 0.95; }
+
+/* The single dark band wrapping the live prototype, tuned to the embed frame it
+   contains so the two read as one object. Light resumes around it. */
+.cs-section--dark {
+  background: radial-gradient(
+    130% 100% at 50% 0%,
+    var(--cs-dark-bg-raised) 0%,
+    var(--cs-dark-bg) 72%
+  );
+  color: var(--cs-dark-text);
+}
+.cs-section--dark .cs-h2 { color: var(--cs-dark-text); }
+.cs-section--dark .cs-body { color: var(--cs-dark-text-2); }
+.cs-section--dark .cs-eyebrow { color: var(--cs-dark-text-2); }
+.cs-section--dark .cs-eyebrow::before { background: var(--cs-dark-text-2); }
+
+/* One oversized type moment, used once at the accessibility thesis. Sits
+   between .cs-h2 and the hero .cs-h1 so it never competes with the hero. */
+.cs-statement {
+  font-family: var(--cs-font-display, -apple-system, BlinkMacSystemFont, 'SF Pro Display', system-ui, sans-serif);
+  font-size: clamp(38px, 6.2vw, 84px);
+  font-weight: 600;
+  line-height: 1.06;
+  letter-spacing: -0.022em;
+  max-width: 960px;
+  margin: 0 0 28px;
+}
+
+/* Section rhythm: breathe wider into the live prototype, compress through the
+   dense reference tables, instead of one flat 120px metronome. */
+.cs-section--air   { padding-top: var(--cs-space-section-xl); padding-bottom: var(--cs-space-section-xl); }
+.cs-section--dense { padding-top: var(--cs-space-section-sm); padding-bottom: var(--cs-space-section-sm); }
+
+@media (max-width: 720px) {
+  .cs-section--air   { padding-top: 128px; padding-bottom: 128px; }
+  .cs-section--dense { padding-top: 52px; padding-bottom: 52px; }
 }

@@ -51,7 +51,7 @@ export function Process() {
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.7, ease: [0.2, 0.8, 0.3, 1.0] }}
         >
-          <SectionLabel>07 &middot; Process</SectionLabel>
+          <SectionLabel stop="amber">07 &middot; Process</SectionLabel>
           <h2 className="cs-h2">
             Looking to <PastelText variant="gradient-2">nature</PastelText> for an anchor metaphor.
           </h2>
