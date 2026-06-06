@@ -1,0 +1,26 @@
+/* Owned display face. Fraunces (SIL Open Font License 1.1), variable,
+   latin-subset, self-hosted. Used for case-study headings and pull-quotes only;
+   SF Pro stays the body and all numerics and chrome. font-display: swap renders
+   the SF Pro fallback instantly and reflows the headings once when the face
+   arrives, so the cold-start-to-interactive budget holds (the font never blocks
+   render). Optical sizing is automatic, so large headings get the display cut
+   and smaller ones tighten. */
+@font-face {
+  font-family: 'Fraunces';
+  font-style: normal;
+  font-weight: 380 620;
+  font-display: swap;
+  src: url('/fonts/fraunces-display.woff2') format('woff2');
+}
+
+:root {
+  --cs-font-display: 'Fraunces', -apple-system, BlinkMacSystemFont,
+    'SF Pro Display', system-ui, sans-serif;
+
+  /* Micro type scale: the eyeballed fractional sizes, named once so the type
+     system matches the engineering rigor the writing claims. */
+  --text-2xs: 10.5px;
+  --text-xs: 11.5px;
+  --text-sm: 13.5px;
+  --text-sm-plus: 14.5px;
+}

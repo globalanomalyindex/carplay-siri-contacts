@@ -2,6 +2,7 @@
 @import "./tokens/motion.css";
 @import "./tokens/color.css";
 @import "./tokens/spatial.css";
+@import "./tokens/type.css";
 
 /* Apple system font stack. Renders SF Pro on macOS/iOS, falls back through
    BlinkMacSystemFont (Chromium on macOS), system-ui (everything else), then
