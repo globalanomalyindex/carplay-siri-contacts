@@ -13,9 +13,28 @@
   src: url('/fonts/fraunces-display.woff2') format('woff2');
 }
 
+/* Swiss neo-grotesque body and a monospace for labels, spec values, and the
+   ASCII motif. Both variable, latin-subset, self-hosted, swap. */
+@font-face {
+  font-family: 'Geist';
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url('/fonts/geist.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Geist Mono';
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url('/fonts/geist-mono.woff2') format('woff2');
+}
+
 :root {
-  --cs-font-display: 'Fraunces', -apple-system, BlinkMacSystemFont,
-    'SF Pro Display', system-ui, sans-serif;
+  --cs-font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+  --cs-font-body: 'Geist', -apple-system, BlinkMacSystemFont, system-ui,
+    'Segoe UI', Roboto, sans-serif;
+  --cs-font-mono: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, Monaco, monospace;
 
   /* Micro type scale: the eyeballed fractional sizes, named once so the type
      system matches the engineering rigor the writing claims. */

@@ -1,193 +1,91 @@
-import { motion, useScroll, useTransform } from 'motion/react'
+import { motion } from 'motion/react'
 import { useRef } from 'react'
-import { PastelText } from '../components/PastelText'
 import { Counter } from '../components/Counter'
-import { useReducedMotion } from '../../a11y/useReducedMotion'
+import { AsciiArrow } from '../components/AsciiArrow'
 
 /**
- * Hero. Full-bleed introduction. Massive title with a pastel-gradient
- * accent on "Master". The rainbow lives as ambient atmosphere behind
- * the text (low-opacity blurred color blobs) plus a thin gradient bar
- * above the eyebrow line. No competing object on the right.
+ * Hero. Brutalist and lowercase. The one bit of color is the ASCII arrow that
+ * fills rainbow one character at a time; everything else is ink on paper. No
+ * ambient gradient, no competing object, just the claim and the numbers.
  */
 export function Hero() {
   const ref = useRef<HTMLElement>(null)
-  const reduced = useReducedMotion()
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ['start start', 'end start'],
-  })
-  const auraY = useTransform(scrollYProgress, [0, 1], reduced ? [0, 0] : [0, -60])
-  const auraOpacity = useTransform(scrollYProgress, [0, 1], [1, 0.55])
-
-  // Blob positions and motion paths form a soft rainbow that drifts
-  // behind the headline. Positions stay inset from the section edges so
-  // the soft falloff of each blob never clips against the section's
-  // overflow boundary.
-  const blobs = [
-    {
-      color: '#FF6E7F',
-      x: ['22%', '28%', '18%', '24%', '22%'],
-      y: ['22%', '16%', '28%', '20%', '22%'],
-    },
-    {
-      color: '#FFD86B',
-      x: ['72%', '66%', '78%', '70%', '72%'],
-      y: ['20%', '28%', '22%', '14%', '20%'],
-    },
-    {
-      color: '#6BFFD1',
-      x: ['78%', '70%', '74%', '82%', '78%'],
-      y: ['72%', '78%', '66%', '74%', '72%'],
-    },
-    {
-      color: '#6B9AFF',
-      x: ['24%', '20%', '30%', '22%', '24%'],
-      y: ['74%', '68%', '78%', '72%', '74%'],
-    },
-    {
-      color: '#B573FF',
-      x: ['50%', '54%', '46%', '52%', '50%'],
-      y: ['48%', '54%', '44%', '50%', '48%'],
-    },
-  ]
 
   return (
-    <header ref={ref} className="cs-section" style={{ paddingTop: 96, position: 'relative', overflow: 'hidden' }}>
-      {/* Ambient rainbow atmosphere. Sits behind text, never competes. */}
-      <motion.div
-        aria-hidden="true"
-        className="hero-aura"
-        style={{ y: auraY, opacity: auraOpacity }}
-      >
-        {blobs.map((b, i) => (
-          <motion.span
-            key={i}
-            className="hero-aura-blob"
-            style={{ background: b.color }}
-            initial={{ left: b.x[0], top: b.y[0], scale: 1 }}
-            animate={
-              reduced
-                ? { left: b.x[0], top: b.y[0], scale: 1 }
-                : {
-                    left: b.x,
-                    top: b.y,
-                    scale: [1, 1.08, 0.96, 1.04, 1],
-                  }
-            }
-            transition={{
-              duration: 18 + i * 1.4,
-              repeat: Infinity,
-              ease: 'easeInOut',
-              delay: i * 0.6,
-            }}
-          />
-        ))}
-      </motion.div>
-
-      <div className="cs-container" style={{ position: 'relative', zIndex: 1 }}>
+    <header ref={ref} className="cs-section cs-hero" style={{ paddingTop: 96 }}>
+      <div className="cs-container">
         <motion.div
+          className="cs-hero-eyebrow"
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: [0.2, 0.8, 0.3, 1.0] }}
-          style={{ display: 'flex', alignItems: 'center', gap: 14 }}
         >
-          {/* Thin rainbow tech-spec bar */}
-          <span aria-hidden="true" className="hero-spec-bar" />
-          <p
-            style={{
-              fontSize: 13,
-              fontWeight: 500,
-              letterSpacing: '0.12em',
-              textTransform: 'uppercase',
-              color: 'var(--cs-text-2)',
-              margin: 0,
-            }}
-          >
-            A CarPlay case study, designed + built by Christopher Robin Fiore
+          <AsciiArrow length={7} />
+          <p className="cs-mono-label" style={{ margin: 0 }}>
+            CarPlay redesign &middot; designed + built by Christopher Robin Fiore
           </p>
         </motion.div>
 
         <motion.h1
           className="cs-h1"
-          style={{ marginTop: 36, position: 'relative', maxWidth: 720 }}
+          style={{ marginTop: 32, maxWidth: 880 }}
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.85, ease: [0.2, 0.8, 0.3, 1.0], delay: 0.06 }}
         >
-          One{' '}
-          <PastelText variant="gradient-1">Master</PastelText>
-          <br />
-          Affordance.
+          one master affordance.
         </motion.h1>
 
         <motion.p
           className="cs-lead"
-          style={{ marginTop: 28, maxWidth: 720 }}
+          style={{ marginTop: 28, maxWidth: 660 }}
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.75, ease: [0.2, 0.8, 0.3, 1.0], delay: 0.18 }}
         >
-          A new system-level interaction primitive for CarPlay, designed and
-          built in code. One persistent orb that is both a Siri trigger and a
-          tremor-tolerant magnifier, so the whole interface stays reachable for
-          the drivers who need it most.
+          a new interaction primitive for CarPlay, built in real code (it's right
+          below, go poke at it). one orb that is both a Siri trigger and a
+          tremor-proof magnifier, so the whole car interface stays reachable for
+          the people who need it most.
         </motion.p>
 
         <motion.div
-          style={{
-            marginTop: 44,
-            display: 'flex',
-            gap: 44,
-            flexWrap: 'wrap',
-            maxWidth: 720,
-          }}
+          className="cs-hero-stats"
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, ease: [0.2, 0.8, 0.3, 1.0], delay: 0.26 }}
         >
-          <div>
-            <div className="cs-stat-value" style={{ fontSize: 30 }}>
-              <Counter value={45} suffix="%" /> <span aria-hidden="true" style={{ color: 'var(--cs-text-3)' }}>&rarr;</span> <Counter value={85} suffix="%" />
+          <div className="cs-stat">
+            <div className="cs-stat-value">
+              <Counter value={45} suffix="%" />
+              <span aria-hidden="true" className="cs-stat-arrow">-&gt;</span>
+              <Counter value={85} suffix="%" />
             </div>
-            <div className="cs-stat-label" style={{ maxWidth: 210 }}>
-              Target first-try task completion for motor-constrained drivers.
-            </div>
+            <div className="cs-stat-label">target first-try completion, motor-constrained drivers</div>
           </div>
-          <div>
-            <div className="cs-stat-value" style={{ fontSize: 30 }}>
+          <div className="cs-stat">
+            <div className="cs-stat-value">
               <Counter value={40} suffix="%" />
             </div>
-            <div className="cs-stat-label" style={{ maxWidth: 200 }}>
-              Predicted drop in mis-actions on bumpy roads.
-            </div>
+            <div className="cs-stat-label">predicted drop in mis-actions on bumpy roads</div>
           </div>
-          <div>
-            <div className="cs-stat-value" style={{ fontSize: 30 }}>
+          <div className="cs-stat">
+            <div className="cs-stat-value">
               <Counter value={20} suffix="M+" />
             </div>
-            <div className="cs-stat-label" style={{ maxWidth: 210 }}>
-              US adults with significant motor impairment. Direct beneficiaries.
-            </div>
+            <div className="cs-stat-label">US adults with significant motor impairment, counted once</div>
           </div>
         </motion.div>
 
         <motion.div
-          style={{
-            marginTop: 48,
-            display: 'flex',
-            gap: 32,
-            flexWrap: 'wrap',
-            fontSize: 13,
-            color: 'var(--cs-text-2)',
-          }}
+          className="cs-hero-meta"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.4 }}
         >
-          <span><strong style={{ color: 'var(--cs-text)', fontWeight: 600 }}>Designed + built by</strong> &nbsp; Christopher Robin Fiore, Design Engineer</span>
-          <span><strong style={{ color: 'var(--cs-text)', fontWeight: 600 }}>Reading time</strong> &nbsp; 8 min</span>
-          <span><strong style={{ color: 'var(--cs-text)', fontWeight: 600 }}>Published</strong> &nbsp; May 2026</span>
+          <span><strong>built by</strong> Christopher Robin Fiore, design engineer</span>
+          <span><strong>read time</strong> 8 min</span>
+          <span><strong>shipped</strong> may 2026</span>
         </motion.div>
       </div>
     </header>
