@@ -67,15 +67,20 @@ export function TabPill({ tabs, active, onChange }: TabPillProps) {
           id={`tab-${t}`}
           region="tabs"
           index={i}
+          selected={t === active}
           onCommit={() => onChange(t)}
           label={`${LABELS[t]} tab`}
         >
-          <button
-            onClick={() => onChange(t)}
+          {/* Presentational span, not a <button>: the MagnifiableFrame is the
+              single interactive node for this tab (it owns Tab focus, aria-label,
+              aria-pressed and Enter/Space). A nested button would add a second
+              interactive node for one control. State is data-* only, for styling. */}
+          <span
             data-active={t === active || undefined}
             data-variant="tab"
             data-state={t === active ? 'active' : 'idle'}
             style={{
+              display: 'block',
               padding: '6px 12px',
               borderRadius: 14,
               background: t === active ? 'rgba(60,180,200,0.30)' : 'transparent',
@@ -83,13 +88,12 @@ export function TabPill({ tabs, active, onChange }: TabPillProps) {
               fontSize: 12,
               fontWeight: t === active ? 600 : 500,
               letterSpacing: '-0.01em',
-              border: 'none',
               cursor: 'pointer',
               transition: 'background-color 220ms cubic-bezier(0.2,0.8,0.3,1), color 220ms cubic-bezier(0.2,0.8,0.3,1), transform 140ms cubic-bezier(0.08,0.82,0.17,1)',
             }}
           >
             {LABELS[t]}
-          </button>
+          </span>
         </MagnifiableFrame>
       ))}
     </div>

@@ -32,6 +32,40 @@ describe('MasterOrb', () => {
   })
 })
 
+describe('MasterOrb keyboard path', () => {
+  it('exposes the orb as a focusable button labelled Wake Siri', () => {
+    render(<MagnifierProvider><MasterOrb /></MagnifierProvider>)
+    const hit = screen.getByTestId('master-orb-hit')
+    expect(hit).toHaveAttribute('role', 'button')
+    expect(hit).toHaveAttribute('tabindex', '0')
+    expect(hit).toHaveAttribute('aria-label', 'Wake Siri')
+    expect(hit).toHaveAttribute('aria-pressed', 'false')
+  })
+
+  it('wakes Siri on Enter (same primary action as a tap)', () => {
+    render(<MagnifierProvider><MasterOrb /></MagnifierProvider>)
+    const hit = screen.getByTestId('master-orb-hit')
+    fireEvent.keyDown(hit, { key: 'Enter' })
+    expect(screen.getByTestId('siri-aura')).toBeInTheDocument()
+    expect(hit).toHaveAttribute('aria-pressed', 'true')
+  })
+
+  it('wakes Siri on Space and prevents default scroll', () => {
+    render(<MagnifierProvider><MasterOrb /></MagnifierProvider>)
+    const hit = screen.getByTestId('master-orb-hit')
+    const ev = fireEvent.keyDown(hit, { key: ' ' })
+    expect(screen.getByTestId('siri-aura')).toBeInTheDocument()
+    expect(ev).toBe(false)
+  })
+
+  it('ignores other keys', () => {
+    render(<MagnifierProvider><MasterOrb /></MagnifierProvider>)
+    const hit = screen.getByTestId('master-orb-hit')
+    fireEvent.keyDown(hit, { key: 'a' })
+    expect(screen.queryByTestId('siri-aura')).not.toBeInTheDocument()
+  })
+})
+
 describe('MasterOrb drag', () => {
   it('enters rotary mode on drag past threshold', () => {
     render(<MagnifierProvider><MasterOrb /></MagnifierProvider>)

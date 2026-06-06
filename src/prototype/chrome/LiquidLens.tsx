@@ -49,12 +49,18 @@ export function LiquidLens({ screenRef }: LiquidLensProps) {
   const reduced = useReducedMotion()
   const [rect, setRect] = useState<LensRect | null>(null)
   const rectRef = useRef<LensRect | null>(null)
+  // The lens is faintest exactly on the full-width content rows, which are the
+  // primary call target. When the lock is on a content region we raise the
+  // convex sheen and the chromatic-rim opacity so the most important lock reads
+  // strongest. Dock and tab locks already read well and stay at base strength.
+  const [contentLock, setContentLock] = useState(false)
 
   useEffect(() => {
     const screen = screenRef.current
     if (!rotaryActive || !lockedId || !screen) {
       rectRef.current = null
       setRect(null)
+      setContentLock(false)
       return
     }
 
@@ -62,9 +68,12 @@ export function LiquidLens({ screenRef }: LiquidLensProps) {
     const measure = () => {
       const target = screen.querySelector(`[data-testid="magnifiable-${lockedId}"]`)
       if (target) {
+        const el = target as HTMLElement
+        const region = el.getAttribute('data-region') ?? 'content'
+        setContentLock(region === 'content')
         const sr = screen.getBoundingClientRect()
-        const tr = (target as HTMLElement).getBoundingClientRect()
-        const cs = getComputedStyle(target as HTMLElement)
+        const tr = el.getBoundingClientRect()
+        const cs = getComputedStyle(el)
         const radius = parseFloat(cs.borderRadius) || 10
         // Clamp to the screen (with a few px of glow bleed) so the lens hugs a
         // full-width row instead of sticking out past the device edges.
@@ -124,29 +133,42 @@ export function LiquidLens({ screenRef }: LiquidLensProps) {
             zIndex: 12,
             pointerEvents: 'none',
             // Convex glass dome: bright top sheen fading to a clear centre so
-            // the magnified content underneath stays crisp.
-            backgroundImage:
-              'linear-gradient(180deg, rgba(255,255,255,0.30) 0%, rgba(255,255,255,0.05) 30%, rgba(255,255,255,0) 56%)',
+            // the magnified content underneath stays crisp. Content-row locks
+            // (the primary call target) get a brighter sheen so the lens reads
+            // strongest where it matters most.
+            backgroundImage: contentLock
+              ? 'linear-gradient(180deg, rgba(255,255,255,0.42) 0%, rgba(255,255,255,0.10) 30%, rgba(255,255,255,0) 58%)'
+              : 'linear-gradient(180deg, rgba(255,255,255,0.30) 0%, rgba(255,255,255,0.05) 30%, rgba(255,255,255,0) 56%)',
             boxShadow: [
-              'inset 0 1.5px 1px rgba(255,255,255,0.6)', //  convex top light
-              'inset 0 -5px 10px rgba(28,48,78,0.22)', //     convex underside
-              '0 0 0 1px rgba(196,232,255,0.7)', //           crisp glass rim
-              '0 12px 36px rgba(130,200,255,0.40)', //        iridescent glow
-              '0 4px 12px rgba(0,0,0,0.30)', //               lift
+              contentLock
+                ? 'inset 0 1.5px 1.5px rgba(255,255,255,0.78)' // brighter convex top light
+                : 'inset 0 1.5px 1px rgba(255,255,255,0.6)', //  convex top light
+              contentLock
+                ? 'inset 0 -6px 12px rgba(28,48,78,0.28)' //     deeper convex underside
+                : 'inset 0 -5px 10px rgba(28,48,78,0.22)', //    convex underside
+              '0 0 0 1px rgba(196,232,255,0.7)', //              crisp glass rim
+              contentLock
+                ? '0 14px 40px rgba(130,200,255,0.52)' //        stronger iridescent glow
+                : '0 12px 36px rgba(130,200,255,0.40)', //       iridescent glow
+              '0 4px 12px rgba(0,0,0,0.30)', //                  lift
             ].join(', '),
           }}
         >
           {/* Chromatic-aberration rim: a thin spectral ring via a masked conic
-              gradient, blended as light so it reads as a glass edge. */}
+              gradient, blended as light so it reads as a glass edge. The rim
+              opacity and thickness lift on content-row locks so the spectral
+              edge is clearest on the primary call target. */}
           <span
             aria-hidden
+            data-strong={contentLock || undefined}
             style={{
               position: 'absolute',
               inset: 0,
               borderRadius: 'inherit',
-              padding: 1.5,
-              background:
-                'conic-gradient(from 140deg, rgba(255,94,138,0.65), rgba(255,211,107,0.5), rgba(107,255,209,0.5), rgba(107,154,255,0.65), rgba(181,115,255,0.65), rgba(255,94,138,0.65))',
+              padding: contentLock ? 2 : 1.5,
+              background: contentLock
+                ? 'conic-gradient(from 140deg, rgba(255,94,138,0.85), rgba(255,211,107,0.7), rgba(107,255,209,0.7), rgba(107,154,255,0.85), rgba(181,115,255,0.85), rgba(255,94,138,0.85))'
+                : 'conic-gradient(from 140deg, rgba(255,94,138,0.65), rgba(255,211,107,0.5), rgba(107,255,209,0.5), rgba(107,154,255,0.65), rgba(181,115,255,0.65), rgba(255,94,138,0.65))',
               WebkitMask:
                 'linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0)',
               WebkitMaskComposite: 'xor',

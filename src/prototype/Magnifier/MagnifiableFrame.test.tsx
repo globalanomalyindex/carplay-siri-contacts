@@ -27,6 +27,22 @@ describe('MagnifiableFrame', () => {
     expect(screen.getByTestId('magnifiable-row-1')).toBeInTheDocument()
   })
 
+  it('emits data-region so the lens can strengthen content-row locks', () => {
+    renderInProvider(
+      <>
+        <MagnifiableFrame id="row-r" onCommit={() => {}}>
+          row
+        </MagnifiableFrame>
+        <MagnifiableFrame id="dock-r" region="dock" onCommit={() => {}}>
+          dock
+        </MagnifiableFrame>
+      </>,
+    )
+    // Default region is content (the primary call target the lens emphasises).
+    expect(screen.getByTestId('magnifiable-row-r')).toHaveAttribute('data-region', 'content')
+    expect(screen.getByTestId('magnifiable-dock-r')).toHaveAttribute('data-region', 'dock')
+  })
+
   it('renders a commit-flash overlay when recordCommit fires for its id', () => {
     let recordCommit: ((id: string) => void) | null = null
     function Probe() {

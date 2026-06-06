@@ -8,6 +8,12 @@ export const space = {
 
   /** Scale a locked rotary target swells to: the loupe / Fitts magnification. */
   magnifyScale: 1.12,
+  /**
+   * Settle a locked full-width content row makes. It is already wide, so it
+   * cannot loupe like a dock icon without overflowing; instead it gives a small
+   * forward settle on lock so the primary call target reads as "this one".
+   */
+  contentSettleScale: 1.04,
 
   membraneHysteresisFraction: 0.60,
 

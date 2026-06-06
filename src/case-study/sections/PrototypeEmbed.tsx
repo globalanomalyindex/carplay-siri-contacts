@@ -82,7 +82,7 @@ export function PrototypeEmbed() {
               border: '1px solid rgba(255, 255, 255, 0.06)',
             }}
           >
-            <PrototypeStage />
+            <PrototypeStage showCoach />
           </div>
         </motion.div>
 

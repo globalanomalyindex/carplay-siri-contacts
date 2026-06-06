@@ -11,6 +11,8 @@
 
   /* Magnifier (mirrors spatial.ts magnifyScale) */
   --magnify-scale:        1.12;
+  /* Settle a locked full-width content row makes (mirrors contentSettleScale) */
+  --content-settle-scale: 1.04;
 
   /* Hysteresis: lock holds until finger is 60 percent past the next center */
   --membrane-hysteresis-fraction: 0.60;

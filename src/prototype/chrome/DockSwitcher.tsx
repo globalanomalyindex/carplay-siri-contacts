@@ -144,6 +144,7 @@ function DockSlot({ item, active, onSelect, onToast }: DockSlotProps) {
       region="dock"
       quickdraw
       label={`${item.label} surface`}
+      selected={active}
       onCommit={() => onSelect(item.id)}
     >
       <ExpandableCell
@@ -199,14 +200,13 @@ function DockButton({
   }
 
   return (
-    // div, not button: the surrounding ExpandableCell owns the press
-    // recognition (tap, drag, hold). A nested button would steal focus and
-    // double-handle the events. We keep the accessible role + label on the
-    // outer cell.
+    // Presentational div, not a button or a role="button": the surrounding
+    // MagnifiableFrame is the single interactive node for this control (it owns
+    // tabIndex, aria-label, aria-pressed and the Enter/Space handler), and the
+    // ExpandableCell owns the pointer press recognition. A nested button or
+    // role here would put two interactive nodes in the tree for one control and
+    // double-handle activation. State is carried only as data-* for styling.
     <div
-      role="button"
-      aria-label={label}
-      aria-pressed={active}
       data-active={active || undefined}
       data-variant="dock-button"
       data-state={active ? 'active' : 'idle'}

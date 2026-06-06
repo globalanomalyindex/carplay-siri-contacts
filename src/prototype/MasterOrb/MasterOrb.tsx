@@ -195,6 +195,20 @@ export function MasterOrb() {
     }
   }, [resolveMove, resolveUp, resolveCancel])
 
+  // Keyboard path for the orb: Enter or Space wakes Siri, the same primary
+  // action a quick tap fires. The drag-to-magnify gesture has its own Tab path
+  // (each magnifiable control is focusable), so the orb key handler stays
+  // scoped to its tap action and never tries to synthesize a drag.
+  const onKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+        e.preventDefault()
+        send({ type: 'TAP' })
+      }
+    },
+    [send],
+  )
+
   const onPointerDown = useCallback((e: React.PointerEvent) => {
     downStartRef.current = { x: e.clientX, y: e.clientY, t: performance.now() }
     lastPointerRef.current = { x: e.clientX, y: e.clientY }
@@ -217,6 +231,11 @@ export function MasterOrb() {
         data-testid="master-orb-hit"
         data-state={state}
         ref={hitRef}
+        role="button"
+        tabIndex={0}
+        aria-label="Wake Siri"
+        aria-pressed={state === 'siriActive'}
+        onKeyDown={onKeyDown}
         onPointerDown={onPointerDown}
         onPointerMove={(e) => resolveMove(e.clientX, e.clientY)}
         onPointerUp={(e) => resolveUp(e.clientX, e.clientY)}

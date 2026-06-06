@@ -21,14 +21,19 @@ describe('DockSwitcher', () => {
     expect(screen.queryByTestId('dock-dialer')).not.toBeInTheDocument()
   })
 
-  it('marks the active surface with aria-pressed=true and data-active', () => {
+  it('marks the active surface with aria-pressed=true on the interactive frame and data-active on the glyph', () => {
     renderInProvider(<DockSwitcher surface="maps" onSelect={() => {}} />)
-    const mapsBtn = screen.getByTestId('dock-maps')
-    expect(mapsBtn.getAttribute('aria-pressed')).toBe('true')
-    expect(mapsBtn.getAttribute('data-active')).toBe('true')
-    const phoneBtn = screen.getByTestId('dock-phone')
-    expect(phoneBtn.getAttribute('aria-pressed')).toBe('false')
-    expect(phoneBtn.hasAttribute('data-active')).toBe(false)
+    // aria-pressed lives on the single interactive node (the MagnifiableFrame),
+    // so the accessibility tree has exactly one button per control. The inner
+    // glyph carries only data-active for styling and is not interactive.
+    const mapsFrame = screen.getByTestId('magnifiable-dock-maps')
+    expect(mapsFrame.getAttribute('aria-pressed')).toBe('true')
+    expect(mapsFrame.getAttribute('role')).toBe('button')
+    expect(screen.getByTestId('dock-maps').getAttribute('data-active')).toBe('true')
+
+    const phoneFrame = screen.getByTestId('magnifiable-dock-phone')
+    expect(phoneFrame.getAttribute('aria-pressed')).toBe('false')
+    expect(screen.getByTestId('dock-phone').hasAttribute('data-active')).toBe(false)
   })
 
   it('fires onSelect with the right surface id on tap', () => {
