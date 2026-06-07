@@ -1,13 +1,12 @@
 import { motion } from 'motion/react'
 import { AsciiArrow } from '../components/AsciiArrow'
-import { PastelText } from '../components/PastelText'
+import { Emphasis } from '../components/Emphasis'
 import { SectionLabel } from '../components/SectionLabel'
 
 interface Axis {
   name: string
   problem: string
   response: string
-  accent: 'pink' | 'mint' | 'sky'
 }
 
 const AXES: Axis[] = [
@@ -16,21 +15,18 @@ const AXES: Axis[] = [
     problem: 'targets are far, small, or dropped wherever the layout felt like putting them.',
     response:
       'the orb lives in one fixed system-level spot above the dock. always there, always reachable. no hunting for it.',
-    accent: 'pink',
   },
   {
     name: 'jitter tolerance',
     problem: 'road vibration and tremor turn precise taps into mis-taps.',
     response:
       'sustained gestures average the noise out across a path. a 40pt magnetic radius and 60% hysteresis hold the lock through small bumps.',
-    accent: 'mint',
   },
   {
     name: 'fatigue (arm anchor)',
     problem: 'hover-and-tap makes the arm hold itself up for every single action.',
     response:
       'drag-and-lift keeps the finger on the screen for the whole gesture, so the screen does the holding. one decisive lift commits.',
-    accent: 'sky',
   },
 ]
 
@@ -50,11 +46,11 @@ export function Thesis() {
           transition={{ duration: 0.7, ease: [0.2, 0.8, 0.3, 1.0] }}
         >
           <AsciiArrow length={5} />
-          <SectionLabel stop="amber">02 &middot; thesis</SectionLabel>
+          <SectionLabel>02 &middot; thesis</SectionLabel>
           <h2 className="cs-h2">
             one persistent orb.
             <br />
-            <PastelText variant="gradient-1">every Phone interaction</PastelText> today. the system tomorrow.
+            <Emphasis>every Phone interaction</Emphasis> today. the system tomorrow.
           </h2>
           <p className="cs-body">
             one system-level affordance in the top-left negative space above
@@ -113,7 +109,7 @@ export function Thesis() {
               </h3>
               <p
                 style={{
-                  fontSize: 13.5,
+                  fontSize: 'var(--text-sm)',
                   color: 'var(--cs-text-2)',
                   margin: '0 0 16px',
                   lineHeight: 1.5,
@@ -123,7 +119,7 @@ export function Thesis() {
               >
                 {axis.problem}
               </p>
-              <p style={{ fontSize: 14.5, color: 'var(--cs-text)', margin: 0, lineHeight: 1.55 }}>
+              <p style={{ fontSize: 'var(--text-sm-plus)', color: 'var(--cs-text)', margin: 0, lineHeight: 1.55 }}>
                 {axis.response}
               </p>
             </motion.div>

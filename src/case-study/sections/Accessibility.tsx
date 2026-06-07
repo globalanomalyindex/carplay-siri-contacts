@@ -1,6 +1,6 @@
 import { motion } from 'motion/react'
 import { AsciiArrow } from '../components/AsciiArrow'
-import { PastelText } from '../components/PastelText'
+import { Emphasis } from '../components/Emphasis'
 import { PullQuote } from '../components/PullQuote'
 import { SectionLabel } from '../components/SectionLabel'
 
@@ -9,7 +9,6 @@ interface Beneficiary {
   prevalence: string
   constraint: string
   response: string
-  accent: string
 }
 
 const BENEFICIARIES: Beneficiary[] = [
@@ -18,42 +17,36 @@ const BENEFICIARIES: Beneficiary[] = [
     prevalence: '~1M US adults',
     constraint: '3-6Hz resting tremor and rigidity make precise tap timing hard.',
     response: 'the magnifier averages the tremor out across the gesture. only the lift point matters, so there is no tap-timing window to miss.',
-    accent: 'var(--pastel-pink)',
   },
   {
     group: 'essential tremor',
-    prevalence: '~10M US adults',
+    prevalence: '~7M US adults',
     constraint: 'action tremor gets worse the moment you reach for a small target.',
     response: '40pt lock radius. land anywhere in range and the shake can keep going without breaking the lock.',
-    accent: 'var(--pastel-peach)',
   },
   {
     group: 'arthritis, low precision',
-    prevalence: '~58M US adults',
+    prevalence: '~53M US adults',
     constraint: 'joint pain on repeated precise actuations; holding a hover is expensive.',
     response: 'the orb sits in a fixed spot (zero hunt). screen-as-anchor lets the arm rest. a predicted ~50% drop in joint actuations to place a call.',
-    accent: 'var(--pastel-yellow)',
   },
   {
     group: 'post-stroke, MS, low dexterity',
     prevalence: '~8M US adults',
     constraint: 'limited finger isolation; pinch and spread are out of reach.',
     response: 'a single-finger drag is the only input the system asks for. layout mirrors for RHD vehicles.',
-    accent: 'var(--pastel-mint)',
   },
   {
     group: 'one-handed users',
     prevalence: 'situational',
     constraint: 'holding a kid, a coffee, a phone. a broken arm. cold gloved hands.',
     response: 'every action is one drag. there is no two-handed gesture anywhere. gloves work fine as long as they trip capacitance.',
-    accent: 'var(--pastel-sky)',
   },
   {
     group: 'drivers, generally',
-    prevalence: '~230M US adults',
+    prevalence: '~233M US licensed drivers',
     constraint: 'bumpy roads, fatigue, distraction, glare, cold hands, an unfamiliar rental.',
     response: 'the same primitive covers all of it. curb-cut effect: design for the margin, lift everyone.',
-    accent: 'var(--pastel-lavender)',
   },
 ]
 
@@ -95,11 +88,11 @@ export function Accessibility() {
           transition={{ duration: 0.7, ease: [0.2, 0.8, 0.3, 1.0] }}
         >
           <AsciiArrow length={5} />
-          <SectionLabel stop="blue">04 &middot; accessibility</SectionLabel>
+          <SectionLabel>04 &middot; accessibility</SectionLabel>
           <h2 className="cs-statement">
             built for the most motor-constrained driver.
             <br />
-            <PastelText variant="gradient-1">everyone</PastelText> gets the same affordance.
+            <Emphasis>everyone</Emphasis> gets the same affordance.
           </h2>
           <p className="cs-body">
             CarPlay's accessibility surface today is a lot thinner than iOS's.
@@ -117,9 +110,7 @@ export function Accessibility() {
             plainly: this is capability, not accommodation. a driver who
             couldn't reliably place a call while the car was moving gets that
             control back, on their own. the measure that matters isn't seconds
-            saved or screens avoided. it's first-try completion, and the target
-            is to carry motor-constrained drivers from a 45 percent baseline to
-            85 percent.
+            saved or screens avoided. it's first-try completion.
           </p>
           <p className="cs-body">
             holding a cell expands it inline instead of opening a separate menu.
@@ -163,8 +154,8 @@ export function Accessibility() {
               </h3>
               <div
                 style={{
-                  fontFamily: 'ui-monospace, "SF Mono", Monaco, monospace',
-                  fontSize: 11,
+                  fontFamily: 'var(--cs-font-mono)',
+                  fontSize: 'var(--text-xs)',
                   color: 'var(--cs-text-2)',
                   marginBottom: 14,
                   letterSpacing: '-0.01em',
@@ -174,7 +165,7 @@ export function Accessibility() {
               </div>
               <p
                 style={{
-                  fontSize: 13.5,
+                  fontSize: 'var(--text-sm)',
                   color: 'var(--cs-text-2)',
                   margin: '0 0 14px',
                   lineHeight: 1.55,
@@ -184,7 +175,7 @@ export function Accessibility() {
               >
                 {b.constraint}
               </p>
-              <p style={{ fontSize: 14, color: 'var(--cs-text)', margin: 0, lineHeight: 1.55 }}>
+              <p style={{ fontSize: 'var(--text-sm-plus)', color: 'var(--cs-text)', margin: 0, lineHeight: 1.55 }}>
                 {b.response}
               </p>
             </motion.div>
@@ -192,7 +183,7 @@ export function Accessibility() {
         </div>
 
         <PullQuote cite="the principle, by name">
-          the <PastelText variant="gradient-2">curb-cut effect</PastelText>: build the ramp for wheelchairs,
+          the <Emphasis>curb-cut effect</Emphasis>: build the ramp for wheelchairs,
           and the strollers, the bikes, and the rolling luggage get it for free.
         </PullQuote>
 
@@ -216,18 +207,7 @@ export function Accessibility() {
                   borderTop: '2px solid var(--cs-text)',
                 }}
               >
-                <div
-                  style={{
-                    fontSize: 12,
-                    fontWeight: 600,
-                    letterSpacing: '0.1em',
-                    textTransform: 'uppercase',
-                    color: 'var(--cs-text-2)',
-                    marginBottom: 10,
-                  }}
-                >
-                  axis 0{i + 1}
-                </div>
+                <div className="cs-kicker" style={{ marginBottom: 10 }}>axis 0{i + 1}</div>
                 <h4
                   style={{
                     fontSize: 18,
@@ -238,7 +218,7 @@ export function Accessibility() {
                 >
                   {a.axis}
                 </h4>
-                <p style={{ fontSize: 14, color: 'var(--cs-text-2)', margin: 0, lineHeight: 1.55 }}>
+                <p style={{ fontSize: 'var(--text-sm-plus)', color: 'var(--cs-text-2)', margin: 0, lineHeight: 1.55 }}>
                   {a.example}
                 </p>
               </div>

@@ -1,5 +1,5 @@
 import { motion } from 'motion/react'
-import { PastelText } from '../components/PastelText'
+import { Emphasis } from '../components/Emphasis'
 import { SectionLabel } from '../components/SectionLabel'
 import { SpecTable } from '../components/SpecTable'
 import { Counter } from '../components/Counter'
@@ -20,15 +20,22 @@ export function Impact() {
           transition={{ duration: 0.7, ease: [0.2, 0.8, 0.3, 1.0] }}
         >
           <AsciiArrow length={5} />
-          <SectionLabel stop="mint">08 &middot; impact</SectionLabel>
+          <SectionLabel>08 &middot; impact</SectionLabel>
           <h2 className="cs-h2">
-            <PastelText variant="gradient-1">measurable</PastelText> on day one.
+            <Emphasis>measurable</Emphasis> on day one.
           </h2>
           <p className="cs-body">
             every claim in this design is set up to be tested. the KPIs below
             are baselines and targets, and the hypothesis sheet behind them
             lists stop-ship criteria. if the prototype shipped at Apple, this
             is how the team would know it worked.
+          </p>
+          <p className="cs-body">
+            the baselines are estimates drawn from comparable driving and
+            assistive-tech studies, not an in-house test i have run. they are
+            starting lines to beat, not measured results. the point is that
+            every one of them is the kind of number a real study could confirm
+            or kill.
           </p>
         </motion.div>
 
@@ -88,7 +95,7 @@ export function Impact() {
               <Counter value={85} suffix="%" />
             </div>
             <div className="cs-stat-label">
-              target first-try task completion for motor-constrained users. baseline 45%.
+              target first-try task completion for motor-constrained users. estimated baseline 45%.
             </div>
           </motion.div>
         </div>
@@ -103,12 +110,13 @@ export function Impact() {
           >
             <h3 className="cs-h3">primary KPIs</h3>
             <SpecTable
+              caption="estimated baseline -> target"
               rows={[
-                { label: 'Eyes-off-road time per task',  value: '3.4s -> <= 2.5s' },
-                { label: 'Time-to-call from home',       value: '6.8s -> <= 4.5s' },
-                { label: 'Motor task completion rate',   value: '45% -> >= 85%' },
-                { label: 'Mis-action rate',              value: '8.2% -> <= 3%' },
-                { label: 'Subjective fatigue (Borg-CR10)', value: '4.2 -> <= 3.2' },
+                { label: 'Eyes-off-road time per task',  value: '~3.5s -> <= 2.5s' },
+                { label: 'Time-to-call from home',       value: '~7s -> <= 4.5s' },
+                { label: 'Motor task completion rate',   value: '~45% -> >= 85%' },
+                { label: 'Mis-action rate',              value: '~8% -> <= 3%' },
+                { label: 'Subjective fatigue (Borg-CR10)', value: '~4 -> <= 3' },
               ]}
             />
           </motion.div>
@@ -143,40 +151,18 @@ export function Impact() {
           <h3 className="cs-h3">phased rollout</h3>
           <div className="cs-grid cs-grid-2">
             <div className="cs-card">
-              <div
-                style={{
-                  fontSize: 12,
-                  fontWeight: 600,
-                  letterSpacing: '0.12em',
-                  textTransform: 'uppercase',
-                  color: 'var(--cs-text-2)',
-                  marginBottom: 12,
-                }}
-              >
-                phase 1 &middot; phone deep build
-              </div>
-              <p style={{ fontSize: 14.5, lineHeight: 1.55, margin: 0, color: 'var(--cs-text)' }}>
+              <div className="cs-kicker">phase 1 &middot; phone deep build</div>
+              <p style={{ fontSize: 'var(--text-sm-plus)', lineHeight: 1.55, margin: 0, color: 'var(--cs-text)' }}>
                 master orb ships as system chrome. the Phone app adopts the
-                magnifier first. the contacts tab disappears from the driving
+                magnifier first. the Contacts tab disappears from the driving
                 state instead of redirecting. a radial dialer replaces the
                 keypad in parked-only state. opt-in for general users, default-on
                 for paired-iPhone AssistiveTouch users.
               </p>
             </div>
             <div className="cs-card">
-              <div
-                style={{
-                  fontSize: 12,
-                  fontWeight: 600,
-                  letterSpacing: '0.12em',
-                  textTransform: 'uppercase',
-                  color: 'var(--cs-text-2)',
-                  marginBottom: 12,
-                }}
-              >
-                phase 2 &middot; system-wide
-              </div>
-              <p style={{ fontSize: 14.5, lineHeight: 1.55, margin: 0, color: 'var(--cs-text)' }}>
+              <div className="cs-kicker">phase 2 &middot; system-wide</div>
+              <p style={{ fontSize: 'var(--text-sm-plus)', lineHeight: 1.55, margin: 0, color: 'var(--cs-text)' }}>
                 Maps adopts the magnifier for point-of-interest pins and the
                 quick-controls strip. Music adopts it for queue selection and
                 scrub-bar drift. the third-party API <code className="spec-value">CPMagnifiableTarget</code> ships

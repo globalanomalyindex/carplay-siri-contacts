@@ -1,6 +1,6 @@
 import { motion } from 'motion/react'
 import { AsciiArrow } from '../components/AsciiArrow'
-import { PastelText } from '../components/PastelText'
+import { Emphasis } from '../components/Emphasis'
 import { SectionLabel } from '../components/SectionLabel'
 
 interface Gesture {
@@ -112,9 +112,9 @@ export function GestureGrammar() {
           transition={{ duration: 0.7, ease: [0.2, 0.8, 0.3, 1.0] }}
         >
           <AsciiArrow length={5} />
-          <SectionLabel stop="violet">05 &middot; gesture grammar</SectionLabel>
+          <SectionLabel>05 &middot; gesture grammar</SectionLabel>
           <h2 className="cs-h2">
-            <PastelText variant="gradient-1">twelve gestures.</PastelText> one vocabulary.
+            <Emphasis>twelve gestures.</Emphasis> one vocabulary.
           </h2>
           <p className="cs-body">
             the orb owns two. the magnifier owns six. apps own four. every
@@ -130,8 +130,8 @@ export function GestureGrammar() {
         <div
           style={{
             marginTop: 56,
-            border: '1px solid var(--cs-rule)',
-            borderRadius: 18,
+            border: '1px solid var(--cs-text)',
+            borderRadius: 0,
             overflow: 'hidden',
             background: '#FFFFFF',
           }}
@@ -178,9 +178,9 @@ export function GestureGrammar() {
                     alignSelf: 'flex-start',
                     padding: '3px 10px',
                     background: 'transparent',
-                    border: '1px solid var(--cs-rule)',
-                    borderRadius: 999,
-                    fontSize: 10.5,
+                    border: '1px solid var(--cs-text)',
+                    borderRadius: 0,
+                    fontSize: 'var(--text-2xs)',
                     fontWeight: 600,
                     color: 'var(--cs-text-2)',
                     letterSpacing: '0.06em',
@@ -193,7 +193,7 @@ export function GestureGrammar() {
                   {g.name}
                 </span>
               </div>
-              <span style={{ fontSize: 14.5, lineHeight: 1.55, color: 'var(--cs-text)' }}>
+              <span style={{ fontSize: 'var(--text-sm-plus)', lineHeight: 1.55, color: 'var(--cs-text)' }}>
                 {g.outcome}
               </span>
               <code

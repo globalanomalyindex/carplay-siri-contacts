@@ -7,27 +7,50 @@ import { useMagnifiable } from './useMagnifiable'
 import { MasterOrb } from '../MasterOrb/MasterOrb'
 
 describe('Magnifier integration', () => {
-  it('commits the locked target on lift after drag from orb', () => {
+  it('commits the target under the lift, not just the only target, after drag from orb', () => {
     const onSarah = vi.fn()
+    const onMom = vi.fn()
     render(
       <MagnifierProvider>
         <MasterOrb />
-        <div style={{ position: 'absolute', top: 200, left: 300 }}>
-          <MagnifiableFrame id="sarah" onCommit={onSarah}>
-            Sarah
-          </MagnifiableFrame>
-        </div>
+        <MagnifiableFrame id="mom" onCommit={onMom}>
+          Mom
+        </MagnifiableFrame>
+        <MagnifiableFrame id="sarah" onCommit={onSarah}>
+          Sarah
+        </MagnifiableFrame>
       </MagnifierProvider>,
     )
 
-    const orbHit = screen.getByTestId('master-orb-hit')
+    // jsdom does not lay out elements, so without stubbed rects the pick is
+    // degenerate (every box is 0x0 at the origin) and a single target "passes"
+    // regardless of geometry. Stub two separated boxes so the lift position
+    // actually decides which target commits.
+    const stubRect = (el: Element, top: number, left: number, w = 120, h = 56) => {
+      el.getBoundingClientRect = () =>
+        ({
+          x: left,
+          y: top,
+          left,
+          top,
+          right: left + w,
+          bottom: top + h,
+          width: w,
+          height: h,
+          toJSON: () => ({}),
+        }) as DOMRect
+    }
+    stubRect(screen.getByTestId('magnifiable-mom'), 20, 20)
+    stubRect(screen.getByTestId('magnifiable-sarah'), 180, 260)
 
+    const orbHit = screen.getByTestId('master-orb-hit')
     fireEvent.pointerDown(orbHit, { pointerId: 1, clientX: 10, clientY: 10 })
     fireEvent.pointerMove(orbHit, { pointerId: 1, clientX: 30, clientY: 10 })
     fireEvent.pointerMove(orbHit, { pointerId: 1, clientX: 300, clientY: 200 })
     fireEvent.pointerUp(orbHit, { pointerId: 1, clientX: 300, clientY: 200 })
 
     expect(onSarah).toHaveBeenCalledTimes(1)
+    expect(onMom).not.toHaveBeenCalled()
   })
 
   it('commits a freeDrift target on lift over its bounds', () => {

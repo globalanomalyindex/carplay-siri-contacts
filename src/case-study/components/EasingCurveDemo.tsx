@@ -1,4 +1,4 @@
-import { motion, useReducedMotion as motionReduced } from 'motion/react'
+import { motion } from 'motion/react'
 import { useReducedMotion } from '../../a11y/useReducedMotion'
 
 export interface EasingCurveDemoProps {
@@ -27,9 +27,7 @@ export function EasingCurveDemo({
   use,
   duration = 1.4,
 }: EasingCurveDemoProps) {
-  const reduced = useReducedMotion()
-  const reducedMotion = motionReduced()
-  const skipMotion = reduced || reducedMotion
+  const skipMotion = useReducedMotion()
 
   // SVG curve path. Coordinate system: 0,0 top-left, 100x100 in viewBox.
   // Curve goes from bottom-left (0, 100) to top-right (100, 0) using

@@ -11,7 +11,12 @@ import type { Point } from './geometry'
  * screen or engagement.
  */
 
-export type CommitKind = 'lift' | 'quickdraw' | 'dwell-menu' | 'tap'
+/**
+ * How a commit was produced. A normal lift on the locked target, or a quickdraw
+ * (the lens committed live the moment it locked, no lift required). These are
+ * the only two outcomes the driver emits.
+ */
+export type CommitKind = 'lift' | 'quickdraw'
 
 export type TelemetryEvent =
   | { kind: 'sessionStart'; at: number }

@@ -1,6 +1,6 @@
 import { motion } from 'motion/react'
 import { AsciiArrow } from '../components/AsciiArrow'
-import { PastelText } from '../components/PastelText'
+import { Emphasis } from '../components/Emphasis'
 import { PullQuote } from '../components/PullQuote'
 import { SectionLabel } from '../components/SectionLabel'
 
@@ -8,7 +8,6 @@ interface NatureCandidate {
   name: string
   trait: string
   outcome: string
-  accent: 'pink' | 'peach' | 'yellow' | 'mint' | 'sky' | 'lavender'
 }
 
 const CANDIDATES: NatureCandidate[] = [
@@ -16,25 +15,21 @@ const CANDIDATES: NatureCandidate[] = [
     name: 'Mimosa pudica',
     trait: 'folds on touch, reopens after a delay',
     outcome: 'modeled a fail-safe close. too binary for continuous gestures.',
-    accent: 'mint',
   },
   {
     name: 'Sea anemone',
     trait: 'polyps reach toward stimulus, retract from danger',
     outcome: 'caught directional attention, but the kinetic vocabulary read as decorative, not functional.',
-    accent: 'sky',
   },
   {
     name: 'Starling murmuration',
     trait: 'thousands of birds, one body',
     outcome: 'a lovely systems metaphor for collective interaction. solo-driver context did not fit.',
-    accent: 'lavender',
   },
   {
     name: 'Pinecone',
     trait: 'hinged scales open and close with humidity',
     outcome: 'early front-runner. eventually swapped for water once i needed continuous-gesture support.',
-    accent: 'peach',
   },
 ]
 
@@ -53,9 +48,9 @@ export function Process() {
           transition={{ duration: 0.7, ease: [0.2, 0.8, 0.3, 1.0] }}
         >
           <AsciiArrow length={5} />
-          <SectionLabel stop="amber">07 &middot; process</SectionLabel>
+          <SectionLabel>07 &middot; process</SectionLabel>
           <h2 className="cs-h2">
-            i went looking at <PastelText variant="gradient-2">nature</PastelText> for an anchor metaphor.
+            i went looking at <Emphasis>nature</Emphasis> for an anchor metaphor.
           </h2>
           <p className="cs-body">
             the brief needed a single primitive that could absorb the
@@ -97,7 +92,7 @@ export function Process() {
               </h3>
               <p
                 style={{
-                  fontSize: 13.5,
+                  fontSize: 'var(--text-sm)',
                   color: 'var(--cs-text-2)',
                   margin: '0 0 14px',
                   lineHeight: 1.5,
@@ -105,7 +100,7 @@ export function Process() {
               >
                 {c.trait}
               </p>
-              <p style={{ fontSize: 13.5, color: 'var(--cs-text)', margin: 0, lineHeight: 1.5 }}>
+              <p style={{ fontSize: 'var(--text-sm)', color: 'var(--cs-text)', margin: 0, lineHeight: 1.5 }}>
                 {c.outcome}
               </p>
             </motion.div>
@@ -163,10 +158,10 @@ export function Process() {
           </p>
         </motion.div>
 
-        <PullQuote cite="the curb-cut effect">
-          build for the most motor-constrained driver.
+        <PullQuote cite="the pivot, in one line">
+          the pinecone modeled a door.
           <br />
-          <PastelText variant="gradient-1">everyone else benefits.</PastelText>
+          the gestures it had to carry needed <Emphasis>water</Emphasis>.
         </PullQuote>
       </div>
     </section>

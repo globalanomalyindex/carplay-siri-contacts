@@ -1,6 +1,6 @@
 import { motion } from 'motion/react'
 import { AsciiArrow } from '../components/AsciiArrow'
-import { PastelText } from '../components/PastelText'
+import { Emphasis } from '../components/Emphasis'
 import { SectionLabel } from '../components/SectionLabel'
 
 /**
@@ -18,9 +18,9 @@ export function Reflection() {
           transition={{ duration: 0.7, ease: [0.2, 0.8, 0.3, 1.0] }}
         >
           <AsciiArrow length={5} />
-          <SectionLabel stop="blue">09 &middot; reflection</SectionLabel>
+          <SectionLabel>09 &middot; reflection</SectionLabel>
           <h2 className="cs-h2">
-            what <PastelText variant="gradient-2">worked</PastelText>. what i would push further.
+            what <Emphasis>worked</Emphasis>. what i would push further.
           </h2>
         </motion.div>
 
@@ -76,6 +76,17 @@ export function Reflection() {
               eventually make a passenger mode safe, but that's a research
               question, not a design question.
             </p>
+            <p className="cs-body">
+              the part i am most curious to push is the intent layer. right now
+              the magnifier works out what you meant from geometry alone: snap
+              to a component on discrete UI, free-drift on a continuous canvas.
+              that same question, what did the driver actually intend, is exactly
+              where a model takes over once geometry runs out. say "call the
+              office one" over a list of three offices, and the gesture stops
+              being the thing that has to be precise. the affordance stays the
+              same. what resolves the target gets smarter, and the accessibility
+              win compounds.
+            </p>
           </motion.div>
         </div>
 
@@ -87,18 +98,7 @@ export function Reflection() {
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.6 }}
         >
-          <div
-            style={{
-              fontSize: 12,
-              fontWeight: 600,
-              letterSpacing: '0.12em',
-              textTransform: 'uppercase',
-              color: 'var(--cs-text-2)',
-              marginBottom: 14,
-            }}
-          >
-            next in the series
-          </div>
+          <div className="cs-kicker">next in the series</div>
           <h3
             style={{
               fontSize: 24,
@@ -110,7 +110,7 @@ export function Reflection() {
             cellular CarPlay: a customizable widget-grid layout.
           </h3>
           <p style={{ margin: 0, fontSize: 15, color: 'var(--cs-text-2)', lineHeight: 1.55 }}>
-            the Master Orb is the foundation that makes the customizable grid
+            the master orb is the foundation that makes the customizable grid
             safe to drive. composing a CarPlay home screen from cells of
             varying sizes (now playing, navigation mini, contacts mini) is the
             next case study.

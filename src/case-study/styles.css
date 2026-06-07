@@ -1,18 +1,9 @@
 /* Case study scoped styles. Applied via .case-study root class.
-   Apple Newsroom meets Apple developer documentation: lots of whitespace,
-   monospace inline values, careful typography, washed pastel accents on
-   key words only. Pastels are spot accents, never wallpaper. */
+   Brutalist and Swiss: hard rules, mono labels, a strict modular type scale,
+   ink on paper. The only color in the whole layer is the ASCII arrow, which
+   carries the orb spectrum. No pastel fills, no soft gradients on chrome. */
 
 :root {
-  /* Washed pastels. Accent palette. Used only on highlighted words,
-     section dividers, or accent backgrounds. Not for body. */
-  --pastel-pink:     #FFC9D2;
-  --pastel-peach:    #FFDDB8;
-  --pastel-yellow:   #FFF3B0;
-  --pastel-mint:     #C7F0D8;
-  --pastel-sky:      #C6E5FB;
-  --pastel-lavender: #DCCAF7;
-
   /* Case study surface colors */
   --cs-bg:          #FBFBFD;
   --cs-bg-tint:     #F5F5F7;
@@ -177,13 +168,13 @@
   color: var(--cs-text-2);
 }
 
-/* Monospace inline spec value */
+/* Monospace inline spec value. Hard-edged chip, no rounding. */
 .spec-value {
-  font-family: ui-monospace, 'SF Mono', Monaco, 'Cascadia Mono', monospace;
+  font-family: var(--cs-font-mono);
   font-size: 0.86em;
   background: var(--cs-spec-bg);
   padding: 2px 7px;
-  border-radius: 5px;
+  border-radius: 0;
   letter-spacing: -0.01em;
   white-space: nowrap;
 }
@@ -201,38 +192,6 @@
   text-decoration-thickness: 0.07em;
   text-underline-offset: 0.1em;
   text-decoration-color: var(--cs-text);
-}
-
-/* Pastel text accent. Applied via PastelText component. */
-.pastel-text {
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  -webkit-text-fill-color: transparent;
-  display: inline;
-  background-size: 100% 100%;
-}
-
-.pastel-text[data-variant="pink"]      { background-image: linear-gradient(135deg, #FF92A8, #FFC9D2); }
-.pastel-text[data-variant="peach"]     { background-image: linear-gradient(135deg, #FFB078, #FFDDB8); }
-.pastel-text[data-variant="yellow"]    { background-image: linear-gradient(135deg, #F0CB4A, #FFF3B0); }
-.pastel-text[data-variant="mint"]      { background-image: linear-gradient(135deg, #6FD89E, #C7F0D8); }
-.pastel-text[data-variant="sky"]       { background-image: linear-gradient(135deg, #7AB8E8, #C6E5FB); }
-.pastel-text[data-variant="lavender"]  { background-image: linear-gradient(135deg, #A88BE3, #DCCAF7); }
-.pastel-text[data-variant="gradient-1"] {
-  background-image: linear-gradient(110deg, #FF92A8 0%, #FFB078 28%, #6FD89E 58%, #7AB8E8 82%, #A88BE3 100%);
-}
-.pastel-text[data-variant="gradient-2"] {
-  background-image: linear-gradient(110deg, #7AB8E8 0%, #6FD89E 38%, #FFB078 70%, #FF92A8 100%);
-}
-
-/* Soft pastel highlight (marker-style background, keeps text body color) */
-.pastel-highlight {
-  background-color: var(--bg, var(--pastel-mint));
-  padding: 0.05em 0.22em;
-  border-radius: 5px;
-  box-decoration-break: clone;
-  -webkit-box-decoration-break: clone;
 }
 
 /* Pull quote */
@@ -288,65 +247,6 @@
   color: var(--cs-text);
 }
 
-/* Hero rainbow atmosphere. Soft color blobs drift behind the headline
-   and fade out toward the section edges so nothing ever clips. */
-.hero-aura {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  overflow: hidden;
-  /* Radial mask fades the aura out before it can touch the section edges. */
-  -webkit-mask-image: radial-gradient(
-    ellipse 80% 70% at center,
-    rgba(0, 0, 0, 1) 0%,
-    rgba(0, 0, 0, 0.85) 45%,
-    rgba(0, 0, 0, 0) 95%
-  );
-  mask-image: radial-gradient(
-    ellipse 80% 70% at center,
-    rgba(0, 0, 0, 1) 0%,
-    rgba(0, 0, 0, 0.85) 45%,
-    rgba(0, 0, 0, 0) 95%
-  );
-}
-
-.hero-aura-blob {
-  position: absolute;
-  display: block;
-  width: clamp(360px, 38vw, 560px);
-  height: clamp(360px, 38vw, 560px);
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  filter: blur(120px);
-  opacity: 0.18;
-  mix-blend-mode: multiply;
-  will-change: left, top, transform;
-}
-
-@media (prefers-color-scheme: dark) {
-  .hero-aura-blob {
-    mix-blend-mode: screen;
-    opacity: 0.24;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .hero-aura-blob { animation: none; }
-}
-
-/* Thin rainbow tech-spec bar above the eyebrow line. Hairline width,
-   pastel gradient, soft saturation. */
-.hero-spec-bar {
-  display: inline-block;
-  width: 72px;
-  height: 3px;
-  border-radius: 2px;
-  background: var(--spectrum-rule);
-  flex-shrink: 0;
-  opacity: 0.85;
-}
-
 /* Top navigation */
 .cs-nav {
   position: sticky;
@@ -354,6 +254,13 @@
   z-index: 10;
   background: var(--cs-bg);
   border-bottom: 1px solid var(--cs-text);
+}
+
+/* The nav is sticky (~54px), so anchor jumps and the skip-link must offset by
+   it or the target section's label lands hidden under the bar. */
+.case-study main[id],
+.case-study section[id] {
+  scroll-margin-top: 72px;
 }
 
 .cs-nav-inner {
@@ -402,6 +309,49 @@
   padding: 24px;
 }
 
+/* Shared label and card-text utilities. These replace the uppercase-kicker and
+   card-copy inline-style blocks that were hand-copied across the sections, so
+   tracking and sizing stay in one place and route through the micro scale. */
+.cs-kicker {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--cs-text-2);
+  margin: 0 0 14px;
+}
+
+.cs-card-title {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin: 0 0 4px;
+}
+
+.cs-card-meta {
+  font-family: var(--cs-font-mono);
+  font-size: var(--text-xs);
+  color: var(--cs-text-2);
+  letter-spacing: -0.01em;
+  margin: 0 0 14px;
+}
+
+/* The two card-copy steps: a muted secondary line and a primary response line.
+   One named pair instead of the 13.5 / 14 / 14.5 px drift across sections. */
+.cs-card-note {
+  font-size: var(--text-sm);
+  color: var(--cs-text-2);
+  line-height: 1.55;
+  margin: 0;
+}
+
+.cs-card-resp {
+  font-size: var(--text-sm-plus);
+  color: var(--cs-text);
+  line-height: 1.55;
+  margin: 0;
+}
+
 .cs-grid {
   display: grid;
   gap: 24px;
@@ -447,11 +397,11 @@
   letter-spacing: 0.004em;
 }
 
-/* Easing curve demo card */
+/* Easing curve demo card. Hard-edged ink border to match the brutalist cards. */
 .curve-card {
   background: #FFFFFF;
-  border: 1px solid var(--cs-rule);
-  border-radius: 16px;
+  border: 1px solid var(--cs-text);
+  border-radius: 0;
   padding: 24px;
   display: flex;
   flex-direction: column;
@@ -488,20 +438,19 @@
   position: relative;
   height: 36px;
   background: var(--cs-bg-tint);
-  border-radius: 8px;
+  border-radius: 0;
   overflow: hidden;
 }
 
+/* Solid ink dot. The page is grayscale plus the ASCII arrow only, so the puck
+   is monochrome (no rainbow conic fill, no tinted shadow). */
 .curve-card-demo .puck {
   position: absolute;
   top: 50%;
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  background: conic-gradient(
-    from 200deg, #FF6E7F, #FFD86B, #6BFFD1, #6B9AFF, #B573FF, #FF6E7F
-  );
-  box-shadow: 0 4px 12px rgba(120, 100, 200, 0.25);
+  background: var(--cs-text);
   transform: translateY(-50%);
 }
 
@@ -623,8 +572,8 @@
   width: 14px;
   height: 14px;
   border-radius: 50%;
-  background: var(--pastel-pink);
-  box-shadow: 0 0 0 4px rgba(255, 201, 210, 0.30);
+  background: var(--cs-text);
+  box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.10);
 }
 
 .friction-pin-text {
@@ -701,33 +650,11 @@
   .cs-skip-link { transition: none; }
 }
 
-/* ============================================================
-   Visual signature: the orb spectrum as a documented through-line.
-   ============================================================ */
-
-/* The signature bar from the hero, reused as a divider at the two highest
-   narrative seams (into the dark prototype band, out of the reference tables). */
-.cs-divider-spectrum {
-  border: 0;
-  width: 72px;
-  height: 3px;
-  border-radius: 2px;
-  background: var(--spectrum-rule);
-  opacity: 0.9;
-  margin: 72px auto;
-}
-
-/* Section index: each numbered eyebrow takes one spectrum hue on its number and
-   leading rule only. The title text stays neutral, so color indexes the
-   document without becoming wallpaper. */
+/* Section index: the numbered eyebrow tracks the document in mono. The leading
+   number is weighted so it reads as the index; everything stays ink, since the
+   one bit of color in this layer is the ASCII arrow above it. */
 .cs-eyebrow { font-variant-numeric: tabular-nums; }
-.cs-eyebrow[data-stop="pink"]   { --stop: var(--spectrum-pink); }
-.cs-eyebrow[data-stop="amber"]  { --stop: var(--spectrum-amber); }
-.cs-eyebrow[data-stop="mint"]   { --stop: var(--spectrum-mint); }
-.cs-eyebrow[data-stop="blue"]   { --stop: var(--spectrum-blue); }
-.cs-eyebrow[data-stop="violet"] { --stop: var(--spectrum-violet); }
-.cs-eyebrow[data-stop] .cs-eyebrow-num { color: var(--cs-text); font-weight: 600; }
-.cs-eyebrow[data-stop]::before { background: var(--cs-text); opacity: 1; }
+.cs-eyebrow-num { color: var(--cs-text); font-weight: 600; }
 
 /* The single dark band wrapping the live prototype, tuned to the embed frame it
    contains so the two read as one object. Light resumes around it. */

@@ -19,20 +19,7 @@ export interface SpecTableProps {
 export function SpecTable({ rows, caption }: SpecTableProps) {
   return (
     <div>
-      {caption && (
-        <div
-          style={{
-            fontSize: 12,
-            fontWeight: 500,
-            letterSpacing: '0.1em',
-            textTransform: 'uppercase',
-            color: 'var(--cs-text-2)',
-            marginBottom: 14,
-          }}
-        >
-          {caption}
-        </div>
-      )}
+      {caption && <div className="cs-kicker">{caption}</div>}
       <div>
         {rows.map((row, i) => (
           <div className="spec-row" key={i}>

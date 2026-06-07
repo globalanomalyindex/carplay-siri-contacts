@@ -1,7 +1,7 @@
 import { motion } from 'motion/react'
 import { Link } from 'react-router-dom'
 import { AsciiArrow } from '../components/AsciiArrow'
-import { PastelText } from '../components/PastelText'
+import { Emphasis } from '../components/Emphasis'
 import { SectionLabel } from '../components/SectionLabel'
 import { PrototypeStage } from '../../prototype/PrototypeStage'
 
@@ -30,9 +30,9 @@ export function PrototypeEmbed() {
           style={{ textAlign: 'center', maxWidth: 720, marginInline: 'auto' }}
         >
           <AsciiArrow length={5} />
-          <SectionLabel stop="mint">03 &middot; try it</SectionLabel>
+          <SectionLabel>03 &middot; try it</SectionLabel>
           <h2 className="cs-h2" style={{ marginInline: 'auto' }}>
-            <PastelText variant="gradient-2">the prototype.</PastelText>
+            <Emphasis>the prototype.</Emphasis>
           </h2>
           <p className="cs-body" style={{ marginInline: 'auto' }}>
             everything in this case study lives in the screen below. pointer
@@ -99,7 +99,7 @@ export function PrototypeEmbed() {
               transition={{ duration: 0.5, delay: i * 0.05 }}
               style={{
                 padding: '18px 20px',
-                borderRadius: 14,
+                borderRadius: 0,
                 background: 'rgba(255, 255, 255, 0.05)',
                 border: '1px solid var(--cs-dark-rule)',
               }}
@@ -130,7 +130,7 @@ export function PrototypeEmbed() {
               alignItems: 'center',
               gap: 8,
               padding: '12px 22px',
-              borderRadius: 999,
+              borderRadius: 0,
               border: '1px solid var(--cs-dark-rule)',
               color: 'var(--cs-dark-text)',
               fontSize: 14,

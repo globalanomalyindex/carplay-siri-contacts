@@ -467,6 +467,10 @@ function ActionChip({ action, hovered }: ActionChipProps) {
   const tone = action.tone ?? (action.variant === 'primary' ? 'call' : 'neutral')
   const filled = action.variant !== 'secondary'
   const baseColor = TONE_COLOR[tone]
+  const [focused, setFocused] = useState(false)
+  // A chip is "active" when the magnifier hovers it OR a keyboard user focuses
+  // it, so the lit affordance is identical across input methods.
+  const active = hovered || focused
 
   return (
     <motion.div
@@ -476,8 +480,20 @@ function ActionChip({ action, hovered }: ActionChipProps) {
       data-variant={action.variant ?? 'primary'}
       data-state={hovered ? 'hovered' : 'idle'}
       role="button"
+      tabIndex={0}
       aria-label={action.label}
-      animate={{ scale: hovered ? 1.06 : 1 }}
+      // Keyboard path to the same handler the magnifier lift fires. The whole
+      // thesis is that every action is reachable without precise pointing, so a
+      // chip the pointer can hit must also answer to Enter and Space.
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+          e.preventDefault()
+          action.onAction()
+        }
+      }}
+      onFocus={() => setFocused(true)}
+      onBlur={() => setFocused(false)}
+      animate={{ scale: active ? 1.06 : 1 }}
       transition={{ type: 'spring', stiffness: 380, damping: 26, mass: 0.5 }}
       style={{
         display: 'inline-flex',
@@ -490,14 +506,16 @@ function ActionChip({ action, hovered }: ActionChipProps) {
         fontSize: 13,
         fontWeight: 600,
         letterSpacing: '-0.01em',
+        outline: 'none',
+        cursor: 'pointer',
         color: filled ? '#fff' : 'rgba(255,255,255,0.92)',
         background: filled ? baseColor : 'rgba(255,255,255,0.10)',
-        border: hovered
+        border: active
           ? '1.5px solid var(--accent-cyan, rgba(120, 220, 240, 0.95))'
           : filled
           ? '1px solid rgba(0,0,0,0.10)'
           : '1px solid rgba(255,255,255,0.20)',
-        boxShadow: hovered
+        boxShadow: active
           ? '0 0 0 3px rgba(120, 220, 240, 0.28), 0 4px 14px rgba(120, 220, 240, 0.30)'
           : '0 1px 3px rgba(0,0,0,0.18)',
         whiteSpace: 'nowrap',

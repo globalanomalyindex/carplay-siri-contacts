@@ -1,6 +1,6 @@
 import { motion, useReducedMotion } from 'motion/react'
 import { useState } from 'react'
-import { PastelText } from '../components/PastelText'
+import { Emphasis } from '../components/Emphasis'
 import { SectionLabel } from '../components/SectionLabel'
 import { SpecTable } from '../components/SpecTable'
 import { EasingCurveDemo } from '../components/EasingCurveDemo'
@@ -64,15 +64,6 @@ const CURVES: Curve[] = [
 export function MotionSpec() {
   return (
     <section className="cs-section cs-section--dense" id="motion" style={{ background: 'var(--cs-bg-tint)' }}>
-      {/* Neutralize the curve-card puck to a solid ink dot. The page is
-          grayscale plus the ASCII arrow only, so the old rainbow conic-gradient
-          (and its purple-tinted shadow) is overridden here in monochrome. */}
-      <style>{`
-        #motion .curve-card-demo .puck {
-          background: var(--cs-text);
-          box-shadow: none;
-        }
-      `}</style>
       <div className="cs-container">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
@@ -81,9 +72,9 @@ export function MotionSpec() {
           transition={{ duration: 0.7, ease: [0.2, 0.8, 0.3, 1.0] }}
         >
           <AsciiArrow length={5} />
-          <SectionLabel stop="pink">06 &middot; motion spec</SectionLabel>
+          <SectionLabel>06 &middot; motion spec</SectionLabel>
           <h2 className="cs-h2">
-            eight named curves. <PastelText variant="gradient-2">one feel.</PastelText>
+            eight named curves. <Emphasis>one feel.</Emphasis>
           </h2>
           <p className="cs-body">
             every animation in the prototype points at a named easing token,
@@ -194,8 +185,8 @@ function ExpandableCellDemo() {
       style={{
         background: 'var(--cs-bg)',
         padding: 24,
-        borderRadius: 14,
-        border: '1px solid var(--cs-rule)',
+        borderRadius: 0,
+        border: '1px solid var(--cs-text)',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'flex-start',
@@ -208,8 +199,8 @@ function ExpandableCellDemo() {
         className="cs-nav-link"
         style={{
           padding: '8px 14px',
-          borderRadius: 999,
-          border: '1px solid var(--cs-rule)',
+          borderRadius: 0,
+          border: '1px solid var(--cs-text)',
           background: '#fff',
           cursor: 'pointer',
           fontSize: 13,

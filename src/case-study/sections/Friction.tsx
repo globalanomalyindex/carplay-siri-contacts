@@ -1,6 +1,6 @@
 import { motion } from 'motion/react'
 import { AsciiArrow } from '../components/AsciiArrow'
-import { PastelText } from '../components/PastelText'
+import { Emphasis } from '../components/Emphasis'
 import { PullQuote } from '../components/PullQuote'
 import { SectionLabel } from '../components/SectionLabel'
 
@@ -22,7 +22,7 @@ export function Friction() {
           transition={{ duration: 0.7, ease: [0.2, 0.8, 0.3, 1.0] }}
         >
           <AsciiArrow length={5} />
-          <SectionLabel stop="pink">01 &middot; the friction</SectionLabel>
+          <SectionLabel>01 &middot; the friction</SectionLabel>
           <h2 className="cs-h2">
             the Contacts tab is a sign that points back to itself.
           </h2>
@@ -109,7 +109,7 @@ export function Friction() {
 
         <PullQuote>
           a tab that signposts a feature you could've reached
-          from <PastelText variant="lavender">any other state</PastelText> is attention spent on nothing.
+          from <Emphasis>any other state</Emphasis> is attention spent on nothing.
         </PullQuote>
 
         {/* Customer service validation callout */}
@@ -121,18 +121,7 @@ export function Friction() {
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.7, ease: [0.2, 0.8, 0.3, 1.0] }}
         >
-          <div
-            style={{
-              fontSize: 12,
-              fontWeight: 500,
-              letterSpacing: '0.12em',
-              textTransform: 'uppercase',
-              color: 'var(--cs-text-2)',
-              marginBottom: 12,
-            }}
-          >
-            research insight
-          </div>
+          <div className="cs-kicker">research insight</div>
           <p style={{ margin: 0, fontSize: 17, lineHeight: 1.55, color: 'var(--cs-text)' }}>
             customer-service reps at a major US broadband and TV provider
             field routine calls from customers with motor conditions who lean

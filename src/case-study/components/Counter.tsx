@@ -43,7 +43,24 @@ export function Counter({ value, prefix = '', suffix = '', duration = 1400 }: Co
 
   const finalText = `${prefix}${value.toLocaleString()}${suffix}`
   return (
-    <span ref={ref} aria-label={finalText}>
+    <span ref={ref}>
+      {/* Screen readers get the accurate final value as real text; the animated
+          count is decorative and hidden from assistive tech. */}
+      <span
+        style={{
+          position: 'absolute',
+          width: 1,
+          height: 1,
+          padding: 0,
+          margin: -1,
+          overflow: 'hidden',
+          clip: 'rect(0, 0, 0, 0)',
+          whiteSpace: 'nowrap',
+          border: 0,
+        }}
+      >
+        {finalText}
+      </span>
       <span aria-hidden="true">
         {prefix}
         {displayed.toLocaleString()}
