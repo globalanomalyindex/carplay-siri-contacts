@@ -2,6 +2,8 @@ import { motion } from 'motion/react'
 import { useRef } from 'react'
 import { Counter } from '../components/Counter'
 import { AsciiArrow } from '../components/AsciiArrow'
+import { MetricBadge } from '../components/MetricBadge'
+import { EXPERIMENT_RESULTS } from '../data/experimentResults'
 
 /**
  * Hero. Brutalist and lowercase. The one bit of color is the ASCII arrow that
@@ -10,6 +12,13 @@ import { AsciiArrow } from '../components/AsciiArrow'
  */
 export function Hero() {
   const ref = useRef<HTMLElement>(null)
+
+  // The mis-commit stat is the one measured number in the hero, read from the
+  // generated experiment data so it can never drift from what the runner found.
+  const tab = EXPERIMENT_RESULTS.cells.find(
+    (c) => c.scenarioId === 'tab-contest' && c.tierId === 'essential',
+  )
+  const simDropPts = tab ? Math.round(tab.absoluteRiskReduction * 100) : 0
 
   return (
     <header ref={ref} className="cs-section cs-hero" style={{ paddingTop: 96 }}>
@@ -45,8 +54,8 @@ export function Hero() {
         >
           a new interaction primitive for CarPlay, built in real code (it's right
           below, go poke at it). one orb that is both a Siri trigger and a
-          tremor-proof magnifier, so the whole car interface stays reachable for
-          the people who need it most.
+          tremor-tolerant magnifier, so the whole car interface stays reachable
+          for the people who need it most.
         </motion.p>
 
         <motion.div
@@ -65,9 +74,12 @@ export function Hero() {
           </div>
           <div className="cs-stat">
             <div className="cs-stat-value">
-              <Counter value={40} suffix="%" />
+              <Counter value={simDropPts} suffix=" pts" />
             </div>
-            <div className="cs-stat-label">predicted drop in mis-actions on bumpy roads</div>
+            <div className="cs-stat-label">
+              simulated drop in first-try mis-commits, region gating on vs off
+              <MetricBadge kind="measured" />
+            </div>
           </div>
           <div className="cs-stat">
             <div className="cs-stat-value">

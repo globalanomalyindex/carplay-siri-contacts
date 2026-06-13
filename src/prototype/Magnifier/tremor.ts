@@ -29,12 +29,20 @@ export function mulberry32(seed: number): () => number {
 export interface TremorOptions {
   /** Peak displacement of the sinusoid in pixels. */
   amplitudePx: number
-  /** Tremor frequency in Hz (3 to 6 covers physiological and Parkinsonian). */
+  /** Tremor frequency in Hz (3 to 9 covers physiological through Parkinsonian). */
   frequencyHz: number
   /** Fraction of the amplitude added as seeded per-sample noise (0 to 1). */
   noiseFraction: number
   /** Sample rate of the pointer stream in Hz. */
   sampleRateHz: number
+  /**
+   * When true (the default), each seed draws its own starting phase, so a sweep
+   * of seeds samples where in the tremor cycle the gesture happens to begin, not
+   * just the small per-sample noise. This is what makes a seed sweep a Monte
+   * Carlo over tremor realisations. Set false to pin the phase at 0 (a single
+   * fixed waveform, useful only for isolating the noise term).
+   */
+  randomizePhase?: boolean
 }
 
 export const DEFAULT_TREMOR: TremorOptions = {
@@ -42,23 +50,26 @@ export const DEFAULT_TREMOR: TremorOptions = {
   frequencyHz: 5,
   noiseFraction: 0.45,
   sampleRateHz: 60,
+  randomizePhase: true,
 }
 
 /**
  * Offset the tremor adds to a clean pointer position at sample index `i`.
  * The x and y axes run a quarter cycle out of phase so the hand traces a small
  * wobbling loop rather than a straight line, which is what makes a tremor pull
- * a finger across a target boundary. `rand` is the seeded generator; it is
- * advanced exactly twice per sample so the sequence stays deterministic.
+ * a finger across a target boundary. `phase0` is the per-seed starting phase
+ * (radians); `rand` is the seeded generator, advanced exactly twice per sample
+ * so the sequence stays deterministic.
  */
 export function tremorOffset(
   i: number,
   opts: TremorOptions,
   rand: () => number,
+  phase0 = 0,
 ): Point {
   const { amplitudePx, frequencyHz, noiseFraction, sampleRateHz } = opts
   const t = i / sampleRateHz
-  const phase = 2 * Math.PI * frequencyHz * t
+  const phase = 2 * Math.PI * frequencyHz * t + phase0
   const noiseX = (rand() * 2 - 1) * amplitudePx * noiseFraction
   const noiseY = (rand() * 2 - 1) * amplitudePx * noiseFraction
   return {
@@ -99,8 +110,12 @@ export function tremorPath(
 ): Point[] {
   const base = straightPath(from, to, samples)
   const rand = mulberry32(seed)
+  // Draw the per-seed starting phase first (when enabled) so each seed is a
+  // distinct tremor realisation. Drawing it up front keeps the subsequent
+  // per-sample noise sequence deterministic for a given seed.
+  const phase0 = opts.randomizePhase === false ? 0 : rand() * 2 * Math.PI
   return base.map((p, i) => {
-    const off = tremorOffset(i, opts, rand)
+    const off = tremorOffset(i, opts, rand, phase0)
     return { x: p.x + off.x, y: p.y + off.y }
   })
 }

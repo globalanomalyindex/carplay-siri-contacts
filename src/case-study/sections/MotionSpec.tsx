@@ -59,7 +59,7 @@ const CURVES: Curve[] = [
 /**
  * Motion spec. The most "tech-spec" looking section. Named
  * curves with live demos, durations, and the performance budget. Built to
- * read more like Apple developer documentation than a portfolio page.
+ * read more like Apple developer documentation than a marketing page.
  */
 export function MotionSpec() {
   return (

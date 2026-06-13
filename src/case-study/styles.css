@@ -752,3 +752,53 @@
   color: var(--cs-text);
   font-weight: 500;
 }
+
+/* ============================================================
+   Chart caption and figure
+   ============================================================ */
+
+.cs-chart-caption {
+  font-family: var(--cs-font-mono);
+  font-size: 12px;
+  color: var(--cs-text-2);
+  letter-spacing: 0.005em;
+  margin: 0 0 16px;
+}
+
+.cs-chart-figure {
+  margin: 0;
+}
+
+/* ============================================================
+   MetricBadge
+   ============================================================ */
+
+.cs-badge {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--cs-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border: 1px solid var(--cs-text);
+  border-radius: 0;
+  color: var(--cs-text-2);
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+.cs-badge-measured {
+  color: var(--cs-text);
+  border-color: var(--cs-text);
+}
+
+.cs-badge-projected {
+  color: var(--cs-text-2);
+  border-style: dashed;
+}
+
+.cs-badge-estimate {
+  color: var(--cs-text-3);
+  border-color: var(--cs-rule);
+}

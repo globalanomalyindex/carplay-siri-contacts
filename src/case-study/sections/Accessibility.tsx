@@ -225,6 +225,38 @@ export function Accessibility() {
             ))}
           </div>
         </motion.div>
+
+        {/* Keyboard + screen-reader path */}
+        <motion.div
+          style={{ marginTop: 48 }}
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.6, ease: [0.2, 0.8, 0.3, 1.0] }}
+        >
+          <h3 className="cs-h3">the same gesture, without the pointer.</h3>
+          <p className="cs-body">
+            every magnifiable control is a real focusable button. tab reaches
+            it. enter or space fires the exact same commit a tap-lift fires, so
+            a keyboard or switch-scanning user never hits a dead end. the
+            expanded action chips that appear when you hold a contact follow the
+            same rule: each chip has a tab stop and answers to enter and space.
+            that matters for AssistiveTouch parity. someone who drives their
+            iPhone through AssistiveTouch should not get in the car and find the
+            interface is pointer-only. the keyboard path is the floor that keeps
+            that from happening.
+          </p>
+          <p className="cs-body">
+            the locked target is announced through a polite aria-live region, so
+            a screen-reader user hears which control the lens is resting on as
+            the magnifier moves. reduced motion is honored everywhere: the
+            settle scale, the commit flash, and the lock haptic all suppress
+            when the system preference is set. the keyboard path and the live-
+            region announcement are built and tested in this prototype. full
+            VoiceOver and Switch Control passes are specified for a real
+            production build, not claimed here.
+          </p>
+        </motion.div>
       </div>
     </section>
   )
