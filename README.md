@@ -3,7 +3,8 @@
 Accessibility-led CarPlay redesign demonstrating a single persistent system
 orb that serves as Siri activation and AssistiveTouch-style rotary navigator.
 
-See `docs/one-master-affordance-design.md` for the full design specification.
+See `docs/experiment-methods.md` for the simulated mis-commit study: methods,
+statistics, and results.
 
 ## Running the prototype
 
@@ -38,6 +39,7 @@ npm run test          # Vitest watch mode
 npm run test:run      # Vitest single run
 npm run test:e2e      # Playwright E2E
 npm run typecheck     # TypeScript only
+npm run experiment    # regenerate the simulation data (deterministic, byte-identical)
 ```
 
 ## Architecture
