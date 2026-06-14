@@ -10,7 +10,7 @@
   font-style: normal;
   font-weight: 380 620;
   font-display: swap;
-  src: url('/fonts/fraunces-display.woff2') format('woff2');
+  src: url('./fonts/fraunces-display.woff2') format('woff2');
 }
 
 /* Swiss neo-grotesque body and a monospace for labels, spec values, and the
@@ -20,14 +20,14 @@
   font-style: normal;
   font-weight: 400 600;
   font-display: swap;
-  src: url('/fonts/geist.woff2') format('woff2');
+  src: url('./fonts/geist.woff2') format('woff2');
 }
 @font-face {
   font-family: 'Geist Mono';
   font-style: normal;
   font-weight: 400 600;
   font-display: swap;
-  src: url('/fonts/geist-mono.woff2') format('woff2');
+  src: url('./fonts/geist-mono.woff2') format('woff2');
 }
 
 :root {

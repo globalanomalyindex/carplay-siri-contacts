@@ -8,9 +8,13 @@ import { PrototypePage } from './prototype/PrototypePage'
  * section but the standalone route is what gets opened in a new tab from
  * the nav and footer.
  */
+// import.meta.env.BASE_URL is '/carplay-siri-contacts/' in the deployed build and
+// '/' in dev, so the router resolves /prototype under whatever base it ships on.
+const ROUTER_BASENAME = import.meta.env.BASE_URL.replace(/\/$/, '')
+
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={ROUTER_BASENAME}>
       <Routes>
         <Route path="/" element={<CaseStudyPage />} />
         <Route path="/prototype" element={<PrototypePage />} />
