@@ -1,0 +1,94 @@
+<!doctype html>
+<!-- The 1200x630 link-preview card. Open this file directly in a browser at a
+     1200x630 viewport and capture it to public/og.png. It carries no result
+     numbers on purpose: numbers live in the generated experiment data, and a
+     static image of one would silently go stale. -->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <style>
+      @font-face {
+        font-family: 'Fraunces';
+        font-weight: 380 620;
+        src: url('../src/tokens/fonts/fraunces-display.woff2') format('woff2');
+      }
+      @font-face {
+        font-family: 'Geist';
+        font-weight: 400 600;
+        src: url('../src/tokens/fonts/geist.woff2') format('woff2');
+      }
+      @font-face {
+        font-family: 'Geist Mono';
+        font-weight: 400 600;
+        src: url('../src/tokens/fonts/geist-mono.woff2') format('woff2');
+      }
+      * { margin: 0; box-sizing: border-box; }
+      body {
+        width: 1200px;
+        height: 630px;
+        background: #FBFBFD;
+        color: #1D1D1F;
+        font-family: 'Geist', system-ui, sans-serif;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 64px 72px 56px;
+        -webkit-font-smoothing: antialiased;
+      }
+      .eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        font-family: 'Geist Mono', monospace;
+        font-size: 17px;
+        color: #6E6E73;
+      }
+      .arrow { font-size: 20px; letter-spacing: 0.04em; font-weight: 500; }
+      h1 {
+        font-family: 'Fraunces', Georgia, serif;
+        font-size: 118px;
+        font-weight: 560;
+        line-height: 0.98;
+        letter-spacing: -0.018em;
+        max-width: 1000px;
+      }
+      .sub {
+        font-size: 27px;
+        line-height: 1.45;
+        letter-spacing: -0.012em;
+        max-width: 880px;
+        margin-top: 28px;
+      }
+      .foot {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        border-top: 1.5px solid #1D1D1F;
+        padding-top: 20px;
+        font-family: 'Geist Mono', monospace;
+        font-size: 16px;
+        color: #6E6E73;
+      }
+      .foot strong { color: #1D1D1F; font-weight: 500; }
+    </style>
+  </head>
+  <body>
+    <div>
+      <div class="eyebrow">
+        <span class="arrow"
+          ><span style="color:#FF6E7F">&lt;</span><span style="color:#FFA375">-</span><span style="color:#FFD86B">-</span><span style="color:#B5EC9E">-</span><span style="color:#6BFFD1">-</span><span style="color:#6BCCE8">-</span><span style="color:#6B9AFF">-</span><span style="color:#9087FF">-</span><span style="color:#B573FF">&gt;</span></span
+        >
+        <span>CarPlay redesign &middot; designed + built by Christopher Robin Fiore</span>
+      </div>
+      <h1 style="margin-top: 44px">one master affordance.</h1>
+      <p class="sub">
+        one orb: a Siri trigger and a tremor-tolerant magnifier, so the whole
+        car interface stays reachable for the people who need it most.
+      </p>
+    </div>
+    <div class="foot">
+      <span><strong>built in real code</strong> &middot; measured in a reproducible simulation</span>
+      <span>globalanomalyindex.github.io/carplay-siri-contacts</span>
+    </div>
+  </body>
+</html>

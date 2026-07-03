@@ -248,6 +248,75 @@ export function Impact() {
             </div>
           </div>
         </motion.div>
+
+        {/* Generalization: the primitive is about coarse pointing, not cars.
+            Design arguments, not measured claims, so no badges here. */}
+        <motion.div
+          style={{ marginTop: 80 }}
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.6 }}
+        >
+          <h3 className="cs-h3">where the primitive travels</h3>
+          <p className="cs-body">
+            this part is argument, not measurement. none of this is really a
+            car feature: it is an answer to coarse pointing, any situation
+            where the instrument doing the pointing is less precise than the
+            target it is aimed at. the car is the harshest version of that
+            problem, which is why the design started there. but the same
+            physics shows up on very different screens.
+          </p>
+          <div className="cs-grid cs-grid-2" style={{ marginTop: 40 }}>
+            <div style={{ paddingTop: 18, borderTop: '2px solid var(--cs-text)' }}>
+              <div className="cs-kicker" style={{ marginBottom: 10 }}>reach 01</div>
+              <h4 style={{ fontSize: 18, fontWeight: 600, margin: '0 0 12px', letterSpacing: '-0.01em' }}>
+                a tv, ten feet away
+              </h4>
+              <p style={{ fontSize: 'var(--text-sm-plus)', color: 'var(--cs-text-2)', margin: 0, lineHeight: 1.55 }}>
+                a d-pad already solves coarse pointing by removing it: discrete
+                hops on a layout graph, no position to lose. the interesting
+                case is the pointer remote, gyro wands and free-cursor input,
+                where position turns continuous and wobbly again. that is this
+                exact problem ten feet back, and the same lock radius,
+                hysteresis, and commit-on-lift apply.
+              </p>
+            </div>
+            <div style={{ paddingTop: 18, borderTop: '2px solid var(--cs-text)' }}>
+              <div className="cs-kicker" style={{ marginBottom: 10 }}>reach 02</div>
+              <h4 style={{ fontSize: 18, fontWeight: 600, margin: '0 0 12px', letterSpacing: '-0.01em' }}>
+                small screens
+              </h4>
+              <p style={{ fontSize: 'var(--text-sm-plus)', color: 'var(--cs-text-2)', margin: 0, lineHeight: 1.55 }}>
+                on a watch, the finger is bigger than the thing it is hunting. a
+                lock radius plus commit-on-lift beats demanding pixel-perfect
+                taps from a fingertip that covers the whole button.
+              </p>
+            </div>
+            <div style={{ paddingTop: 18, borderTop: '2px solid var(--cs-text)' }}>
+              <div className="cs-kicker" style={{ marginBottom: 10 }}>reach 03</div>
+              <h4 style={{ fontSize: 18, fontWeight: 600, margin: '0 0 12px', letterSpacing: '-0.01em' }}>
+                spatial interfaces
+              </h4>
+              <p style={{ fontSize: 'var(--text-sm-plus)', color: 'var(--cs-text-2)', margin: 0, lineHeight: 1.55 }}>
+                hand-tracked pinch jitters for everyone, not just people with a
+                tremor. gaze plus gating is the same design wearing different
+                hardware.
+              </p>
+            </div>
+            <div style={{ paddingTop: 18, borderTop: '2px solid var(--cs-text)' }}>
+              <div className="cs-kicker" style={{ marginBottom: 10 }}>reach 04</div>
+              <h4 style={{ fontSize: 18, fontWeight: 600, margin: '0 0 12px', letterSpacing: '-0.01em' }}>
+                model-driven interfaces
+              </h4>
+              <p style={{ fontSize: 'var(--text-sm-plus)', color: 'var(--cs-text-2)', margin: 0, lineHeight: 1.55 }}>
+                when a model resolves what you meant, the gesture only has to be
+                roughly right. intent resolution narrows what you are aiming at;
+                the same deterministic gate still decides when it fires.
+              </p>
+            </div>
+          </div>
+        </motion.div>
       </div>
     </section>
   )

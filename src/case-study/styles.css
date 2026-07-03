@@ -802,3 +802,75 @@
   color: var(--cs-text-3);
   border-color: var(--cs-rule);
 }
+
+/* ============================================================
+   The short version: a four-row scan strip under the hero for the
+   reader with ninety seconds. Hard border, mono labels, no color.
+   ============================================================ */
+
+.cs-shortversion {
+  margin-top: 72px;
+  max-width: 880px;
+  border: 1px solid var(--cs-text);
+  background: #ffffff;
+}
+
+.cs-shortversion-head {
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--cs-text);
+  font-family: var(--cs-font-mono);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--cs-text);
+}
+
+.cs-shortversion-row {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 20px;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--cs-rule);
+}
+
+.cs-shortversion-row:last-child { border-bottom: 0; }
+
+.cs-shortversion-label {
+  font-family: var(--cs-font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--cs-text-2);
+  padding-top: 3px;
+}
+
+.cs-shortversion-body {
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--cs-text);
+  margin: 0;
+}
+
+@media (max-width: 640px) {
+  .cs-shortversion-row {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+}
+
+/* On phone widths the six-link nav overflows. A phone reader scrolls the page
+   rather than jumping it, so keep the two links that matter there (try it and
+   the standalone prototype) and drop the section anchors. */
+@media (max-width: 720px) {
+  .cs-nav-inner a[href^='#']:not([href='#prototype']) {
+    display: none;
+  }
+}
+
+/* A badge that follows a wrapped stat label drops to its own line with a
+   little air, instead of crowding the last line of text. */
+.cs-stat-label .cs-badge {
+  display: inline-flex;
+  margin: 6px 0 0;
+}

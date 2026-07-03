@@ -53,6 +53,14 @@ export function Reflection() {
               who could not place a call while moving can now do it on the first
               try.
             </p>
+            <p className="cs-body">
+              the same test eventually caught this document. early drafts made
+              the reader work for the payoff, which is the exact failure the
+              Contacts tab makes a driver sit through. so the hero now leads
+              with the outcome, a short version gives a skimmer an exit after
+              four rows, and measured numbers wear badges so they cannot be
+              mistaken for targets.
+            </p>
           </motion.div>
 
           <motion.div

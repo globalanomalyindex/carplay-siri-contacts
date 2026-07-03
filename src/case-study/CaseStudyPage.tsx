@@ -28,6 +28,7 @@ export function CaseStudyPage() {
             <a href="#prototype" className="cs-nav-link">try it</a>
             <a href="#accessibility" className="cs-nav-link">accessibility</a>
             <a href="#motion" className="cs-nav-link">motion</a>
+            <a href="#process" className="cs-nav-link">process</a>
             <a href="#impact" className="cs-nav-link">outcomes</a>
             <Link to="/prototype" className="cs-nav-link">open prototype</Link>
           </div>

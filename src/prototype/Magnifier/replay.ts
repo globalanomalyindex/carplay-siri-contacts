@@ -12,7 +12,7 @@ import { space } from '../../tokens/spatial'
  * region gating) over a scripted "place a call" pointer path with reproducible
  * hand jitter, and reports which target a lift would commit. Running it with
  * region gating ON vs OFF over the same seeds measures the mis-commit reduction
- * the spatial gating buys, on screen, rather than as an assertion.
+ * the region gating buys, on screen, rather than as an assertion.
  *
  * It is pure: no DOM, no React, no real pointer. A seed fully determines the
  * path, so the same seed yields the same committed target every run. The driver
